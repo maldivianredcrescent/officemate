@@ -19,8 +19,8 @@ const items = [
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
-          width="20"
-          height="20"
+          width={20}
+          height={20}
           fill="none"
         >
           <path
@@ -34,15 +34,15 @@ const items = [
     },
   },
   {
-    title: "Budget",
-    url: "/app/budget",
+    title: "Workplans",
+    url: "/app/workplans",
     icon: () => {
       return (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
-          width="20"
-          height="20"
+          width={20}
+          height={20}
           fill="none"
         >
           <path
@@ -74,6 +74,149 @@ const items = [
             stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
+          />
+        </svg>
+      );
+    },
+  },
+  {
+    title: "Requests",
+    url: "/app/requests",
+    icon: () => {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width={20}
+          height={20}
+          fill={"none"}
+        >
+          <path
+            d="M3 14V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157C21 4.34315 21 6.22876 21 10V14C21 17.7712 21 19.6569 19.8284 20.8284C18.6569 22 16.7712 22 13 22H11C7.22876 22 5.34315 22 4.17157 20.8284C3 19.6569 3 17.7712 3 14Z"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <path
+            d="M11.3333 10.6667C12.3883 11.7216 13.7778 12.7937 13.7778 12.7937L15.6825 10.8889C15.6825 10.8889 14.6105 9.49939 13.5556 8.44444C12.5006 7.3895 11.1111 6.31746 11.1111 6.31746L9.20635 8.22222C9.20635 8.22222 10.2784 9.61172 11.3333 10.6667ZM11.3333 10.6667L8 14M16 10.5714L13.4603 13.1111M11.4286 6L8.88889 8.53968"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M8 18H16"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      );
+    },
+  },
+];
+
+const settingsItems = [
+  {
+    title: "Projects",
+    url: "/app/projects",
+    icon: () => {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width={20}
+          height={20}
+          fill={"none"}
+        >
+          <rect width="24" height="24" fill="white" />
+          <path
+            d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M2 10H6.19722C6.91179 10 7.26908 10 7.58952 10.112C7.7852 10.1804 7.96906 10.2788 8.13451 10.4037C8.40544 10.6082 8.60363 10.9054 9 11.5C9.39637 12.0946 9.59456 12.3918 9.86549 12.5963C10.0309 12.7212 10.2148 12.8196 10.4105 12.888C10.7309 13 11.0882 13 11.8028 13H12.1972C12.9118 13 13.2691 13 13.5895 12.888C13.7852 12.8196 13.9691 12.7212 14.1345 12.5963C14.4054 12.3918 14.6036 12.0946 15 11.5C15.3964 10.9054 15.5946 10.6082 15.8655 10.4037C16.0309 10.2788 16.2148 10.1804 16.4105 10.112C16.7309 10 17.0882 10 17.8028 10H22"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    },
+  },
+  {
+    title: "Donors",
+    url: "/app/donors",
+    icon: () => {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width={20}
+          height={20}
+          fill="none"
+        >
+          <path
+            d="M4 9.20429C4 7.13113 4 6.09456 4.35762 5.25269C4.65634 4.54947 5.1278 3.94587 5.7219 3.50605C6.43314 2.97951 7.38764 2.79409 9.29665 2.42323C11.2817 2.03759 12.2743 1.84477 13.0467 2.15204C13.6884 2.4073 14.229 2.88941 14.5789 3.5183C15 4.27535 15 5.35324 15 7.50903V16.4909C15 18.6467 15 19.7246 14.5789 20.4816C14.229 21.1105 13.6884 21.5926 13.0467 21.8479C12.2743 22.1552 11.2817 21.9623 9.29665 21.5767C7.38764 21.2058 6.43314 21.0204 5.7219 20.4939C5.1278 20.0541 4.65634 19.4505 4.35762 18.7472C4 17.9054 4 16.8688 4 14.7956V9.20429Z"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <path
+            d="M15 19.7982C16.4473 19.9487 18.3999 20.4116 19.4375 19.0884C20 18.3712 20 17.2786 20 15.0933V8.9066C20 6.72135 20 5.62872 19.4375 4.91149C18.3999 3.58837 16.4473 4.05125 15 4.20173"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+          <path
+            d="M12 13L12 11"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M19 19.7266L22 19.7266"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M2 20H5"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    },
+  },
+  {
+    title: "Users",
+    url: "/app/users",
+    icon: () => {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width={20}
+          height={20}
+          fill={"none"}
+        >
+          <path
+            d="M6.57757 15.4816C5.1628 16.324 1.45336 18.0441 3.71266 20.1966C4.81631 21.248 6.04549 22 7.59087 22H16.4091C17.9545 22 19.1837 21.248 20.2873 20.1966C22.5466 18.0441 18.8372 16.324 17.4224 15.4816C14.1048 13.5061 9.89519 13.5061 6.57757 15.4816Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M16.5 6.5C16.5 8.98528 14.4853 11 12 11C9.51472 11 7.5 8.98528 7.5 6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5Z"
+            stroke="currentColor"
+            strokeWidth="2"
           />
         </svg>
       );
@@ -127,6 +270,23 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Settings</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {settingsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>

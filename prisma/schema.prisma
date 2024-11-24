@@ -82,3 +82,11 @@ model Authenticator {
 
   @@id([userId, credentialID])
 }
+
+model Donor {
+  id        String   @id @default(cuid())
+  name      String
+  code      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

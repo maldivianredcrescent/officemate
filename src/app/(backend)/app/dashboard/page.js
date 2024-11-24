@@ -6,8 +6,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import React from "react";
 
@@ -17,9 +15,10 @@ export default async function AdminHomePage() {
 
   return (
     <div className="w-full h-full">
-      <div className="w-full flex items-center justify-between px-4 py-4 border-b border-gray-200 sticky top-0 bg-background">
+      <div className="w-full flex items-center justify-between px-4 py-4 border-b sticky top-0 bg-background h-[66px]">
         <div className="w-full flex items-center gap-2">
           <SidebarTrigger />
+          <div className="border-r h-[20px] mr-2"></div>
           <div>
             <Breadcrumb>
               <BreadcrumbList>
@@ -33,7 +32,7 @@ export default async function AdminHomePage() {
           </div>
         </div>
       </div>
-      <div className="w-full h-full p-4">sd</div>
+      <div className="w-full h-full p-4"></div>
     </div>
   );
 }
