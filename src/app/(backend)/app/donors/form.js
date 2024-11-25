@@ -53,6 +53,7 @@ const DonorForm = ({ donor, onSuccess, onClose }) => {
     }
 
     if (result.data && result.data.success) {
+      form.reset();
       setIsOpen(false);
       onSuccess?.(result.data.donor);
     } else {
