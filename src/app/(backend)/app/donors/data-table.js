@@ -58,14 +58,17 @@ export function DataTable({
           className="w-full rounded-lg"
         />
       </div>
-      <div className="rounded-xl border">
+      <div className="rounded-xl border overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead className="whitespace-nowrap" key={header.id}>
+                    <TableHead
+                      className="whitespace-nowrap font-semibold text-black/50 bg-gray-50"
+                      key={header.id}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(

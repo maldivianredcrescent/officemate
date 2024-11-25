@@ -67,11 +67,8 @@ const BudgetPage = () => {
         </div>
       </div>
       <div className="w-full h-full p-4">
-        <div className="w-full flex flex-col pb-4">
+        <div className="w-full flex flex-col pb-2">
           <h1 className="text-2xl font-semibold ">Donors</h1>
-          <p className="text-md text-black/50">
-            All the requests that has been submitted
-          </p>
         </div>
         <div className="w-full">
           <DataTable

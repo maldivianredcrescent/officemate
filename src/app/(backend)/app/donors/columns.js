@@ -27,14 +27,14 @@ export const columns = [
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {
-      return <div>{moment(row).format("DD/MM/YYYY")}</div>;
+      return <div>{moment(row.original.createdAt).format("DD/MM/YYYY")}</div>;
     },
   },
   {
     accessorKey: "updatedAt",
     header: "Updated At",
     cell: ({ row }) => {
-      return <div>{moment(row).format("DD/MM/YYYY")}</div>;
+      return <div>{moment(row.original.updatedAt).format("DD/MM/YYYY")}</div>;
     },
   },
   {
