@@ -13,50 +13,47 @@ import {
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { donorSchema } from "@/schemas/donorSchemas";
-import { createDonorAction, updateDonorAction } from "@/actions/donorActions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { workPlanSchema } from "@/schemas/workPlanSchemas";
+import { addProjectToWorkplanAction } from "@/actions/workplaneActions";
 import { useToast } from "@/hooks/use-toast";
-
-const DonorForm = ({ donor, onSuccess, onClose }) => {
+const AddProjectForm = ({ workplan, onSuccess, onClose, projects }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
 
   const form = useForm({
-    resolver: zodResolver(donorSchema),
+    resolver: zodResolver(z.object({ projectId: z.string() })),
     defaultValues: {
-      name: "",
-      code: "",
+      projectId: "",
     },
   });
 
-  useEffect(() => {
-    if (donor) {
-      form.setValue("name", donor.name);
-      form.setValue("code", donor.code);
-    }
-  }, [donor]);
-
   const onSubmit = async (data) => {
-    var result;
-    if (donor) {
-      result = await updateDonorAction({ ...data, id: donor.id });
-    } else {
-      result = await createDonorAction(data);
-    }
+    const result = await addProjectToWorkplanAction({
+      ...data,
+      workplanId: workplan.id,
+    });
 
     if (result.data && result.data.success) {
       form.reset();
       setIsOpen(false);
-      onSuccess?.(result.data.donor);
+      onSuccess?.(result.data.workplanProject);
     } else {
       result.data?.error &&
         toast({
@@ -66,6 +63,10 @@ const DonorForm = ({ donor, onSuccess, onClose }) => {
         });
     }
   };
+
+  useEffect(() => {
+    console.log(projects);
+  }, [projects]);
 
   return (
     <Dialog
@@ -77,46 +78,45 @@ const DonorForm = ({ donor, onSuccess, onClose }) => {
       }}
     >
       <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-lg">
-        {donor ? "Edit Donor" : "Create Donor"}
+        Add Project
       </DialogTrigger>
       <DialogContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <DialogHeader>
               <DialogTitle className="font-semibold">
-                {donor ? "Edit Donor" : "Create Donor"}
+                Add New Project
               </DialogTitle>
               <DialogDescription>
-                {donor
-                  ? "You are currently editing an existing donor's information. Please review the details below and make any necessary changes to ensure that all information is accurate and up-to-date."
-                  : "Welcome! To create a new donor, please fill in the required details in the form below. Make sure to provide all relevant information to help us maintain a comprehensive record of our donors."}
+                Please note that adding a project to this workplan is a
+                significant action. Ensure that you have reviewed all project
+                details and are ready to proceed before continuing.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4">
+            <div>
               <FormField
                 control={form.control}
-                name="name"
+                name="projectId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Donor Name</FormLabel>
+                    <FormLabel>Project</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="eg. National Disaster Management Authority"
+                      <Select
                         {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Donor Code</FormLabel>
-                    <FormControl>
-                      <Input placeholder="eg. NDMA" {...field} />
+                        placeholder="Select a project"
+                        onValueChange={(value) => field.onChange(value)} // Ensure the selected value updates the form state
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a project" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {projects.map((project) => (
+                            <SelectItem key={project.id} value={project.id}>
+                              {project.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -133,4 +133,4 @@ const DonorForm = ({ donor, onSuccess, onClose }) => {
   );
 };
 
-export default DonorForm;
+export default AddProjectForm;

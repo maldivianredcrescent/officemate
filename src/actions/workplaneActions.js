@@ -30,8 +30,9 @@ export const getWorkplanByIdAction = actionClient
         },
       },
     });
+    const allProjects = await prisma.project.findMany();
 
-    return { workplan, projects, success: true };
+    return { workplan, projects, allProjects, success: true };
   });
 
 export const createWorkplanAction = actionClient
@@ -50,4 +51,27 @@ export const updateWorkplanAction = actionClient
       data: parsedInput,
     });
     return { workplan, success: true };
+  });
+
+export const addProjectToWorkplanAction = actionClient
+  .schema(z.object({ workplanId: z.string(), projectId: z.string() }))
+  .action(async ({ parsedInput }) => {
+    const existingWorkplanProject = await prisma.workplanProject.findFirst({
+      where: {
+        workplanId: parsedInput.workplanId,
+        projectId: parsedInput.projectId,
+      },
+    });
+
+    if (!existingWorkplanProject) {
+      const workplanProject = await prisma.workplanProject.create({
+        data: parsedInput,
+      });
+      return { workplanProject, success: true };
+    }
+
+    return {
+      success: false,
+      error: "The project is already associated with this workplan.",
+    };
   });

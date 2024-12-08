@@ -34,9 +34,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm({
     resolver: zodResolver(projectSchema), // Updated to projectSchema
@@ -78,7 +80,12 @@ const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
       setIsOpen(false);
       onSuccess?.(result.data.project);
     } else {
-      result.error && console.log(result.data.error);
+      result.data?.error &&
+        toast({
+          variant: "destructive",
+          title: "Oops! something went wrong",
+          description: result.data.error,
+        });
     }
   };
 

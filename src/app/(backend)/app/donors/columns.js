@@ -18,6 +18,9 @@ export const columns = [
   {
     accessorKey: "code",
     header: "Code",
+    cell: ({ row }) => {
+      return <div className="font-[600]">{row.getValue("code")}</div>;
+    },
   },
   {
     accessorKey: "name",

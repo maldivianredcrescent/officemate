@@ -29,6 +29,7 @@ import {
   createWorkplanAction,
   updateWorkplanAction,
 } from "@/actions/workplaneActions";
+import { Textarea } from "@/components/ui/textarea";
 
 const WorkplanForm = ({ workplan, onSuccess, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,12 +38,14 @@ const WorkplanForm = ({ workplan, onSuccess, onClose }) => {
     resolver: zodResolver(workPlanSchema),
     defaultValues: {
       name: "",
+      description: "",
     },
   });
 
   useEffect(() => {
     if (workplan) {
       form.setValue("name", workplan.name);
+      form.setValue("description", workplan.description);
     }
   }, [workplan]);
 
@@ -80,15 +83,15 @@ const WorkplanForm = ({ workplan, onSuccess, onClose }) => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <DialogHeader>
               <DialogTitle className="font-semibold">
-                Create Workplan
+                {workplan ? "Edit Workplan" : "Create Workplan"}
               </DialogTitle>
               <DialogDescription>
-                Please be aware that this action is permanent and will result in
-                the deletion of your account and all associated data. Ensure you
-                have backed up any important information before continuing.
+                Please note that this action is irreversible and will lead to
+                the deletion of your account along with all related data. Make
+                sure to back up any critical information before proceeding.
               </DialogDescription>
             </DialogHeader>
-            <div>
+            <div className="space-y-4">
               <FormField
                 control={form.control}
                 name="name"
@@ -96,9 +99,24 @@ const WorkplanForm = ({ workplan, onSuccess, onClose }) => {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="name" {...field} />
+                      <Input placeholder="Workplan Name" {...field} />
                     </FormControl>
-                    <FormDescription>This is your budget name.</FormDescription>
+                    <FormDescription>
+                      This is your workplan name.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="description" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

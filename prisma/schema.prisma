@@ -111,6 +111,7 @@ model Project {
 model Workplan {
   id               String            @id @default(cuid())
   name             String
+  description      String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   workplanProjects WorkplanProject[]

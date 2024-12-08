@@ -8,6 +8,7 @@ import AuthProvider from "@/lib/providers";
 import { Inter } from "next/font/google";
 import { Lora } from "next/font/google";
 import { Manrope } from "next/font/google";
+import { Toaster } from "@/components/ui/toaster";
 
 // Configure Inter font with specific weights and subsets
 const inter = Inter({
@@ -46,6 +47,7 @@ export default async function Layout({ children }) {
               <main className="w-full">{children}</main>
             </SidebarProvider>
           </AuthProvider>
+          <Toaster />
         </div>
       </body>
     </html>
