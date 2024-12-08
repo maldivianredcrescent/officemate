@@ -231,7 +231,7 @@ export function AppSidebar() {
         <div className="flex items-center justify-between px-2 pt-2">
           <div className="flex items-center gap-3">
             <div>
-              <div className="w-10 h-10 rounded-lg bg-black flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-black flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -257,9 +257,13 @@ export function AppSidebar() {
                 </svg>
               </div>
             </div>
-            <div>
-              <h1 className="text-md font-semibold">Sharif Khaleel</h1>
-              <p className="text-sm font-medium">ll.hawk.ll@gmail.com</p>
+            <div className="flex flex-col gap-1">
+              <h1 className="text-md font-[700] leading-none">
+                Sharif Khaleel
+              </h1>
+              <p className="text-[13px] font-[400] leading-none opacity-80">
+                ll.hawk.ll@gmail.com
+              </p>
             </div>
           </div>
         </div>

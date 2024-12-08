@@ -20,8 +20,27 @@ export const columns = [
     header: "Code",
   },
   {
+    accessorKey: "donor.name",
+    header: "Donor",
+  },
+  {
     accessorKey: "name",
     header: "Name",
+  },
+  {
+    accessorKey: "amount",
+    header: "Amount",
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("amount"));
+
+      // Format the amount as a dollar amount
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "MVR",
+      }).format(amount);
+
+      return <div>{formatted}</div>;
+    },
   },
   {
     accessorKey: "createdAt",
@@ -44,7 +63,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const donor = row.original;
+      const project = row.original;
 
       return (
         <div className="flex justify-end">
@@ -58,13 +77,15 @@ export const columns = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(donor.code)}
+                onClick={() => navigator.clipboard.writeText(project.code)}
               >
-                Copy Donor Code
+                Copy Project Code
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <Link href={`/app/donors/${donor.id}`}>View Donor Details</Link>
+                <Link href={`/app/projects/${project.id}`}>
+                  View Project Details
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

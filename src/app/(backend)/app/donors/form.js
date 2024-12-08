@@ -40,7 +40,6 @@ const DonorForm = ({ donor, onSuccess, onClose }) => {
     if (donor) {
       form.setValue("name", donor.name);
       form.setValue("code", donor.code);
-      setIsOpen(true);
     }
   }, [donor]);
 

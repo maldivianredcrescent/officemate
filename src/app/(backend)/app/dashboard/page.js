@@ -11,7 +11,6 @@ import React from "react";
 
 export default async function AdminHomePage() {
   const session = await getServerSession(authOptions);
-  console.log(session.user);
 
   return (
     <div className="w-full h-full">

@@ -16,10 +16,6 @@ import moment from "moment";
 
 export const columns = [
   {
-    accessorKey: "code",
-    header: "Code",
-  },
-  {
     accessorKey: "name",
     header: "Name",
   },
@@ -44,7 +40,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const donor = row.original;
+      const project = row.original;
 
       return (
         <div className="flex justify-end">
@@ -58,13 +54,15 @@ export const columns = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(donor.code)}
+                onClick={() => navigator.clipboard.writeText(project.name)}
               >
-                Copy Donor Code
+                Copy Workplan Name
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <Link href={`/app/donors/${donor.id}`}>View Donor Details</Link>
+                <Link href={`/app/workplans/${project.id}`}>
+                  View workplan Details
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

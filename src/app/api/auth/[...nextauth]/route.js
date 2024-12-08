@@ -1,9 +1,5 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth";
-import { authUserAction } from "@/actions/authActions";
-import { prisma } from "@/lib/prisma";
-import { signIn } from "next-auth/react";
 
 export const authOptions = {
   providers: [
@@ -18,7 +14,11 @@ export const authOptions = {
         const { email, password } = credentials;
 
         // Example: Replace this with your database or API call
-        const user = { id: 1, name: "John Doe", email: "example@example.com" }; // Mocked user
+        const user = {
+          id: 1,
+          name: "Sharif Khaleel",
+          email: "ll.hawk.ll@gmail.com",
+        }; // Mocked user
 
         if (email === user.email && password === "password123") {
           return user;
@@ -48,6 +48,9 @@ export const authOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/auth/signin",
+  },
 };
 
 const handler = NextAuth(authOptions);

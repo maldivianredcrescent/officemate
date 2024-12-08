@@ -84,9 +84,42 @@ model Authenticator {
 }
 
 model Donor {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   code      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Project   Project[]
+}
+
+model Project {
+  id              String            @id @default(cuid())
+  name            String
+  code            String
+  start_year      Int
+  end_year        Int?
+  donorId         String
+  strategicCode   Int?
+  amount          Float?
+  file            String?
+  donor           Donor             @relation(fields: [donorId], references: [id], onDelete: Cascade)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  WorkplanProject WorkplanProject[]
+}
+
+model Workplan {
+  id               String            @id @default(cuid())
+  name             String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  workplanProjects WorkplanProject[]
+}
+
+model WorkplanProject {
+  id         String   @id @default(cuid())
+  workplanId String
+  projectId  String
+  Workplan   Workplan @relation(fields: [workplanId], references: [id])
+  Project    Project  @relation(fields: [projectId], references: [id])
 }

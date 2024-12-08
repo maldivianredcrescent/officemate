@@ -19,6 +19,26 @@ export const getDonorsAction = actionClient
     return { donors, totalDonors, success: true };
   });
 
+export const getDonorByIdAction = actionClient
+  .schema(
+    z.object({
+      id: z.string(),
+      skip: z.number().optional(),
+      limit: z.number().optional(),
+    })
+  )
+  .action(async ({ parsedInput }) => {
+    const donor = await prisma.donor.findUnique({
+      where: { id: parsedInput.id },
+    });
+    const projects = await prisma.project.findMany({
+      where: { donorId: parsedInput.id },
+      skip: parsedInput.skip,
+      take: parsedInput.limit,
+    });
+    return { donor, projects, success: true };
+  });
+
 export const createDonorAction = actionClient
   .schema(donorSchema.omit({ id: true }))
   .action(async ({ parsedInput }) => {

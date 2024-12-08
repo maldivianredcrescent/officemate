@@ -24,38 +24,56 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { workPlanSchema } from "@/schemas/workPlanSchemas";
+import {
+  createWorkplanAction,
+  updateWorkplanAction,
+} from "@/actions/workplaneActions";
 
-const BudgetForm = ({ budget, onSuccess }) => {
+const WorkplanForm = ({ workplan, onSuccess, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(
-      z.object({
-        name: z.string().min(2, {
-          message: "Name must be at least 2 characters.",
-        }),
-      })
-    ),
+    resolver: zodResolver(workPlanSchema),
     defaultValues: {
       name: "",
     },
   });
 
   useEffect(() => {
-    if (budget) {
-      setIsOpen(true);
-      form.setValue("name", budget.name);
+    if (workplan) {
+      form.setValue("name", workplan.name);
     }
-  }, [budget]);
+  }, [workplan]);
 
-  function onSubmit(data) {
-    console.log(data);
-  }
+  const onSubmit = async (data) => {
+    let result;
+    if (workplan) {
+      result = await updateWorkplanAction({ ...data, id: workplan.id });
+    } else {
+      result = await createWorkplanAction(data);
+    }
+
+    if (result.data && result.data.success) {
+      form.reset();
+      setIsOpen(false);
+      onSuccess?.(result.data.workplan);
+    } else {
+      result.error && console.log(result.data.error);
+    }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        !open && form.reset();
+        onClose?.();
+        setIsOpen(open);
+      }}
+    >
       <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-lg">
-        {budget ? "Edit Workplan" : "Create Workplan"}
+        {workplan ? "Edit Workplan" : "Create Workplan"}
       </DialogTrigger>
       <DialogContent>
         <Form {...form}>
@@ -96,4 +114,4 @@ const BudgetForm = ({ budget, onSuccess }) => {
   );
 };
 
-export default BudgetForm;
+export default WorkplanForm;
