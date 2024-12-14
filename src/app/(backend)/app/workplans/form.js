@@ -45,7 +45,7 @@ const WorkplanForm = ({ workplan, onSuccess, onClose }) => {
   useEffect(() => {
     if (workplan) {
       form.setValue("name", workplan.name);
-      form.setValue("description", workplan.description);
+      form.setValue("description", workplan.description || "");
     }
   }, [workplan]);
 

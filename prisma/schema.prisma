@@ -93,34 +93,36 @@ model Donor {
 }
 
 model Project {
-  id              String            @id @default(cuid())
-  name            String
-  code            String
-  start_year      Int
-  end_year        Int?
-  donorId         String
-  strategicCode   Int?
-  amount          Float?
-  file            String?
-  donor           Donor             @relation(fields: [donorId], references: [id], onDelete: Cascade)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  WorkplanProject WorkplanProject[]
+  id            String     @id @default(cuid())
+  name          String
+  code          String
+  start_year    Int
+  end_year      Int?
+  donorId       String
+  strategicCode Int?
+  amount        Float?
+  file          String?
+  donor         Donor      @relation(fields: [donorId], references: [id], onDelete: Cascade)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  Activity      Activity[]
 }
 
 model Workplan {
-  id               String            @id @default(cuid())
-  name             String
-  description      String?
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  workplanProjects WorkplanProject[]
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Activity    Activity[]
 }
 
-model WorkplanProject {
+model Activity {
   id         String   @id @default(cuid())
+  name       String
   workplanId String
   projectId  String
-  Workplan   Workplan @relation(fields: [workplanId], references: [id])
-  Project    Project  @relation(fields: [projectId], references: [id])
+  budget     Float?
+  workplan   Workplan @relation(fields: [workplanId], references: [id])
+  project    Project  @relation(fields: [projectId], references: [id])
 }

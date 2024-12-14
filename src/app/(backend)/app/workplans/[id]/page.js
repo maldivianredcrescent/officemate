@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useAction } from "next-safe-action/hooks";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Breadcrumb,
@@ -14,17 +14,17 @@ import {
 } from "@/components/ui/breadcrumb";
 import WorkplanForm from "../form";
 import { getWorkplanByIdAction } from "@/actions/workplaneActions";
-import { DataTable } from "../../projects/data-table";
-import { columns } from "../../projects/columns";
 import { usePagination } from "@/hooks/use-pagination";
-import AddProjectForm from "./add-project";
+import { DataTable } from "../../activities/data-table";
+import { columns } from "../../activities/columns";
+import ActivityForm from "../../activities/form";
 
 const WorkplanByIdPage = () => {
-  const router = useRouter();
   const { id } = useParams();
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const { isPending, execute, result } = useAction(getWorkplanByIdAction);
   const { limit, skip, pagination, onPaginationChange } = usePagination();
+  const [selectedActivity, setSelectedActivity] = useState();
 
   React.useEffect(() => {
     if (id) {
@@ -92,28 +92,55 @@ const WorkplanByIdPage = () => {
               : ""}
           </p>
         </div>
+        <div className="w-full grid grid-cols-1 lg:grid-cols-4 mt-4 gap-4">
+          <div className="bg-white border rounded-lg p-4 mb-4">
+            <h2 className="text-sm font-[400] opacity-50">Total Projects</h2>
+            <p className="text-xl font-bold">
+              {result.data && result.data.activities.length}
+            </p>
+          </div>
+          <div className="bg-white border rounded-lg p-4 mb-4">
+            <h2 className="text-sm font-[400] opacity-50">Available Budget</h2>
+            <p className="text-xl font-bold">
+              {result.data && result.data.availableBudget
+                ? `MVR ${result.data.availableBudget
+                    .toFixed(2)
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+                : "MVR 0.00"}
+            </p>
+          </div>
+        </div>
         <div className="w-full">
-          <div className="w-full flex flex-row items-center justify-between pb-2 mt-6">
-            <h1 className="text-2xl font-semibold ">Projects</h1>{" "}
+          <div className="w-full flex flex-row items-center justify-between pb-2">
+            <h1 className="text-2xl font-semibold ">Activities</h1>
             {result.data && result.data.allProjects && (
-              <AddProjectForm
+              <ActivityForm
+                activity={selectedActivity}
                 workplan={result.data.workplan}
                 projects={result.data.allProjects}
                 onSuccess={() => {
+                  setSelectedActivity();
                   execute({ id });
+                }}
+                onClose={() => {
+                  setSelectedActivity();
                 }}
               />
             )}
           </div>
           <DataTable
-            columns={columns}
+            columns={columns({
+              onEdit: (activity) => {
+                setSelectedActivity(activity);
+              },
+            })}
             isPending={isPending}
             data={
-              !isPending && result.data && result.data.projects // Updated to result.data.projects
-                ? result.data.projects
+              !isPending && result.data && result.data.activities
+                ? result.data.activities
                 : []
             }
-            rowCount={result.data?.totalProjects || 0} // Updated to totalProjects
+            rowCount={result.data?.totalActivities || 0}
             onPaginationChange={onPaginationChange}
             pagination={pagination}
           />

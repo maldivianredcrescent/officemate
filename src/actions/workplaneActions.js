@@ -17,22 +17,36 @@ export const getWorkplanByIdAction = actionClient
       where: { id: parsedInput.id }, // Ensuring the id is explicitly referenced
     });
 
-    const workplanProjects = await prisma.workplanProject.findMany({
+    const activities = await prisma.activity.findMany({
+      where: {
+        workplanId: parsedInput.id,
+      },
+      include: {
+        project: true,
+      },
+    });
+
+    const totalActivities = await prisma.activity.count({
       where: {
         workplanId: parsedInput.id,
       },
     });
 
-    const projects = await prisma.project.findMany({
-      where: {
-        id: {
-          in: workplanProjects.map((wp) => wp.projectId),
-        },
-      },
-    });
+    const availableBudget = activities.reduce(
+      (total, activity) => total + activity.budget,
+      0
+    );
+
     const allProjects = await prisma.project.findMany();
 
-    return { workplan, projects, allProjects, success: true };
+    return {
+      workplan,
+      activities,
+      allProjects,
+      totalActivities,
+      success: true,
+      availableBudget,
+    };
   });
 
 export const createWorkplanAction = actionClient
@@ -51,27 +65,4 @@ export const updateWorkplanAction = actionClient
       data: parsedInput,
     });
     return { workplan, success: true };
-  });
-
-export const addProjectToWorkplanAction = actionClient
-  .schema(z.object({ workplanId: z.string(), projectId: z.string() }))
-  .action(async ({ parsedInput }) => {
-    const existingWorkplanProject = await prisma.workplanProject.findFirst({
-      where: {
-        workplanId: parsedInput.workplanId,
-        projectId: parsedInput.projectId,
-      },
-    });
-
-    if (!existingWorkplanProject) {
-      const workplanProject = await prisma.workplanProject.create({
-        data: parsedInput,
-      });
-      return { workplanProject, success: true };
-    }
-
-    return {
-      success: false,
-      error: "The project is already associated with this workplan.",
-    };
   });
