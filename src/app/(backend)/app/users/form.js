@@ -22,60 +22,57 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { activitySchema } from "@/schemas/activitySchemas"; // Updated to activitySchema
-import {
-  createActivityAction,
-  updateActivityAction,
-} from "@/actions/activityActions"; // Updated to activityActions
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { userSchema } from "@/schemas/userSchemas";
+import { updateUserAction } from "@/actions/usersActions";
+import { createUser } from "@/actions/authActions";
 
-const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
+const UserForm = ({ user, onSuccess, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const [isSaving, setSaving] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(activitySchema), // Updated to activitySchema
+    resolver: zodResolver(userSchema),
     defaultValues: {
       name: "",
-      budget: "",
-      projectId: "",
+      email: "",
+      password: "",
     },
   });
 
   useEffect(() => {
-    if (activity) {
-      form.setValue("name", activity.name);
-      form.setValue("budget", activity.budget); // Set budget
-      form.setValue("projectId", activity.projectId); // Set projectId
-      form.setValue("workplanId", activity.workplanId); // Set workplanId
+    if (user) {
+      form.setValue("name", user.name);
+      form.setValue("email", user.email);
       setIsOpen(true);
     }
-  }, [activity]);
+  }, [user]);
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
+    setSaving(true);
     let result;
-    if (activity) {
-      result = await updateActivityAction({
-        ...data,
-        id: activity.id,
-      });
+    if (user) {
+      result = await updateUserAction({ ...data, id: user.id });
     } else {
-      result = await createActivityAction({ ...data, workplanId: workplan.id });
+      result = await createUser(data);
     }
 
     if (result.data && result.data.success) {
       form.reset();
       setIsOpen(false);
-      onSuccess?.(result.data.activity);
+      onSuccess?.(result.data.user);
+      if (user) {
+        toast({
+          title: "User updated",
+          description: "User details updated successfully",
+        });
+      } else {
+        toast({
+          title: "User created",
+          description: "User details created successfully",
+        });
+      }
     } else {
       result.data?.error &&
         toast({
@@ -84,7 +81,7 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
           description: result.data.error,
         });
     }
-    setIsLoading(false);
+    setSaving(false);
   };
 
   return (
@@ -97,19 +94,19 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
       }}
     >
       <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-lg">
-        {activity ? "Edit Activity" : "Create Activity"}
+        {user ? "Edit User" : "Create User"}
       </DialogTrigger>
       <DialogContent className="overflow-y-auto">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader>
               <DialogTitle className="font-semibold">
-                {activity ? "Edit Activity" : "Create Activity"}
+                {user ? "Edit User" : "Create User"}
               </DialogTitle>
               <DialogDescription>
-                {activity
-                  ? "You are currently editing an existing activity's information. Please review the details below and make any necessary changes to ensure that all information is accurate and up-to-date."
-                  : "Welcome! To create a new activity, please fill in the required details in the form below. Make sure to provide all relevant information to help us maintain a comprehensive record of our activities."}
+                {user
+                  ? "You are currently editing an existing user's information. Please review the details below and make any necessary changes to ensure that all information is accurate and up-to-date."
+                  : "Welcome! To create a new user, please fill in the required details in the form below. Make sure to provide all relevant information to help us maintain a comprehensive record of our users."}{" "}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
@@ -118,9 +115,9 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Activity Name</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="eg. Disaster Response" {...field} />
+                      <Input placeholder="eg. John Doe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -128,47 +125,29 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
               />
               <FormField
                 control={form.control}
-                name="budget"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Budget</FormLabel>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="eg. john@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
-                        placeholder="eg. 5000"
+                        type="password"
+                        placeholder="Password"
                         {...field}
-                        onChange={(e) =>
-                          field.onChange(parseFloat(e.target.value, 10))
-                        } // Change to float after setting
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="projectId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Project</FormLabel>
-                    <FormControl>
-                      <Select
-                        {...field}
-                        placeholder="Select a project"
-                        onValueChange={(value) => field.onChange(value)} // Ensure the selected value updates the form state
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a project" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {projects.map((project) => (
-                            <SelectItem key={project.id} value={project.id}>
-                              {project.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -176,8 +155,8 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
               />
             </div>
             <DialogFooter>
-              <Button disabled={isLoading} type="submit">
-                {isLoading && (
+              <Button type="submit" disabled={isSaving}>
+                {isSaving && (
                   <svg
                     className="animate-spin h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
@@ -209,4 +188,4 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
   );
 };
 
-export default ActivityForm;
+export default UserForm;

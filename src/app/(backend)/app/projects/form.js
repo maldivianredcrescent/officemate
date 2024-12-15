@@ -39,6 +39,7 @@ import { useToast } from "@/hooks/use-toast";
 const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(projectSchema), // Updated to projectSchema
@@ -68,6 +69,7 @@ const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
   }, [project]);
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     let result;
     if (project) {
       result = await updateProjectAction({ ...data, id: project.id });
@@ -87,6 +89,7 @@ const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
           description: result.data.error,
         });
     }
+    setIsLoading(false);
   };
 
   return (
@@ -267,7 +270,31 @@ const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
               />
             </div>
             <DialogFooter>
-              <Button type="submit">Save</Button>
+              <Button disabled={isLoading} type="submit">
+                {isLoading && (
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                )}
+                Save
+              </Button>
             </DialogFooter>
           </form>
         </Form>

@@ -1,5 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth";
+import { authenticateUser } from "@/actions/authActions";
 
 export const authOptions = {
   providers: [
@@ -10,20 +11,13 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        // Implement your authentication logic here
         const { email, password } = credentials;
 
-        // Example: Replace this with your database or API call
-        const user = {
-          id: 1,
-          name: "Sharif Khaleel",
-          email: "ll.hawk.ll@gmail.com",
-        }; // Mocked user
-
-        if (email === user.email && password === "password123") {
-          return user;
+        const result = await authenticateUser({ email, password });
+        if (result && result.user && result.user.email) {
+          return result.user;
         }
-        // Return null if the authentication fails
+
         return null;
       },
     }),

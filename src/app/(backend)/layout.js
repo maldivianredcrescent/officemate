@@ -6,7 +6,6 @@ import { authOptions } from "../api/auth/[...nextauth]/route";
 import AuthProvider from "@/lib/providers";
 
 import { Inter } from "next/font/google";
-import { Lora } from "next/font/google";
 import { Manrope } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -16,13 +15,6 @@ const inter = Inter({
   weight: ["400", "700"],
   display: "swap",
   variable: "--font-inter", // Optional: create a CSS variable
-});
-
-const lora = Lora({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-  variable: "--font-lora",
 });
 
 const manrope = Manrope({
@@ -35,10 +27,7 @@ export default async function Layout({ children }) {
   const session = await getServerSession(authOptions);
 
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${lora.variable} ${manrope.variable}`}
-    >
+    <html lang="en" className={`${inter.variable} ${manrope.variable}`}>
       <body className="antialiased font-manrope">
         <div className="flex w-full h-full">
           <AuthProvider session={session}>

@@ -67,7 +67,6 @@ module.exports = {
       },
       fontFamily: {
         inter: ["var(--font-inter)"],
-        lora: ["var(--font-lora)"],
         manrope: ["var(--font-manrope)"],
       },
     },
