@@ -14,13 +14,16 @@ datasource db {
 }
 
 model User {
-  id            String   @id
-  email         String   @unique
-  name          String
-  password_hash String
-  role          String   @default("user")
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  id              String    @id
+  email           String    @unique
+  name            String
+  password_hash   String
+  role            String    @default("user")
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  submitted       Request[] @relation("SubmittedBy")
+  budgetApproved  Request[] @relation("BudgetApprovedBy")
+  financeApproved Request[] @relation("FinanceApprovedBy")
 }
 
 model Donor {
@@ -58,11 +61,40 @@ model Workplan {
 }
 
 model Activity {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   name       String
   workplanId String
   projectId  String
   budget     Float?
-  workplan   Workplan @relation(fields: [workplanId], references: [id])
-  project    Project  @relation(fields: [projectId], references: [id])
+  workplan   Workplan  @relation(fields: [workplanId], references: [id])
+  project    Project   @relation(fields: [projectId], references: [id])
+  Request    Request[]
+}
+
+model Request {
+  id                  String        @id @default(cuid())
+  type                String        @default("service")
+  activityId          String
+  submittedById       String?
+  budgetApprovedById  String?
+  financeApprovedById String?
+  activity            Activity      @relation(fields: [activityId], references: [id])
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  requestItems        RequestItem[]
+  submittedBy         User?         @relation("SubmittedBy", fields: [submittedById], references: [id])
+  budgetApprovedBy    User?         @relation("BudgetApprovedBy", fields: [budgetApprovedById], references: [id])
+  financeApprovedBy   User?         @relation("FinanceApprovedBy", fields: [financeApprovedById], references: [id])
+}
+
+model RequestItem {
+  id        String   @id @default(cuid())
+  requestId String
+  name      String
+  qty       Int
+  rate      Float
+  amount    Float
+  request   Request  @relation(fields: [requestId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

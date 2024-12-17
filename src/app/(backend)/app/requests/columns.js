@@ -14,40 +14,52 @@ import {
 import Link from "next/link";
 import moment from "moment";
 
-export const columns = (onEdit) => [
+export const columns = [
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "type",
+    header: "Type",
     cell: ({ row }) => {
-      return <div className="font-[600]">{row.getValue("email")}</div>;
+      return <div className="font-[600]">{row.getValue("type")}</div>;
     },
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: "activity.name",
+    header: "Activity",
   },
   {
-    accessorKey: "created_at",
+    accessorKey: "activity.workplan.name",
+    header: "Workplan",
+  },
+  {
+    accessorKey: "activity.project.name",
+    header: "Project",
+  },
+  {
+    accessorKey: "activity.project.donor.name",
+    header: "Donor",
+  },
+  {
+    accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {
       return (
-        <div>{moment(row.getValue("created_at")).format("DD/MM/YYYY")}</div>
+        <div>{moment(row.getValue("createdAt")).format("DD/MM/YYYY")}</div>
       );
     },
   },
   {
-    accessorKey: "updated_at",
+    accessorKey: "updatedAt",
     header: "Updated At",
     cell: ({ row }) => {
       return (
-        <div>{moment(row.getValue("updated_at")).format("DD/MM/YYYY")}</div>
+        <div>{moment(row.getValue("updatedAt")).format("DD/MM/YYYY")}</div>
       );
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const user = row.original;
+      const activity = row.original;
 
       return (
         <div className="flex justify-end">
@@ -61,13 +73,17 @@ export const columns = (onEdit) => [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(user.email)}
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    `${window.location.origin}/app/requests/${activity.id}`
+                  )
+                }
               >
-                Copy Email
+                Copy Request URL
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onEdit(user)}>
-                Edit User
+              <DropdownMenuItem>
+                <Link href={`/app/requests/${activity.id}`}>View Request</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

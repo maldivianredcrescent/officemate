@@ -21,61 +21,56 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { activitySchema } from "@/schemas/activitySchemas"; // Updated to activitySchema
+import { requestItemSchema } from "@/schemas/requestItemSchemas"; // Updated import to requestItemSchema
 import {
-  createActivityAction,
-  updateActivityAction,
-} from "@/actions/activityActions"; // Updated to activityActions
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  createRequestItemAction,
+  updateRequestItemAction,
+} from "@/actions/requestItemActions"; // Updated action imports
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
-const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
+const RequestItemForm = ({ requestItem, onSuccess, onClose, request }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm({
-    resolver: zodResolver(activitySchema), // Updated to activitySchema
+    resolver: zodResolver(requestItemSchema),
     defaultValues: {
       name: "",
-      budget: "",
-      projectId: "",
+      qty: 0,
+      rate: 0,
     },
   });
 
   useEffect(() => {
-    if (activity) {
-      form.setValue("name", activity.name);
-      form.setValue("budget", activity.budget); // Set budget
-      form.setValue("projectId", activity.projectId); // Set projectId
-      form.setValue("workplanId", activity.workplanId); // Set workplanId
+    if (requestItem) {
+      form.setValue("name", requestItem.name);
+      form.setValue("qty", requestItem.qty);
+      form.setValue("rate", requestItem.rate);
       setIsOpen(true);
     }
-  }, [activity]);
+  }, [requestItem]);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    let result;
-    if (activity) {
-      result = await updateActivityAction({
+    var result;
+    if (requestItem) {
+      result = await updateRequestItemAction({
         ...data,
-        id: activity.id,
+        id: requestItem.id,
       });
     } else {
-      result = await createActivityAction({ ...data, workplanId: workplan.id });
+      result = await createRequestItemAction({
+        ...data,
+        requestId: request.id,
+      });
     }
 
     if (result.data && result.data.success) {
       form.reset();
       setIsOpen(false);
-      onSuccess?.(result.data.activity);
+      onSuccess?.(result.data.requestItem);
     } else {
       result.data?.error &&
         toast({
@@ -97,19 +92,19 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
       }}
     >
       <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-lg">
-        {activity ? "Edit Activity" : "Create Activity"}
+        {requestItem ? "Edit Item" : "Add Item"}
       </DialogTrigger>
-      <DialogContent className="overflow-y-auto">
+      <DialogContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader>
               <DialogTitle className="font-semibold">
-                {activity ? "Edit Activity" : "Create Activity"}
+                {requestItem ? "Edit Item" : "Add Item"}
               </DialogTitle>
               <DialogDescription>
-                {activity
-                  ? "You are currently editing an existing activity's information. Please review the details below and make any necessary changes to ensure that all information is accurate and up-to-date."
-                  : "Welcome! To create a new activity, please fill in the required details in the form below. Make sure to provide all relevant information to help us maintain a comprehensive record of our activities."}
+                {requestItem
+                  ? "You are currently editing an existing request item's information. Please review the details below and make any necessary changes to ensure that all information is accurate and up-to-date."
+                  : "Welcome! To create a new request item, please fill in the required details in the form below. Make sure to provide all relevant information to help us maintain a comprehensive record of our request items."}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
@@ -118,9 +113,9 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Activity Name</FormLabel>
+                    <FormLabel>Item Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="eg. Disaster Response" {...field} />
+                      <Input {...field} placeholder="Enter item name" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -128,18 +123,19 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
               />
               <FormField
                 control={form.control}
-                name="budget"
+                name="qty"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Budget</FormLabel>
+                    <FormLabel>Quantity</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="eg. 5000"
                         {...field}
+                        placeholder="Enter quantity"
+                        step="0.01"
                         onChange={(e) =>
-                          field.onChange(parseFloat(e.target.value, 10))
-                        } // Change to float after setting
+                          field.onChange(parseFloat(e.target.value))
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -148,27 +144,20 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
               />
               <FormField
                 control={form.control}
-                name="projectId"
+                name="rate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Project</FormLabel>
+                    <FormLabel>Rate</FormLabel>
                     <FormControl>
-                      <Select
+                      <Input
+                        type="number"
                         {...field}
-                        placeholder="Select a project"
-                        onValueChange={(value) => field.onChange(value)} // Ensure the selected value updates the form state
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a project" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {projects.map((project) => (
-                            <SelectItem key={project.id} value={project.id}>
-                              {project.name} ({project.workplan.name})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        placeholder="Enter rate"
+                        step="0.01"
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value))
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -209,4 +198,4 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
   );
 };
 
-export default ActivityForm;
+export default RequestItemForm; // Updated export

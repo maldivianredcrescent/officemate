@@ -8,46 +8,34 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Link from "next/link";
 import moment from "moment";
 
-export const columns = (onEdit) => [
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => {
-      return <div className="font-[600]">{row.getValue("email")}</div>;
-    },
-  },
+export const columns = ({ onEdit, onDelete }) => [
   {
     accessorKey: "name",
-    header: "Name",
-  },
-  {
-    accessorKey: "created_at",
-    header: "Created At",
+    header: "Description",
     cell: ({ row }) => {
-      return (
-        <div>{moment(row.getValue("created_at")).format("DD/MM/YYYY")}</div>
-      );
+      return <div className="font-[600]">{row.getValue("name")}</div>;
     },
   },
   {
-    accessorKey: "updated_at",
-    header: "Updated At",
-    cell: ({ row }) => {
-      return (
-        <div>{moment(row.getValue("updated_at")).format("DD/MM/YYYY")}</div>
-      );
-    },
+    accessorKey: "qty",
+    header: "Quantity",
+  },
+  {
+    accessorKey: "rate",
+    header: "Rate",
+  },
+  {
+    accessorKey: "amount",
+    header: "Amount",
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const user = row.original;
+      const requestItem = row.original;
 
       return (
         <div className="flex justify-end">
@@ -61,13 +49,18 @@ export const columns = (onEdit) => [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(user.email)}
+                onClick={() => {
+                  onEdit(requestItem);
+                }}
               >
-                Copy Email
+                Edit Item
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onEdit(user)}>
-                Edit User
+              <DropdownMenuItem
+                onClick={() => {
+                  onDelete(requestItem);
+                }}
+              >
+                Delete Item
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -43,7 +43,6 @@ const items = [
   },
   {
     title: "Requests",
-    url: "/app/requests",
     items: [
       {
         title: "All Requests",
@@ -51,11 +50,11 @@ const items = [
       },
       {
         title: "Goods Requests",
-        url: "/app/requests",
+        url: "/app/requests?type=goods",
       },
       {
         title: "Services Requests",
-        url: "/app/requests",
+        url: "/app/requests?type=service",
       },
     ],
     icon: () => {
