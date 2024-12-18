@@ -14,21 +14,26 @@ datasource db {
 }
 
 model User {
-  id              String    @id
-  email           String    @unique
-  name            String
-  password_hash   String
-  role            String    @default("user")
-  unitId          String?
-  unit            Unit?     @relation(fields: [unitId], references: [id])
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  created         Request[] @relation("CreatedBy")
-  submitted       Request[] @relation("SubmittedBy")
-  budgetApproved  Request[] @relation("BudgetApprovedBy")
-  financeApproved Request[] @relation("FinanceApprovedBy")
-  completed       Request[] @relation("CompletedBy")
-  rejected        Request[] @relation("RejectedBy")
+  id                       String      @id
+  email                    String      @unique
+  name                     String
+  password_hash            String
+  role                     String      @default("user")
+  unitId                   String?
+  unit                     Unit?       @relation(fields: [unitId], references: [id])
+  created_at               DateTime    @default(now())
+  updated_at               DateTime    @updatedAt
+  created                  Request[]   @relation("CreatedBy")
+  submitted                Request[]   @relation("SubmittedBy")
+  budgetApproved           Request[]   @relation("BudgetApprovedBy")
+  financeApproved          Request[]   @relation("FinanceApprovedBy")
+  completed                Request[]   @relation("CompletedBy")
+  rejected                 Request[]   @relation("RejectedBy")
+  clearanceRejected        Clearance[] @relation("ClearanceRejectedBy")
+  clearanceSubmitted       Clearance[] @relation("ClearanceSubmittedBy")
+  clearanceBudgetApproved  Clearance[] @relation("ClearanceBudgetApprovedBy")
+  clearanceFinanceApproved Clearance[] @relation("ClearanceFinanceApprovedBy")
+  clearanceCompleted       Clearance[] @relation("ClearanceCompletedBy")
 }
 
 model Unit {
@@ -116,6 +121,7 @@ model Request {
   budgetApprovedBy    User?         @relation("BudgetApprovedBy", fields: [budgetApprovedById], references: [id])
   financeApprovedBy   User?         @relation("FinanceApprovedBy", fields: [financeApprovedById], references: [id])
   completedBy         User?         @relation("CompletedBy", fields: [completedById], references: [id])
+  clearance           Clearance[]
 }
 
 model RequestItem {
@@ -129,4 +135,31 @@ model RequestItem {
   request   Request  @relation(fields: [requestId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Clearance {
+  id                  String    @id @default(cuid())
+  name                String
+  status              String    @default("created")
+  expenditure         Float     @default(0)
+  requestId           String
+  rejectedById        String?
+  rejectedAt          DateTime?
+  rejectedRemarks     String?
+  submittedById       String?
+  submittedAt         DateTime?
+  budgetApprovedById  String?
+  budgetApprovedAt    DateTime?
+  financeApprovedById String?
+  financeApprovedAt   DateTime?
+  completedById       String?
+  completedAt         DateTime?
+  request             Request   @relation(fields: [requestId], references: [id])
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  rejectedBy          User?     @relation("ClearanceRejectedBy", fields: [rejectedById], references: [id])
+  submittedBy         User?     @relation("ClearanceSubmittedBy", fields: [submittedById], references: [id])
+  budgetApprovedBy    User?     @relation("ClearanceBudgetApprovedBy", fields: [budgetApprovedById], references: [id])
+  financeApprovedBy   User?     @relation("ClearanceFinanceApprovedBy", fields: [financeApprovedById], references: [id])
+  completedBy         User?     @relation("ClearanceCompletedBy", fields: [completedById], references: [id])
 }
