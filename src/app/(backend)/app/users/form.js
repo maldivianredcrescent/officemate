@@ -26,8 +26,15 @@ import { useToast } from "@/hooks/use-toast";
 import { userSchema } from "@/schemas/userSchemas";
 import { updateUserAction } from "@/actions/usersActions";
 import { createUser } from "@/actions/authActions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const UserForm = ({ user, onSuccess, onClose }) => {
+const UserForm = ({ user, onSuccess, onClose, units }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const [isSaving, setSaving] = useState(false);
@@ -38,6 +45,8 @@ const UserForm = ({ user, onSuccess, onClose }) => {
       name: "",
       email: "",
       password: "",
+      unitId: "",
+      role: "",
     },
   });
 
@@ -45,6 +54,8 @@ const UserForm = ({ user, onSuccess, onClose }) => {
     if (user) {
       form.setValue("name", user.name);
       form.setValue("email", user.email);
+      form.setValue("unitId", user.unitId);
+      form.setValue("role", user.role);
       setIsOpen(true);
     }
   }, [user]);
@@ -131,6 +142,59 @@ const UserForm = ({ user, onSuccess, onClose }) => {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="eg. john@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="unitId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit</FormLabel>
+                    <FormControl>
+                      <Select
+                        {...field}
+                        placeholder="Select a unit"
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select unit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {units.map((unit) => (
+                            <SelectItem key={unit.id} value={unit.id}>
+                              {unit.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <FormControl>
+                      <Select
+                        {...field}
+                        placeholder="Select a role"
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="user">User</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

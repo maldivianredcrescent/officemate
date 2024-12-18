@@ -6,4 +6,5 @@ export const requestItemSchema = z.object({
   name: z.string(),
   qty: z.number(),
   rate: z.number(),
+  remarks: z.string().optional(),
 });

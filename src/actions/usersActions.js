@@ -15,9 +15,11 @@ export const getUsersAction = actionClient
       orderBy: { updated_at: "desc" },
       skip: parsedInput.skip,
       take: parsedInput.limit,
+      include: { unit: true },
     });
+    const units = await prisma.unit.findMany();
     const totalUsers = await prisma.user.count();
-    return { users, totalUsers, success: true };
+    return { users, units, totalUsers, success: true };
   });
 
 export const getUserByIdAction = actionClient
@@ -25,6 +27,7 @@ export const getUserByIdAction = actionClient
   .action(async ({ parsedInput }) => {
     const user = await prisma.user.findUnique({
       where: { id: parsedInput.id },
+      include: { unit: true },
     });
 
     if (!user) {
@@ -33,8 +36,9 @@ export const getUserByIdAction = actionClient
         error: "User not found",
       };
     }
+    const units = await prisma.unit.findMany();
 
-    return { user, success: true };
+    return { user, units, success: true };
   });
 
 export const updateUserAction = actionClient
@@ -51,7 +55,12 @@ export const updateUserAction = actionClient
       const user = await prisma.user.update({
         where: { id: parsedInput.id },
         data: {
-          ...{ email: parsedInput.email, name: parsedInput.name },
+          ...{
+            email: parsedInput.email,
+            name: parsedInput.name,
+            unitId: parsedInput.unitId,
+            role: parsedInput.role,
+          },
           password_hash: passwordHash,
         },
       });
@@ -62,6 +71,8 @@ export const updateUserAction = actionClient
         data: {
           email: parsedInput.email,
           name: parsedInput.name,
+          unitId: parsedInput.unitId,
+          role: parsedInput.role,
         },
       });
       return { user, success: true };

@@ -5,4 +5,6 @@ export const userSchema = z.object({
   email: z.string().email("Invalid email format"),
   name: z.string().min(1, "Name is required"),
   password: z.string().optional(),
+  unitId: z.string().optional(),
+  role: z.string().optional(),
 });

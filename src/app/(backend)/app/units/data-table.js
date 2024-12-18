@@ -20,13 +20,6 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export function DataTable({
   columns,
@@ -55,48 +48,18 @@ export function DataTable({
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row items-center gap-4 py-4">
+      <div className="flex items-center py-4">
         <Input
-          placeholder="Filter using project name..."
-          value={
-            columnFilters.find((f) => f.id === "activity.workplan.name")
-              ?.value || ""
+          placeholder="Filter name..."
+          value={table.getColumn("name")?.getFilterValue() ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          onChange={(e) => {
-            const value = e.target.value;
-            setColumnFilters((prev) =>
-              prev
-                .filter((f) => f.id !== "activity.workplan.name")
-                .concat({
-                  id: "activity.workplan.name",
-                  value,
-                })
-            );
-          }}
           className="w-full rounded-lg"
         />
-        {/* <Select
-          value={table.getColumn("type")?.getFilterValue() ?? type}
-          placeholder="Filter project..."
-          onValueChange={(value) => {
-            table.getColumn("type")?.setFilterValue(value);
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a request type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem key="goods" value="goods">
-              Goods
-            </SelectItem>
-            <SelectItem key="service" value="service">
-              Service
-            </SelectItem>
-          </SelectContent>
-        </Select> */}
       </div>
       <div className="rounded-xl border overflow-hidden">
-        <Table className="w-full">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

@@ -1,8 +1,10 @@
 "use server";
 
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { actionClient } from "@/lib/safe-action";
 import { requestSchema } from "@/schemas/requestSchemas"; // Updated import to requestSchema
+import { getServerSession } from "next-auth";
 import { z } from "zod";
 
 export const getRequestsAction = actionClient
@@ -66,6 +68,7 @@ export const getRequestByIdAction = actionClient
         submittedBy: true,
         budgetApprovedBy: true,
         financeApprovedBy: true,
+        completedBy: true,
       },
     });
     const activities = await prisma.activity.findMany({
@@ -75,19 +78,109 @@ export const getRequestByIdAction = actionClient
   });
 
 export const createRequestAction = actionClient
-  .schema(requestSchema.omit({ id: true })) // Updated to use requestSchema
+  .schema(requestSchema.omit({ id: true }))
   .action(async ({ parsedInput }) => {
-    const request = await prisma.request.create({ data: parsedInput });
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
+    const request = await prisma.request.create({
+      data: { ...parsedInput, createdById: user.id },
+    });
 
     return { request, success: true };
   });
 
 export const updateRequestAction = actionClient
-  .schema(requestSchema) // Updated to use requestSchema
+  .schema(requestSchema)
   .action(async ({ parsedInput }) => {
     const request = await prisma.request.update({
       where: { id: parsedInput.id },
       data: parsedInput,
+    });
+    return { request, success: true };
+  });
+
+export const submitRequestForApprovalAction = actionClient
+  .schema(z.object({ id: z.string() }))
+  .action(async ({ parsedInput }) => {
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
+    const request = await prisma.request.update({
+      where: { id: parsedInput.id },
+      data: {
+        status: "submitted",
+        submittedAt: new Date(),
+        submittedById: user.id,
+      },
+    });
+    return { request, success: true };
+  });
+
+export const submitRequestForBudgetApprovalAction = actionClient
+  .schema(z.object({ id: z.string() }))
+  .action(async ({ parsedInput }) => {
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
+    const request = await prisma.request.update({
+      where: { id: parsedInput.id },
+      data: {
+        status: "budget_approved",
+        budgetApprovedAt: new Date(),
+        budgetApprovedById: user.id,
+      },
+    });
+    return { request, success: true };
+  });
+
+export const submitRequestForFinanceApprovalAction = actionClient
+  .schema(z.object({ id: z.string() }))
+  .action(async ({ parsedInput }) => {
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
+    const request = await prisma.request.update({
+      where: { id: parsedInput.id },
+      data: {
+        status: "finance_approved",
+        financeApprovedAt: new Date(),
+        financeApprovedById: user.id,
+      },
+    });
+    return { request, success: true };
+  });
+
+export const completedRequestAction = actionClient
+  .schema(z.object({ id: z.string() }))
+  .action(async ({ parsedInput }) => {
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
+    const request = await prisma.request.update({
+      where: { id: parsedInput.id },
+      data: {
+        status: "completed",
+        completedAt: new Date(),
+        completedById: user.id,
+      },
+    });
+    return { request, success: true };
+  });
+
+export const rejectRequestAction = actionClient
+  .schema(z.object({ id: z.string() }))
+  .action(async ({ parsedInput }) => {
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
+    const request = await prisma.request.update({
+      where: { id: parsedInput.id },
+      data: {
+        status: "rejected",
+        rejectedAt: new Date(),
+        rejectedById: user.id,
+      },
     });
     return { request, success: true };
   });

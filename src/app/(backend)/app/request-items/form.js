@@ -28,6 +28,7 @@ import {
 } from "@/actions/requestItemActions"; // Updated action imports
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const RequestItemForm = ({ requestItem, onSuccess, onClose, request }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,6 +41,7 @@ const RequestItemForm = ({ requestItem, onSuccess, onClose, request }) => {
       name: "",
       qty: 0,
       rate: 0,
+      remarks: "",
     },
   });
 
@@ -48,6 +50,7 @@ const RequestItemForm = ({ requestItem, onSuccess, onClose, request }) => {
       form.setValue("name", requestItem.name);
       form.setValue("qty", requestItem.qty);
       form.setValue("rate", requestItem.rate);
+      form.setValue("remarks", requestItem.remarks);
       setIsOpen(true);
     }
   }, [requestItem]);
@@ -158,6 +161,19 @@ const RequestItemForm = ({ requestItem, onSuccess, onClose, request }) => {
                           field.onChange(parseFloat(e.target.value))
                         }
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="remarks"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Remarks</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} placeholder="Enter remarks" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

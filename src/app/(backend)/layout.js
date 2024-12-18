@@ -33,7 +33,7 @@ export default async function Layout({ children }) {
           <AuthProvider session={session}>
             <SidebarProvider>
               <AppSidebar />
-              <main className="w-full">{children}</main>
+              <main className="w-full overflow-hidden">{children}</main>
             </SidebarProvider>
           </AuthProvider>
           <Toaster />

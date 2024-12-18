@@ -11,15 +11,17 @@ import {
 } from "@/components/ui/breadcrumb";
 import React, { useEffect, useState } from "react";
 import { useAction } from "next-safe-action/hooks";
-import UserForm from "./form";
+import UnitForm from "./form"; // Updated to UnitForm
+import { getUnitsAction } from "@/actions/unitActions"; // Updated to unitActions
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
+import { useSearchParams } from "next/navigation";
 import { usePagination } from "@/hooks/use-pagination";
-import { getUsersAction } from "@/actions/usersActions";
 
-const UsersPage = () => {
-  const [selectedUser, setSelectedUser] = useState();
-  const { isPending, execute, result } = useAction(getUsersAction);
+const UnitPage = () => {
+  // Updated component name to UnitPage
+  const [selectedUnit, setSelectedUnit] = useState(); // Updated state to selectedUnit
+  const { isPending, execute, result } = useAction(getUnitsAction); // Updated action to getUnitsAction
   const { limit, skip, pagination, onPaginationChange } = usePagination();
 
   useEffect(() => {
@@ -45,40 +47,46 @@ const UsersPage = () => {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Users</BreadcrumbPage>{" "}
+                  <BreadcrumbPage>Units</BreadcrumbPage>{" "}
+                  {/* Updated to Units */}
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
             <div>
-              <UserForm
-                units={result.data?.units || []}
-                user={selectedUser}
-                onClose={() => setSelectedUser(null)}
+              <UnitForm // Updated to UnitForm
+                unit={selectedUnit} // Updated to unit
+                onClose={() => setSelectedUnit(null)} // Updated to setSelectedUnit
                 onSuccess={() => {
                   execute({
                     skip: skip,
                     limit: limit,
                   });
-                  setSelectedUser(null);
+                  setSelectedUnit(null); // Updated to setSelectedUnit
                 }}
               />
             </div>
           </div>
         </div>
       </div>
-      <div className="w-full h-full px-4">
+      <div className="w-full h-full p-4">
+        <div className="w-full flex flex-col pb-2">
+          <h1 className="text-2xl font-semibold ">Units</h1>{" "}
+          {/* Updated to Units */}
+        </div>
         <div className="w-full">
           <DataTable
-            columns={columns((user) => {
-              setSelectedUser(user);
+            columns={columns({
+              onEdit: (unit) => {
+                setSelectedUnit(unit);
+              },
             })}
             isPending={isPending}
             data={
-              !isPending && result.data && result.data.users // Updated to result.data.users
-                ? result.data.users
+              !isPending && result.data && result.data.units // Updated to result.data.units
+                ? result.data.units
                 : []
             }
-            rowCount={result.data?.totalUsers || 0} // Updated to totalUsers
+            rowCount={result.data?.totalUnits || 0} // Updated to totalUnits
             onPaginationChange={onPaginationChange}
             pagination={pagination}
           />
@@ -88,4 +96,4 @@ const UsersPage = () => {
   );
 };
 
-export default UsersPage; // Updated to UsersPage
+export default UnitPage; // Updated to UnitPage

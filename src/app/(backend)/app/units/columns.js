@@ -14,51 +14,33 @@ import {
 import Link from "next/link";
 import moment from "moment";
 
-export const columns = (onEdit) => [
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => {
-      return <div className="font-[600]">{row.getValue("email")}</div>;
-    },
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
-    cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue("role")}</div>;
-    },
-  },
+export const columns = ({ onEdit }) => [
   {
     accessorKey: "name",
     header: "Name",
   },
   {
-    accessorKey: "unit.name",
-    header: "Unit",
-  },
-  {
-    accessorKey: "created_at",
+    accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {
       return (
-        <div>{moment(row.getValue("created_at")).format("DD/MM/YYYY")}</div>
+        <div>{moment(row.getValue("createdAt")).format("DD/MM/YYYY")}</div>
       );
     },
   },
   {
-    accessorKey: "updated_at",
+    accessorKey: "updatedAt",
     header: "Updated At",
     cell: ({ row }) => {
       return (
-        <div>{moment(row.getValue("updated_at")).format("DD/MM/YYYY")}</div>
+        <div>{moment(row.getValue("updatedAt")).format("DD/MM/YYYY")}</div>
       );
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const user = row.original;
+      const unit = row.original;
 
       return (
         <div className="flex justify-end">
@@ -72,13 +54,13 @@ export const columns = (onEdit) => [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(user.email)}
+                onClick={() => navigator.clipboard.writeText(unit.code)}
               >
-                Copy Email
+                Copy Unit Code
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onEdit(user)}>
-                Edit User
+              <DropdownMenuItem onClick={() => onEdit(unit)}>
+                Edit Unit
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

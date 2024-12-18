@@ -19,7 +19,9 @@ export const columns = [
     accessorKey: "type",
     header: "Type",
     cell: ({ row }) => {
-      return <div className="font-[600]">{row.getValue("type")}</div>;
+      return (
+        <div className="font-[600] capitalize">{row.getValue("type")}</div>
+      );
     },
   },
   {
@@ -35,8 +37,66 @@ export const columns = [
     header: "Project",
   },
   {
-    accessorKey: "activity.project.donor.name",
+    accessorKey: "activity.project.donor.code",
     header: "Donor",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      switch (row.getValue("status")) {
+        case "created":
+          return (
+            <div className="flex">
+              <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+                Created
+              </div>
+            </div>
+          );
+        case "submitted":
+          return (
+            <div className="flex">
+              <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+                Submitted
+              </div>
+            </div>
+          );
+        case "budget_approved":
+          return (
+            <div className="flex">
+              <div className="bg-[#A5F3FC] rounded-full text-[#020617] font-[600] text-xs px-3 py-1 text-center">
+                Budget Approved
+              </div>
+            </div>
+          );
+        case "finance_approved":
+          return (
+            <div className="flex">
+              <div className="bg-[#0891B2] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+                Finance Approved
+              </div>
+            </div>
+          );
+        case "completed":
+          return (
+            <div className="flex">
+              <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+                Completed
+              </div>
+            </div>
+          );
+        case "rejected":
+          return (
+            <div className="flex">
+              <div className="bg-red-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+                Rejected
+              </div>
+            </div>
+          );
+        default:
+          return <div>{row.getValue("status")}</div>;
+      }
+    },
   },
   {
     accessorKey: "createdAt",

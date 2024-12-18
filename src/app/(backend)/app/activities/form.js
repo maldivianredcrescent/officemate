@@ -164,7 +164,7 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
                         <SelectContent>
                           {projects.map((project) => (
                             <SelectItem key={project.id} value={project.id}>
-                              {project.name} ({project.workplan.name})
+                              {project.name}
                             </SelectItem>
                           ))}
                         </SelectContent>

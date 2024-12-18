@@ -18,7 +18,7 @@ import { columns } from "./columns";
 import { useSearchParams } from "next/navigation";
 import { usePagination } from "@/hooks/use-pagination";
 
-const BudgetPage = () => {
+const DonorPage = () => {
   const [selectedDonor, setSelectedDonor] = useState();
   const { isPending, execute, result } = useAction(getDonorsAction);
   const { limit, skip, pagination, onPaginationChange } = usePagination();
@@ -89,4 +89,4 @@ const BudgetPage = () => {
   );
 };
 
-export default BudgetPage;
+export default DonorPage;
