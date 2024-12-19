@@ -14,7 +14,15 @@ export const getWorkplanByIdAction = actionClient
   .schema(z.object({ id: z.string() }))
   .action(async ({ parsedInput }) => {
     const workplan = await prisma.workplan.findUnique({
-      where: { id: parsedInput.id }, // Ensuring the id is explicitly referenced
+      where: { id: parsedInput.id },
+      include: {
+        activity: {
+          include: {
+            project: true,
+            requests: true,
+          },
+        },
+      },
     });
 
     const activities = await prisma.activity.findMany({
@@ -37,6 +45,24 @@ export const getWorkplanByIdAction = actionClient
       0
     );
 
+    const requestItems = await prisma.requestItem.findMany({
+      where: {
+        request: {
+          activity: {
+            workplanId: parsedInput.id,
+          },
+          status: {
+            in: ["finance_approved", "completed", "budget_approved"],
+          },
+        },
+      },
+    });
+
+    const totalRequestItemsAmount = requestItems.reduce(
+      (total, item) => total + item.amount,
+      0
+    );
+
     const allProjects = await prisma.project.findMany();
 
     return {
@@ -46,6 +72,8 @@ export const getWorkplanByIdAction = actionClient
       totalActivities,
       success: true,
       availableBudget,
+      totalRequestItemsAmount,
+      remainingBudget: availableBudget - totalRequestItemsAmount,
     };
   });
 

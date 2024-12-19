@@ -63,7 +63,7 @@ export function DataTable({
             onChange={(event) =>
               table.getColumn("email")?.setFilterValue(event.target.value)
             }
-            className="w-full rounded-lg text-sm h-[40px] w-1/2 lg:w-full"
+            className="w-full rounded-[--radius] text-sm h-[40px] w-1/2 lg:w-full"
           />
         </div>
       </div>

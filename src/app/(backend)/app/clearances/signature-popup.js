@@ -68,7 +68,7 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request }) => {
         onClose?.();
       }}
     >
-      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-lg">
+      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]">
         {request?.status === "created" && "Submit request"}
         {request?.status === "submitted" && "Approve budget"}
         {request?.status === "budget_approved" && "Approve finance"}

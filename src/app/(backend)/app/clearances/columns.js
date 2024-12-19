@@ -16,11 +16,20 @@ import moment from "moment";
 
 export const columns = [
   {
+    accessorKey: "number",
+    header: "Number",
+    cell: ({ row }) => {
+      return (
+        <div className="font-[600]">
+          MRCC/{moment(row.getValue("createdAt")).format("YYYY")}/
+          {row.getValue("number")}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "request.title",
     header: "Request",
-    cell: ({ row }) => {
-      return <div>{row.getValue("request.title")}</div>;
-    },
   },
   {
     accessorKey: "status",

@@ -73,7 +73,7 @@ export function DataTable({
                 })
             );
           }}
-          className="w-full rounded-lg"
+          className="w-full rounded-[--radius]"
         /> */}
         {/* <Select
           value={table.getColumn("type")?.getFilterValue() ?? type}

@@ -16,6 +16,13 @@ import moment from "moment";
 
 export const columns = ({ onEdit }) => [
   {
+    accessorKey: "number",
+    header: "No.",
+    cell: ({ row }) => {
+      return <div>{row.getValue("number")}</div>;
+    },
+  },
+  {
     accessorKey: "name",
     header: "Activity Name",
   },
@@ -84,6 +91,9 @@ export const columns = ({ onEdit }) => [
                 }}
               >
                 Edit Activity
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href={`/activities/${activity.id}`}>View Activity</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

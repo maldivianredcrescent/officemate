@@ -93,17 +93,37 @@ const WorkplanByIdPage = () => {
           </p>
         </div>
         <div className="w-full grid grid-cols-1 lg:grid-cols-4 mt-4 gap-4">
-          <div className="bg-white border rounded-lg p-4 mb-4">
+          <div className="bg-white border rounded-[--radius] p-4 mb-4">
             <h2 className="text-sm font-[400] opacity-50">Total Projects</h2>
-            <p className="text-xl font-bold">
+            <p className="text-lg font-bold">
               {result.data && result.data.activities.length}
             </p>
           </div>
-          <div className="bg-white border rounded-lg p-4 mb-4">
-            <h2 className="text-sm font-[400] opacity-50">Available Budget</h2>
-            <p className="text-xl font-bold">
+          <div className="bg-white border rounded-[--radius] p-4 mb-4">
+            <h2 className="text-sm font-[400] opacity-50">Budgeted</h2>
+            <p className="text-lg font-bold">
               {result.data && result.data.availableBudget
                 ? `MVR ${result.data.availableBudget
+                    .toFixed(2)
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+                : "MVR 0.00"}
+            </p>
+          </div>
+          <div className="bg-white border rounded-[--radius] p-4 mb-4">
+            <h2 className="text-sm font-[400] opacity-50">Used</h2>
+            <p className="text-lg font-bold">
+              {result.data && result.data.totalRequestItemsAmount
+                ? `MVR ${result.data.totalRequestItemsAmount
+                    .toFixed(2)
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+                : "MVR 0.00"}
+            </p>
+          </div>
+          <div className="bg-white border rounded-[--radius] p-4 mb-4">
+            <h2 className="text-sm font-[400] opacity-50">Remaining</h2>
+            <p className="text-lg font-bold">
+              {result.data && result.data.remainingBudget
+                ? `MVR ${result.data.remainingBudget
                     .toFixed(2)
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
                 : "MVR 0.00"}

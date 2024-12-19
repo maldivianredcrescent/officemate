@@ -55,7 +55,7 @@ export function DataTable({
           onChange={(event) =>
             table.getColumn("code")?.setFilterValue(event.target.value)
           }
-          className="w-full rounded-lg"
+          className="w-full rounded-[--radius]"
         />
       </div>
       <div className="rounded-xl border overflow-hidden">

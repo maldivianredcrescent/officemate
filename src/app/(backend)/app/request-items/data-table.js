@@ -66,7 +66,7 @@ export function DataTable({
                 })
             );
           }}
-          className="w-full rounded-lg"
+          className="w-full rounded-[--radius]"
         /> */}
       </div>
       <div className="rounded-xl border overflow-hidden">

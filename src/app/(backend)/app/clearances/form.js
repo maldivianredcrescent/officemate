@@ -93,7 +93,7 @@ const ClearanceForm = ({ clearance, onSuccess, onClose }) => {
         setIsOpen(open);
       }}
     >
-      <DialogTrigger className="text-sm text-[--primary] font-[400] underline rounded-lg">
+      <DialogTrigger className="text-sm text-[--primary] font-[400] underline rounded-[--radius]">
         {clearance ? "Edit" : "Create"}
       </DialogTrigger>
       <DialogContent>

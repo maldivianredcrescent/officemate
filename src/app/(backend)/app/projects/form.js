@@ -101,7 +101,7 @@ const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
         setIsOpen(open);
       }}
     >
-      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-lg">
+      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]">
         {project ? "Edit Project" : "Create Project"}
       </DialogTrigger>
       <DialogContent className="lg:max-h-[90vh] h-[100vh] overflow-y-auto">

@@ -94,7 +94,7 @@ const RequestItemForm = ({ requestItem, onSuccess, onClose, request }) => {
         setIsOpen(open);
       }}
     >
-      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-lg">
+      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]">
         {requestItem ? "Edit Item" : "Add Item"}
       </DialogTrigger>
       <DialogContent>

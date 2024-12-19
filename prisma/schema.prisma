@@ -81,17 +81,19 @@ model Workplan {
 
 model Activity {
   id         String    @id @default(cuid())
+  number     Int       @default(autoincrement())
   name       String
   workplanId String
   projectId  String
   budget     Float?
   workplan   Workplan  @relation(fields: [workplanId], references: [id])
   project    Project   @relation(fields: [projectId], references: [id])
-  Request    Request[]
+  requests   Request[]
 }
 
 model Request {
   id                       String        @id @default(cuid())
+  number                   Int           @default(autoincrement())
   title                    String
   type                     String        @default("service")
   status                   String        @default("created")
@@ -143,6 +145,7 @@ model RequestItem {
 
 model Clearance {
   id                       String    @id @default(cuid())
+  number                   Int       @default(autoincrement())
   status                   String    @default("created")
   expenditure              Float     @default(0)
   remarks                  String?

@@ -78,7 +78,7 @@ const UnitForm = ({ unit, onSuccess, onClose }) => {
         setIsOpen(open);
       }}
     >
-      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-lg">
+      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]">
         {unit ? "Edit Unit" : "Create Unit"}
       </DialogTrigger>
       <DialogContent>
