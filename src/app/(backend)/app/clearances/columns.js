@@ -16,6 +16,13 @@ import moment from "moment";
 
 export const columns = [
   {
+    accessorKey: "request.title",
+    header: "Request",
+    cell: ({ row }) => {
+      return <div>{row.getValue("request.title")}</div>;
+    },
+  },
+  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {

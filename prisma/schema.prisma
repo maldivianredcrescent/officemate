@@ -67,7 +67,7 @@ model Project {
   donor         Donor      @relation(fields: [donorId], references: [id], onDelete: Cascade)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
-  Activity      Activity[]
+  activity      Activity[]
 }
 
 model Workplan {
@@ -76,7 +76,7 @@ model Workplan {
   description String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  Activity    Activity[]
+  activity    Activity[]
 }
 
 model Activity {
@@ -91,37 +91,41 @@ model Activity {
 }
 
 model Request {
-  id                  String        @id @default(cuid())
-  title               String
-  type                String        @default("service")
-  status              String        @default("created")
-  activityId          String
-  unitId              String
-  createdById         String
-  rejectedById        String?
-  rejectedAt          DateTime?
-  rejectedRemarks     String?
-  submittedById       String?
-  submittedAt         DateTime?
-  budgetApprovedById  String?
-  budgetApprovedAt    DateTime?
-  financeApprovedById String?
-  financeApprovedAt   DateTime?
-  completedById       String?
-  completedAt         DateTime?
-  remarks             String?
-  activity            Activity      @relation(fields: [activityId], references: [id])
-  unit                Unit          @relation(fields: [unitId], references: [id])
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
-  requestItems        RequestItem[]
-  createdBy           User?         @relation("CreatedBy", fields: [createdById], references: [id])
-  rejectedBy          User?         @relation("RejectedBy", fields: [rejectedById], references: [id])
-  submittedBy         User?         @relation("SubmittedBy", fields: [submittedById], references: [id])
-  budgetApprovedBy    User?         @relation("BudgetApprovedBy", fields: [budgetApprovedById], references: [id])
-  financeApprovedBy   User?         @relation("FinanceApprovedBy", fields: [financeApprovedById], references: [id])
-  completedBy         User?         @relation("CompletedBy", fields: [completedById], references: [id])
-  clearance           Clearance[]
+  id                       String        @id @default(cuid())
+  title                    String
+  type                     String        @default("service")
+  status                   String        @default("created")
+  activityId               String
+  unitId                   String?
+  createdById              String
+  rejectedById             String?
+  rejectedAt               DateTime?
+  rejectedRemarks          String?
+  submittedById            String?
+  submittedAt              DateTime?
+  submittedSignature       String?
+  budgetApprovedById       String?
+  budgetApprovedAt         DateTime?
+  budgetApprovedSignature  String?
+  financeApprovedById      String?
+  financeApprovedAt        DateTime?
+  financeApprovedSignature String?
+  completedById            String?
+  completedAt              DateTime?
+  completedSignature       String?
+  remarks                  String?
+  activity                 Activity      @relation(fields: [activityId], references: [id])
+  unit                     Unit?         @relation(fields: [unitId], references: [id])
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+  requestItems             RequestItem[]
+  createdBy                User?         @relation("CreatedBy", fields: [createdById], references: [id])
+  rejectedBy               User?         @relation("RejectedBy", fields: [rejectedById], references: [id])
+  submittedBy              User?         @relation("SubmittedBy", fields: [submittedById], references: [id])
+  budgetApprovedBy         User?         @relation("BudgetApprovedBy", fields: [budgetApprovedById], references: [id])
+  financeApprovedBy        User?         @relation("FinanceApprovedBy", fields: [financeApprovedById], references: [id])
+  completedBy              User?         @relation("CompletedBy", fields: [completedById], references: [id])
+  clearance                Clearance[]
 }
 
 model RequestItem {
@@ -138,28 +142,32 @@ model RequestItem {
 }
 
 model Clearance {
-  id                  String    @id @default(cuid())
-  name                String
-  status              String    @default("created")
-  expenditure         Float     @default(0)
-  requestId           String
-  rejectedById        String?
-  rejectedAt          DateTime?
-  rejectedRemarks     String?
-  submittedById       String?
-  submittedAt         DateTime?
-  budgetApprovedById  String?
-  budgetApprovedAt    DateTime?
-  financeApprovedById String?
-  financeApprovedAt   DateTime?
-  completedById       String?
-  completedAt         DateTime?
-  request             Request   @relation(fields: [requestId], references: [id])
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  rejectedBy          User?     @relation("ClearanceRejectedBy", fields: [rejectedById], references: [id])
-  submittedBy         User?     @relation("ClearanceSubmittedBy", fields: [submittedById], references: [id])
-  budgetApprovedBy    User?     @relation("ClearanceBudgetApprovedBy", fields: [budgetApprovedById], references: [id])
-  financeApprovedBy   User?     @relation("ClearanceFinanceApprovedBy", fields: [financeApprovedById], references: [id])
-  completedBy         User?     @relation("ClearanceCompletedBy", fields: [completedById], references: [id])
+  id                       String    @id @default(cuid())
+  status                   String    @default("created")
+  expenditure              Float     @default(0)
+  remarks                  String?
+  requestId                String
+  rejectedById             String?
+  rejectedAt               DateTime?
+  rejectedRemarks          String?
+  submittedById            String?
+  submittedSignature       String?
+  submittedAt              DateTime?
+  budgetApprovedById       String?
+  budgetApprovedAt         DateTime?
+  budgetApprovedSignature  String?
+  financeApprovedById      String?
+  financeApprovedAt        DateTime?
+  financeApprovedSignature String?
+  completedById            String?
+  completedSignature       String?
+  completedAt              DateTime?
+  request                  Request   @relation(fields: [requestId], references: [id])
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+  rejectedBy               User?     @relation("ClearanceRejectedBy", fields: [rejectedById], references: [id])
+  submittedBy              User?     @relation("ClearanceSubmittedBy", fields: [submittedById], references: [id])
+  budgetApprovedBy         User?     @relation("ClearanceBudgetApprovedBy", fields: [budgetApprovedById], references: [id])
+  financeApprovedBy        User?     @relation("ClearanceFinanceApprovedBy", fields: [financeApprovedById], references: [id])
+  completedBy              User?     @relation("ClearanceCompletedBy", fields: [completedById], references: [id])
 }

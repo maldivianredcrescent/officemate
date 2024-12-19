@@ -19,7 +19,7 @@ import { usePagination } from "@/hooks/use-pagination";
 import { useSearchParams } from "next/navigation";
 
 const RequestPage = () => {
-  const [selectedRequest, setSelectedRequest] = useState();
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const { isPending, execute, result } = useAction(getRequestsAction); // Updated to use getRequestsAction
   const { limit, skip, pagination, onPaginationChange } = usePagination();
   const params = useSearchParams();

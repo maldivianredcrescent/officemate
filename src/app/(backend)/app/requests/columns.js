@@ -33,6 +33,10 @@ export const columns = [
     header: "Workplan",
   },
   {
+    accessorKey: "unit.name",
+    header: "Unit",
+  },
+  {
     accessorKey: "activity.project.name",
     header: "Project",
   },

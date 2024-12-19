@@ -27,6 +27,8 @@ import { columns } from "../../request-items/columns";
 import moment from "moment";
 import { deleteRequestItemAction } from "@/actions/requestItemActions";
 import { Button } from "@/components/ui/button";
+import SignaturePad from "@/components/ui/signature-pad";
+import SignaturePopup from "../signature-popup";
 
 const RequestByIdPage = () => {
   const { id } = useParams();
@@ -37,16 +39,7 @@ const RequestByIdPage = () => {
   const { isPending: isDeletePending, execute: deleteRequestItem } = useAction(
     deleteRequestItemAction
   );
-  const { isPending: isSubmitPending, execute: submitRequestForApproval } =
-    useAction(submitRequestForApprovalAction);
-  const { isPending: isBudgetApprovedPending, execute: budgetApprovedRequest } =
-    useAction(submitRequestForBudgetApprovalAction);
-  const {
-    isPending: isSubmitFinancePending,
-    execute: submitRequestForFinanceApproval,
-  } = useAction(submitRequestForFinanceApprovalAction);
-  const { isPending: isCompletedPending, execute: completedRequest } =
-    useAction(completedRequestAction);
+  const [isSignaturePopupOpen, setIsSignaturePopupOpen] = useState(false);
 
   React.useEffect(() => {
     if (id) {
@@ -109,145 +102,6 @@ const RequestByIdPage = () => {
     }
   };
 
-  const renderButtons = (status) => {
-    switch (status) {
-      case "created":
-        return (
-          <Button
-            onClick={async () => {
-              await submitRequestForApproval({ id: result.data.request.id });
-              execute({ id, limit, skip });
-            }}
-          >
-            Submit for Approval
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="size-6"
-              color={"#ffffff"}
-              fill={"none"}
-            >
-              <path
-                d="M20.0001 11.9998L4.00012 11.9998"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M15.0003 17C15.0003 17 20.0002 13.3176 20.0002 12C20.0002 10.6824 15.0002 7 15.0002 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        );
-      case "submitted":
-        return (
-          <Button
-            onClick={async () => {
-              await budgetApprovedRequest({ id: result.data.request.id });
-              execute({ id, limit, skip });
-            }}
-          >
-            Approve Budget
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="size-6"
-              color={"#ffffff"}
-              fill={"none"}
-            >
-              <path
-                d="M20.0001 11.9998L4.00012 11.9998"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M15.0003 17C15.0003 17 20.0002 13.3176 20.0002 12C20.0002 10.6824 15.0002 7 15.0002 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        );
-      case "budget_approved":
-        return (
-          <Button
-            onClick={async () => {
-              await submitRequestForFinanceApproval({
-                id: result.data.request.id,
-              });
-              execute({ id, limit, skip });
-            }}
-          >
-            Approve Finance
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="size-6"
-              color={"#ffffff"}
-              fill={"none"}
-            >
-              <path
-                d="M20.0001 11.9998L4.00012 11.9998"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M15.0003 17C15.0003 17 20.0002 13.3176 20.0002 12C20.0002 10.6824 15.0002 7 15.0002 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        );
-      case "finance_approved":
-        return (
-          <Button
-            onClick={async () => {
-              await completedRequest({ id: result.data.request.id });
-              execute({ id, limit, skip });
-            }}
-          >
-            Completed
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="size-6"
-              color={"#ffffff"}
-              fill={"none"}
-            >
-              <path
-                d="M20.0001 11.9998L4.00012 11.9998"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M15.0003 17C15.0003 17 20.0002 13.3176 20.0002 12C20.0002 10.6824 15.0002 7 15.0002 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        );
-    }
-  };
-
   return (
     <div className="w-full h-full">
       <div className="w-full flex items-center justify-between px-4 py-4 border-b sticky top-0 bg-background h-[66px] z-50">
@@ -295,13 +149,24 @@ const RequestByIdPage = () => {
       </div>
       <div className="w-full h-full p-4">
         <div className="w-full flex flex-col justify-between pb-4 capitalize">
-          <div className="w-full flex items-center gap-4 mb-2">
-            <h1 className="text-2xl font-semibold">
-              {result.data && result.data.request
-                ? result.data.request.type + " request"
-                : "Request Details"}
-            </h1>
-            <div>{renderStatus(result.data?.request?.status)}</div>
+          <div className="w-full flex items-center justify-between gap-4 mb-2">
+            <div className="flex flex-row gap-3 items-center">
+              <h1 className="text-2xl font-semibold">
+                {result.data && result.data.request
+                  ? result.data.request.type + " request"
+                  : "Request Details"}
+              </h1>
+              <div>{renderStatus(result.data?.request?.status)}</div>
+            </div>
+            <div className="text-xl font-semibold">
+              {result.data && result.data.totalAmount
+                ? "MVR " +
+                  result.data.totalAmount.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : ""}
+            </div>
           </div>
           {result.data && result.data.request && (
             <div className="mt-4">
@@ -384,18 +249,39 @@ const RequestByIdPage = () => {
               // pagination={pagination}
             />
             <div className="my-6 flex items-center justify-between">
-              {result.data && result.data.request && (
-                <RequestItemForm
-                  requestItem={selectedRequestItem}
-                  request={result.data.request}
-                  onSuccess={() => {
-                    execute({ id, limit, skip });
-                    setSelectedRequestItem(null);
-                  }}
-                  onClose={() => setSelectedRequestItem(null)}
-                />
-              )}
-              <div>{renderButtons(result.data?.request?.status)}</div>
+              {result.data &&
+                result.data.request &&
+                ["created"].includes(result.data?.request?.status) && (
+                  <RequestItemForm
+                    requestItem={selectedRequestItem}
+                    request={result.data.request}
+                    onSuccess={() => {
+                      execute({ id, limit, skip });
+                      setSelectedRequestItem(null);
+                    }}
+                    onClose={() => setSelectedRequestItem(null)}
+                  />
+                )}
+              <div>
+                {[
+                  "created",
+                  "submitted",
+                  "budget_approved",
+                  "finance_approved",
+                ].includes(result.data?.request?.status) && (
+                  <SignaturePopup
+                    request={result.data?.request}
+                    isPopupOpen={isSignaturePopupOpen}
+                    onSuccess={() => {
+                      setIsSignaturePopupOpen(false);
+                      execute({ id, limit, skip });
+                    }}
+                    onClose={() => {
+                      setIsSignaturePopupOpen(false);
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </div>
           {result.data?.request?.status !== "created" && (
@@ -407,7 +293,7 @@ const RequestByIdPage = () => {
                       Submitted By
                     </p>
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                      <p>
+                      <p className="font-[600]">
                         {result.data && result.data.request.submittedBy
                           ? result.data.request.submittedBy.name
                           : ""}
@@ -419,6 +305,14 @@ const RequestByIdPage = () => {
                             )
                           : ""}
                       </p>
+                      {result.data?.request?.submittedSignature && (
+                        <div>
+                          <img
+                            src={result.data?.request?.submittedSignature}
+                            className="w-[100px] h-[100px]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -428,7 +322,7 @@ const RequestByIdPage = () => {
                       Budget Approved By
                     </p>
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                      <p>
+                      <p className="font-[600]">
                         {result.data && result.data.request.budgetApprovedBy
                           ? result.data.request.budgetApprovedBy.name
                           : ""}
@@ -440,6 +334,14 @@ const RequestByIdPage = () => {
                             )
                           : ""}
                       </p>
+                      {result.data?.request?.budgetApprovedSignature && (
+                        <div>
+                          <img
+                            src={result.data?.request?.budgetApprovedSignature}
+                            className="w-[100px] h-[100px]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -449,7 +351,7 @@ const RequestByIdPage = () => {
                       Finance Approved By
                     </p>
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                      <p>
+                      <p className="font-[600]">
                         {result.data && result.data.request.financeApprovedBy
                           ? result.data.request.financeApprovedBy.name
                           : ""}
@@ -461,6 +363,14 @@ const RequestByIdPage = () => {
                             ).format("DD MMM YYYY HH:mm")
                           : ""}
                       </p>
+                      {result.data?.request?.financeApprovedSignature && (
+                        <div>
+                          <img
+                            src={result.data?.request?.financeApprovedSignature}
+                            className="w-[100px] h-[100px]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -470,7 +380,7 @@ const RequestByIdPage = () => {
                       Completed By
                     </p>
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                      <p>
+                      <p className="font-[600]">
                         {result.data && result.data.request.completedBy
                           ? result.data.request.completedBy.name
                           : ""}
@@ -482,6 +392,14 @@ const RequestByIdPage = () => {
                             )
                           : ""}
                       </p>
+                      {result.data?.request?.completedSignature && (
+                        <div>
+                          <img
+                            src={result.data?.request?.completedSignature}
+                            className="w-[100px] h-[100px]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

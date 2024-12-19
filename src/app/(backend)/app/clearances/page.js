@@ -12,16 +12,16 @@ import {
 import React, { useEffect, useState } from "react";
 import { useAction } from "next-safe-action/hooks";
 import ClearanceForm from "./form"; // Updated to use ClearanceForm
-import { getClearanceRequestsAction } from "@/actions/clearanceActions"; // Updated to use getClearanceRequestsAction
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { usePagination } from "@/hooks/use-pagination";
 import { useSearchParams } from "next/navigation";
+import { getClearancesAction } from "@/actions/clearanceActions";
 
 const ClearancePage = () => {
   // Updated component name to ClearancePage
   const [selectedClearance, setSelectedClearance] = useState(); // Updated state variable
-  const { isPending, execute, result } = useAction(getClearanceRequestsAction); // Updated to use getClearanceRequestsAction
+  const { isPending, execute, result } = useAction(getClearancesAction); // Updated to use getClearanceRequestsAction
   const { limit, skip, pagination, onPaginationChange } = usePagination();
   const params = useSearchParams();
 

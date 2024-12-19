@@ -20,6 +20,7 @@ export const getRequestsAction = actionClient
       where: parsedInput.type ? { type: parsedInput.type } : undefined,
       orderBy: { updatedAt: "desc" },
       include: {
+        unit: true,
         activity: {
           include: {
             workplan: true,
@@ -64,6 +65,7 @@ export const getRequestByIdAction = actionClient
             },
           },
         },
+        unit: true,
         requestItems: true,
         submittedBy: true,
         budgetApprovedBy: true,
@@ -71,10 +73,16 @@ export const getRequestByIdAction = actionClient
         completedBy: true,
       },
     });
+
+    const totalAmount = request.requestItems.reduce(
+      (sum, item) => sum + item.amount,
+      0
+    );
+
     const activities = await prisma.activity.findMany({
       include: { workplan: true },
     });
-    return { request, activities, success: true };
+    return { request, totalAmount, activities, success: true };
   });
 
 export const createRequestAction = actionClient
@@ -84,7 +92,7 @@ export const createRequestAction = actionClient
     const user = session.user;
 
     const request = await prisma.request.create({
-      data: { ...parsedInput, createdById: user.id },
+      data: { ...parsedInput, createdById: user.id, unitId: user.unitId },
     });
 
     return { request, success: true };
@@ -101,7 +109,7 @@ export const updateRequestAction = actionClient
   });
 
 export const submitRequestForApprovalAction = actionClient
-  .schema(z.object({ id: z.string() }))
+  .schema(z.object({ id: z.string(), signature: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
@@ -112,13 +120,14 @@ export const submitRequestForApprovalAction = actionClient
         status: "submitted",
         submittedAt: new Date(),
         submittedById: user.id,
+        submittedSignature: parsedInput.signature,
       },
     });
     return { request, success: true };
   });
 
 export const submitRequestForBudgetApprovalAction = actionClient
-  .schema(z.object({ id: z.string() }))
+  .schema(z.object({ id: z.string(), signature: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
@@ -129,13 +138,14 @@ export const submitRequestForBudgetApprovalAction = actionClient
         status: "budget_approved",
         budgetApprovedAt: new Date(),
         budgetApprovedById: user.id,
+        budgetApprovedSignature: parsedInput.signature,
       },
     });
     return { request, success: true };
   });
 
 export const submitRequestForFinanceApprovalAction = actionClient
-  .schema(z.object({ id: z.string() }))
+  .schema(z.object({ id: z.string(), signature: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
@@ -146,13 +156,14 @@ export const submitRequestForFinanceApprovalAction = actionClient
         status: "finance_approved",
         financeApprovedAt: new Date(),
         financeApprovedById: user.id,
+        financeApprovedSignature: parsedInput.signature,
       },
     });
     return { request, success: true };
   });
 
 export const completedRequestAction = actionClient
-  .schema(z.object({ id: z.string() }))
+  .schema(z.object({ id: z.string(), signature: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
@@ -163,8 +174,18 @@ export const completedRequestAction = actionClient
         status: "completed",
         completedAt: new Date(),
         completedById: user.id,
+        completedSignature: parsedInput.signature,
       },
     });
+
+    await prisma.clearance.create({
+      data: {
+        requestId: parsedInput.id,
+        submittedById: user.id,
+        submittedAt: new Date(),
+      },
+    });
+
     return { request, success: true };
   });
 

@@ -22,62 +22,57 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { requestSchema } from "@/schemas/requestSchemas"; // Updated import to requestSchema
-import {
-  createRequestAction,
-  rejectRequestAction,
-  updateRequestAction,
-} from "@/actions/requestActions";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useAction } from "next-safe-action/hooks";
+import {
+  createClearanceAction,
+  rejectClearanceAction,
+  updateClearanceAction,
+} from "@/actions/clearanceActions";
+import { z } from "zod";
 
-const RequestForm = ({ request, onSuccess, onClose, activities }) => {
+const ClearanceForm = ({ clearance, onSuccess, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { isPending: isRejectPending, execute: rejectRequest } =
-    useAction(rejectRequestAction);
+  const { isPending: isRejectPending, execute: rejectClearance } = useAction(
+    rejectClearanceAction
+  );
   const { toast } = useToast();
 
   const form = useForm({
-    resolver: zodResolver(requestSchema),
+    resolver: zodResolver(
+      z.object({
+        expenditure: z.string(),
+        remarks: z.string().optional(),
+      })
+    ),
     defaultValues: {
-      type: "",
-      activityId: "",
+      expenditure: "",
       remarks: "",
-      title: "",
     },
   });
 
   useEffect(() => {
-    if (request) {
-      form.setValue("type", request.type);
-      form.setValue("activityId", request.activityId);
-      form.setValue("remarks", request.remarks);
-      form.setValue("title", request.title);
+    if (clearance) {
+      form.setValue("expenditure", clearance.expenditure);
+      form.setValue("remarks", clearance.remarks);
     }
-  }, [request]);
+  }, [clearance]);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
     var result;
-    if (request) {
-      result = await updateRequestAction({ ...data, id: request.id });
+    if (clearance) {
+      result = await updateClearanceAction({ ...data, id: clearance.id });
     } else {
-      result = await createRequestAction(data);
+      result = await createClearanceAction(data);
     }
 
     if (result.data && result.data.success) {
       form.reset();
       setIsOpen(false);
-      onSuccess?.(result.data.request);
+      onSuccess?.(result.data.clearance);
     } else {
       result.data?.error &&
         toast({
@@ -98,18 +93,18 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
         setIsOpen(open);
       }}
     >
-      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-lg">
-        {request ? "Edit Request" : "Create Request"}
+      <DialogTrigger className="text-sm text-[--primary] font-[400] underline rounded-lg">
+        {clearance ? "Edit" : "Create"}
       </DialogTrigger>
       <DialogContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader>
               <DialogTitle className="font-semibold">
-                {request ? "Edit Request" : "Create Request"}
+                {clearance ? "Edit Clearance" : "Create Clearance"}
               </DialogTitle>
               <DialogDescription>
-                {request
+                {clearance
                   ? "You are currently editing an existing request's information. Please review the details below and make any necessary changes to ensure that all information is accurate and up-to-date."
                   : "Welcome! To create a new request, please fill in the required details in the form below. Make sure to provide all relevant information to help us maintain a comprehensive record of our requests."}{" "}
               </DialogDescription>
@@ -117,75 +112,12 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
             <div className="space-y-4">
               <FormField
                 control={form.control}
-                name="title"
+                name="expenditure"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel>Expenditure</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter title" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Request Type</FormLabel>
-                    <FormControl>
-                      <Select
-                        {...field}
-                        placeholder="Select a request type"
-                        onValueChange={(value) => field.onChange(value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a request type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem key="goods" value="goods">
-                            Goods
-                          </SelectItem>
-                          <SelectItem key="service" value="service">
-                            Service
-                          </SelectItem>
-                          <SelectItem
-                            key="working_advance"
-                            value="working_advance"
-                          >
-                            Working Advance
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="activityId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Activity</FormLabel>
-                    <FormControl>
-                      <Select
-                        {...field}
-                        placeholder="Select an activity"
-                        onValueChange={(value) => field.onChange(value)} // Ensure the selected value updates the form state
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select an activity" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {activities.map((activity) => (
-                            <SelectItem key={activity.id} value={activity.id}>
-                              {activity.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Input {...field} placeholder="Enter expenditure" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -206,14 +138,14 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
               />
             </div>
             <DialogFooter>
-              {request && (
+              {clearance && (
                 <div
                   disabled={isRejectPending}
                   variant="destructive"
                   type="submit"
                   className="flex items-center gap-2 cursor-pointer bg-red-500 text-white px-4 py-2 rounded-[--radius]"
                   onClick={async () => {
-                    await rejectRequest({ id: request.id });
+                    await rejectClearance({ id: clearance.id });
                     setIsOpen(false);
                     onSuccess?.();
                   }}
@@ -276,4 +208,4 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
   );
 };
 
-export default RequestForm; // Updated export
+export default ClearanceForm;

@@ -12,41 +12,29 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import RequestForm from "../form";
-import {
-  completedRequestAction,
-  getRequestByIdAction,
-  submitRequestForApprovalAction,
-  submitRequestForBudgetApprovalAction,
-  submitRequestForFinanceApprovalAction,
-} from "@/actions/requestActions";
+import ClearanceForm from "../form";
 import { usePagination } from "@/hooks/use-pagination";
-import RequestItemForm from "../../request-items/form";
-import { DataTable } from "../../request-items/data-table";
-import { columns } from "../../request-items/columns";
 import moment from "moment";
-import { deleteRequestItemAction } from "@/actions/requestItemActions";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "../../request-items/data-table";
+import {
+  completeClearanceAction,
+  getClearanceByIdAction,
+} from "@/actions/clearanceActions";
+import {
+  submitClearanceForApprovalAction,
+  submitClearanceForBudgetApprovalAction,
+  submitClearanceForFinanceApprovalAction,
+} from "@/actions/clearanceActions";
+import { columns } from "../../request-items/columns";
+import SignaturePopup from "../signature-popup";
 
-const RequestByIdPage = () => {
+const ClearanceByIdPage = () => {
   const { id } = useParams();
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-  const { isPending, execute, result } = useAction(getRequestByIdAction);
+  const { isPending, execute, result } = useAction(getClearanceByIdAction);
   const { limit, skip, pagination, onPaginationChange } = usePagination();
-  const [selectedRequestItem, setSelectedRequestItem] = useState(null);
-  const { isPending: isDeletePending, execute: deleteRequestItem } = useAction(
-    deleteRequestItemAction
-  );
-  const { isPending: isSubmitPending, execute: submitRequestForApproval } =
-    useAction(submitRequestForApprovalAction);
-  const { isPending: isBudgetApprovedPending, execute: budgetApprovedRequest } =
-    useAction(submitRequestForBudgetApprovalAction);
-  const {
-    isPending: isSubmitFinancePending,
-    execute: submitRequestForFinanceApproval,
-  } = useAction(submitRequestForFinanceApprovalAction);
-  const { isPending: isCompletedPending, execute: completedRequest } =
-    useAction(completedRequestAction);
+  const [isSignaturePopupOpen, setIsSignaturePopupOpen] = useState(false);
 
   React.useEffect(() => {
     if (id) {
@@ -109,145 +97,6 @@ const RequestByIdPage = () => {
     }
   };
 
-  const renderButtons = (status) => {
-    switch (status) {
-      case "created":
-        return (
-          <Button
-            onClick={async () => {
-              await submitRequestForApproval({ id: result.data.request.id });
-              execute({ id, limit, skip });
-            }}
-          >
-            Submit for Approval
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="size-6"
-              color={"#ffffff"}
-              fill={"none"}
-            >
-              <path
-                d="M20.0001 11.9998L4.00012 11.9998"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M15.0003 17C15.0003 17 20.0002 13.3176 20.0002 12C20.0002 10.6824 15.0002 7 15.0002 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        );
-      case "submitted":
-        return (
-          <Button
-            onClick={async () => {
-              await budgetApprovedRequest({ id: result.data.request.id });
-              execute({ id, limit, skip });
-            }}
-          >
-            Approve Budget
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="size-6"
-              color={"#ffffff"}
-              fill={"none"}
-            >
-              <path
-                d="M20.0001 11.9998L4.00012 11.9998"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M15.0003 17C15.0003 17 20.0002 13.3176 20.0002 12C20.0002 10.6824 15.0002 7 15.0002 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        );
-      case "budget_approved":
-        return (
-          <Button
-            onClick={async () => {
-              await submitRequestForFinanceApproval({
-                id: result.data.request.id,
-              });
-              execute({ id, limit, skip });
-            }}
-          >
-            Approve Finance
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="size-6"
-              color={"#ffffff"}
-              fill={"none"}
-            >
-              <path
-                d="M20.0001 11.9998L4.00012 11.9998"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M15.0003 17C15.0003 17 20.0002 13.3176 20.0002 12C20.0002 10.6824 15.0002 7 15.0002 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        );
-      case "finance_approved":
-        return (
-          <Button
-            onClick={async () => {
-              await completedRequest({ id: result.data.request.id });
-              execute({ id, limit, skip });
-            }}
-          >
-            Completed
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="size-6"
-              color={"#ffffff"}
-              fill={"none"}
-            >
-              <path
-                d="M20.0001 11.9998L4.00012 11.9998"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M15.0003 17C15.0003 17 20.0002 13.3176 20.0002 12C20.0002 10.6824 15.0002 7 15.0002 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Button>
-        );
-    }
-  };
-
   return (
     <div className="w-full h-full">
       <div className="w-full flex items-center justify-between px-4 py-4 border-b sticky top-0 bg-background h-[66px] z-50">
@@ -263,47 +112,40 @@ const RequestByIdPage = () => {
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
-                <BreadcrumbLink href="/app/requests">Requests</BreadcrumbLink>
+                <BreadcrumbLink href="/app/clearances">
+                  Clearances
+                </BreadcrumbLink>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbPage>Details</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
-            <div>
-              {result.data &&
-                result.data.request &&
-                [
-                  "created",
-                  "submitted",
-                  "budget_approved",
-                  "finance_approved",
-                ].includes(result.data?.request?.status) && (
-                  <RequestForm
-                    activities={result.data?.activities || []}
-                    isOpen={isEditFormOpen}
-                    request={result.data.request}
-                    onClose={() => setIsEditFormOpen(false)}
-                    onSuccess={() => {
-                      execute({ id, limit, skip });
-                    }}
-                  />
-                )}
-            </div>
           </div>
         </div>
       </div>
       <div className="w-full h-full p-4">
         <div className="w-full flex flex-col justify-between pb-4 capitalize">
-          <div className="w-full flex items-center gap-4 mb-2">
-            <h1 className="text-2xl font-semibold">
-              {result.data && result.data.request
-                ? result.data.request.type + " request"
-                : "Request Details"}
-            </h1>
-            <div>{renderStatus(result.data?.request?.status)}</div>
+          <div className="w-full flex flex-row items-center justify-between gap-4 mb-2">
+            <div className="flex flex-row gap-3 items-center">
+              <h1 className="text-2xl font-semibold">
+                {result.data && result.data.clearance
+                  ? "Clearance for " + result.data.clearance.request.title
+                  : "Clearance Details"}
+              </h1>
+              <div>{renderStatus(result.data?.clearance?.status)}</div>
+            </div>
+            <div className="text-xl font-semibold">
+              {result.data && result.data.totalAmount
+                ? "MVR " +
+                  result.data.totalAmount.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : ""}
+            </div>
           </div>
-          {result.data && result.data.request && (
+          {result.data && result.data.clearance && (
             <div className="mt-4">
               <div className="w-full flex flex-col space-y-2">
                 <div className="rounded-lg border grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 overflow-hidden">
@@ -313,8 +155,8 @@ const RequestByIdPage = () => {
                         Created At
                       </p>
                       <p className="py-3 px-4 text-sm">
-                        {result.data && result.data.request
-                          ? moment(result.data.request.createdAt).format(
+                        {result.data && result.data.clearance
+                          ? moment(result.data.clearance.createdAt).format(
                               "DD-MM-YYYY"
                             )
                           : "N/A"}
@@ -324,11 +166,11 @@ const RequestByIdPage = () => {
                   <div className="w-full">
                     <div>
                       <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                        Type of Request
+                        Request Title
                       </p>
                       <p className="py-3 px-4 text-sm capitalize">
-                        {result.data && result.data.request.type
-                          ? result.data.request.type
+                        {result.data && result.data.clearance.request.title
+                          ? result.data.clearance.request.title
                           : "N/A"}
                       </p>
                     </div>
@@ -339,8 +181,8 @@ const RequestByIdPage = () => {
                         Project
                       </p>
                       <p className="py-3 px-4 text-sm capitalize">
-                        {result.data && result.data.request.activity
-                          ? result.data.request.activity.project.name
+                        {result.data && result.data.clearance.request.activity
+                          ? result.data.clearance.request.activity.project.name
                           : "N/A"}
                       </p>
                     </div>
@@ -351,8 +193,9 @@ const RequestByIdPage = () => {
                         Donor
                       </p>
                       <p className="py-3 px-4 text-sm capitalize">
-                        {result.data && result.data.request.activity
-                          ? result.data.request.activity.project.donor.name
+                        {result.data && result.data.clearance.request.activity
+                          ? result.data.clearance.request.activity.project.donor
+                              .name
                           : "N/A"}
                       </p>
                     </div>
@@ -366,39 +209,115 @@ const RequestByIdPage = () => {
           <div className="w-full">
             <DataTable
               columns={columns({
-                onEdit: async (requestItem) => {
-                  setSelectedRequestItem(requestItem);
-                },
-                onDelete: async (requestItem) => {
-                  await deleteRequestItem({ id: requestItem.id });
-                  await execute({ id, limit, skip });
-                },
+                onEdit: null,
+                onDelete: null,
               })}
               isPending={isPending}
               data={
-                !isPending && result.data && result.data.request.requestItems
-                  ? result.data.request.requestItems
+                !isPending &&
+                result.data &&
+                result.data.clearance.request.requestItems
+                  ? result.data.clearance.request.requestItems
                   : []
               }
-              // onPaginationChange={onPaginationChange}
-              // pagination={pagination}
             />
+            <div className="w-full flex flex-col space-y-2 mt-6">
+              <div className="rounded-lg border flex flex-col lg:flex-row overflow-hidden">
+                <div className="w-full">
+                  <div>
+                    <p className="text-black/50 text-sm border-b border-t border-t-transparent border-border py-3 font-[600] px-4 bg-gray-50">
+                      Total Requested
+                    </p>
+                    <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                      <p>
+                        MVR{" "}
+                        {result.data && result.data.totalAmount
+                          ? result.data.totalAmount
+                          : "0.00"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full">
+                  <div>
+                    <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
+                      Expenditure
+                    </p>
+                    <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                      <p>
+                        MVR{" "}
+                        {result.data && result.data.clearance.expenditure
+                          ? result.data.clearance.expenditure
+                          : "0.00"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full">
+                  <div>
+                    <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
+                      Balance
+                    </p>
+                    <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                      <p>
+                        MVR{" "}
+                        {result.data && result.data.totalAmount
+                          ? result.data.totalAmount -
+                            result.data.clearance.expenditure
+                          : "0.00"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                {result.data?.clearance?.status !== "completed" && (
+                  <div className="w-full">
+                    <div>
+                      <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
+                        Action
+                      </p>
+                      <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                        <div>
+                          <ClearanceForm
+                            isOpen={isEditFormOpen}
+                            clearance={result.data?.clearance}
+                            onSuccess={() => {
+                              setIsEditFormOpen(false);
+                              execute({ id, limit, skip });
+                            }}
+                            onClose={() => setIsEditFormOpen(false)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="my-6 flex items-center justify-between">
-              {result.data && result.data.request && (
-                <RequestItemForm
-                  requestItem={selectedRequestItem}
-                  request={result.data.request}
-                  onSuccess={() => {
-                    execute({ id, limit, skip });
-                    setSelectedRequestItem(null);
-                  }}
-                  onClose={() => setSelectedRequestItem(null)}
-                />
-              )}
-              <div>{renderButtons(result.data?.request?.status)}</div>
+              <div>
+                {[
+                  "created",
+                  "submitted",
+                  "budget_approved",
+                  "finance_approved",
+                ].includes(result.data?.clearance?.status) && (
+                  <SignaturePopup
+                    request={result.data?.clearance}
+                    isPopupOpen={isSignaturePopupOpen}
+                    onSuccess={() => {
+                      setIsSignaturePopupOpen(false);
+                      execute({ id, limit, skip });
+                    }}
+                    onClose={() => {
+                      setIsSignaturePopupOpen(false);
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </div>
-          {result.data?.request?.status !== "created" && (
+
+          {result.data?.clearance?.status !== "created" && (
             <div className="w-full flex flex-col space-y-2">
               <div className="rounded-lg border grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 overflow-hidden">
                 <div className="w-full">
@@ -408,17 +327,25 @@ const RequestByIdPage = () => {
                     </p>
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
                       <p>
-                        {result.data && result.data.request.submittedBy
-                          ? result.data.request.submittedBy.name
+                        {result.data && result.data.clearance.submittedBy
+                          ? result.data.clearance.submittedBy.name
                           : ""}
                       </p>
                       <p>
-                        {result.data && result.data.request.submittedAt
-                          ? moment(result.data.request.submittedAt).format(
+                        {result.data && result.data.clearance.submittedAt
+                          ? moment(result.data.clearance.submittedAt).format(
                               "DD MMM YYYY HH:mm"
                             )
                           : ""}
                       </p>
+                      {result.data?.clearance?.submittedSignature && (
+                        <div>
+                          <img
+                            src={result.data?.clearance?.submittedSignature}
+                            className="w-[100px] h-[100px]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -429,17 +356,27 @@ const RequestByIdPage = () => {
                     </p>
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
                       <p>
-                        {result.data && result.data.request.budgetApprovedBy
-                          ? result.data.request.budgetApprovedBy.name
+                        {result.data && result.data.clearance.budgetApprovedBy
+                          ? result.data.clearance.budgetApprovedBy.name
                           : ""}
                       </p>
                       <p>
-                        {result.data && result.data.request.budgetApprovedAt
-                          ? moment(result.data.request.budgetApprovedAt).format(
-                              "DD MMM YYYY HH:mm"
-                            )
+                        {result.data && result.data.clearance.budgetApprovedAt
+                          ? moment(
+                              result.data.clearance.budgetApprovedAt
+                            ).format("DD MMM YYYY HH:mm")
                           : ""}
                       </p>
+                      {result.data?.clearance?.budgetApprovedSignature && (
+                        <div>
+                          <img
+                            src={
+                              result.data?.clearance?.budgetApprovedSignature
+                            }
+                            className="w-[100px] h-[100px]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -450,17 +387,27 @@ const RequestByIdPage = () => {
                     </p>
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
                       <p>
-                        {result.data && result.data.request.financeApprovedBy
-                          ? result.data.request.financeApprovedBy.name
+                        {result.data && result.data.clearance.financeApprovedBy
+                          ? result.data.clearance.financeApprovedBy.name
                           : ""}
                       </p>
                       <p>
-                        {result.data && result.data.request.financeApprovedAt
+                        {result.data && result.data.clearance.financeApprovedAt
                           ? moment(
-                              result.data.request.financeApprovedAt
+                              result.data.clearance.financeApprovedAt
                             ).format("DD MMM YYYY HH:mm")
                           : ""}
                       </p>
+                      {result.data?.clearance?.financeApprovedSignature && (
+                        <div>
+                          <img
+                            src={
+                              result.data?.clearance?.financeApprovedSignature
+                            }
+                            className="w-[100px] h-[100px]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -471,33 +418,41 @@ const RequestByIdPage = () => {
                     </p>
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
                       <p>
-                        {result.data && result.data.request.completedBy
-                          ? result.data.request.completedBy.name
+                        {result.data && result.data.clearance.completedBy
+                          ? result.data.clearance.completedBy.name
                           : ""}
                       </p>
                       <p>
-                        {result.data && result.data.request.completedAt
-                          ? moment(result.data.request.completedAt).format(
+                        {result.data && result.data.clearance.completedAt
+                          ? moment(result.data.clearance.completedAt).format(
                               "DD MMM YYYY HH:mm"
                             )
                           : ""}
                       </p>
+                      {result.data?.clearance?.completedSignature && (
+                        <div>
+                          <img
+                            src={result.data?.clearance?.completedSignature}
+                            className="w-[100px] h-[100px]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           )}
-          <div className="w-full flex flex-col space-y-2 mt-6 bg-gray-50 rounded-lg p-4 border border-border">
-            <p className="text-sm text-black/50 font-[600]">Request Remarks</p>
-            <p className="text-sm lg:mr-[20rem] mr-0">
-              {result.data?.request?.remarks || "N/A"}
-            </p>
-          </div>
+        </div>
+        <div className="w-full flex flex-col space-y-2 mt-6 bg-gray-50 rounded-lg p-4 border border-border">
+          <p className="text-sm text-black/50 font-[600]">Clearance Remarks</p>
+          <p className="text-sm lg:mr-[20rem] mr-0">
+            {result.data?.clearance?.remarks || "N/A"}
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default RequestByIdPage; // Updated to RequestByIdPage
+export default ClearanceByIdPage; // Updated to ClearanceByIdPage

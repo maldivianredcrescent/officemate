@@ -6,7 +6,7 @@ import { actionClient } from "@/lib/safe-action";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 
-export const getClearanceRequestsAction = actionClient
+export const getClearancesAction = actionClient
   .schema(
     z.object({
       skip: z.number().optional(),
@@ -15,62 +15,121 @@ export const getClearanceRequestsAction = actionClient
     })
   )
   .action(async ({ parsedInput }) => {
-    const requests = await prisma.clearanceRequest.findMany({
+    const clearances = await prisma.clearance.findMany({
       where: parsedInput.type ? { type: parsedInput.type } : undefined,
       orderBy: { updatedAt: "desc" },
       include: {
-        requestItems: true,
+        request: {
+          include: {
+            activity: true,
+            requestItems: true,
+          },
+        },
       },
       skip: parsedInput.skip,
       take: parsedInput.limit,
     });
 
-    const totalRequests = await prisma.clearanceRequest.count({
+    const totalClearances = await prisma.clearance.count({
       where: parsedInput.type ? { type: parsedInput.type } : undefined,
     });
-    return { requests, totalRequests, success: true };
+    return { clearances, totalClearances, success: true };
   });
 
-export const getClearanceRequestByIdAction = actionClient
+export const getClearanceByIdAction = actionClient
   .schema(
     z.object({
       id: z.string(),
     })
   )
   .action(async ({ parsedInput }) => {
-    const request = await prisma.clearanceRequest.findUnique({
+    const clearance = await prisma.clearance.findUnique({
       where: { id: parsedInput.id },
       include: {
-        result: true,
-        requestItems: true,
+        request: {
+          include: {
+            activity: {
+              include: {
+                project: {
+                  include: {
+                    donor: true,
+                  },
+                },
+              },
+            },
+            requestItems: true,
+            submittedBy: true,
+            budgetApprovedBy: true,
+            financeApprovedBy: true,
+            completedBy: true,
+          },
+        },
         submittedBy: true,
         budgetApprovedBy: true,
         financeApprovedBy: true,
         completedBy: true,
       },
     });
-    return { request, success: true };
+
+    const totalAmount = clearance.request.requestItems.reduce(
+      (sum, item) => sum + item.amount,
+      0
+    );
+
+    return { clearance, totalAmount, success: true };
   });
 
-export const submitClearanceRequestForApprovalAction = actionClient
-  .schema(z.object({ id: z.string() }))
+export const createClearanceAction = actionClient
+  .schema(z.object({ expenditure: z.string(), remarks: z.string().optional() }))
+  .action(async ({ parsedInput }) => {
+    const clearance = await prisma.clearance.create({
+      data: {
+        expenditure: parseFloat(parsedInput.expenditure),
+        remarks: parsedInput.remarks,
+      },
+    });
+    return { clearance, success: true };
+  });
+
+export const updateClearanceAction = actionClient
+  .schema(
+    z.object({
+      id: z.string(),
+      expenditure: z.string(),
+      remarks: z.string().optional(),
+    })
+  )
+  .action(async ({ parsedInput }) => {
+    const clearance = await prisma.clearance.update({
+      where: { id: parsedInput.id },
+      data: {
+        expenditure: parseFloat(parsedInput.expenditure),
+        remarks: parsedInput.remarks,
+      },
+    });
+    return { clearance, success: true };
+  });
+
+export const submitClearanceForApprovalAction = actionClient
+  .schema(z.object({ id: z.string(), signature: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
 
-    const request = await prisma.clearanceRequest.update({
+    const clearance = await prisma.clearance.update({
       where: { id: parsedInput.id },
       data: {
         status: "submitted",
         submittedAt: new Date(),
         submittedById: user.id,
+        submittedSignature: parsedInput.signature,
       },
     });
-    return { request, success: true };
+    return { clearance, success: true };
   });
 
-export const submitClearanceRequestForBudgetApprovalAction = actionClient
-  .schema(z.object({ id: z.string() }))
+export const submitClearanceForBudgetApprovalAction = actionClient
+  .schema(z.object({ id: z.string(), signature: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
@@ -81,52 +140,55 @@ export const submitClearanceRequestForBudgetApprovalAction = actionClient
         status: "budget_approved",
         budgetApprovedAt: new Date(),
         budgetApprovedById: user.id,
+        budgetApprovedSignature: parsedInput.signature,
       },
     });
     return { request, success: true };
   });
 
-export const submitClearanceRequestForFinanceApprovalAction = actionClient
-  .schema(z.object({ id: z.string() }))
+export const submitClearanceForFinanceApprovalAction = actionClient
+  .schema(z.object({ id: z.string(), signature: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
 
-    const request = await prisma.clearance.update({
+    const clearance = await prisma.clearance.update({
       where: { id: parsedInput.id },
       data: {
         status: "finance_approved",
         financeApprovedAt: new Date(),
         financeApprovedById: user.id,
+        financeApprovedSignature: parsedInput.signature,
       },
     });
-    return { request, success: true };
+    return { clearance, success: true };
   });
 
-export const completeClearanceRequestAction = actionClient
-  .schema(z.object({ id: z.string() }))
+export const completeClearanceAction = actionClient
+  .schema(z.object({ id: z.string(), signature: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
 
-    const request = await prisma.clearance.update({
+    const clearance = await prisma.clearance.update({
       where: { id: parsedInput.id },
       data: {
         status: "completed",
         completedAt: new Date(),
         completedById: user.id,
+        completedSignature: parsedInput.signature,
       },
     });
-    return { request, success: true };
+    return { clearance, success: true };
   });
 
-export const rejectClearanceRequestAction = actionClient
+export const rejectClearanceAction = actionClient
   .schema(z.object({ id: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
 
-    const request = await prisma.clearance.update({
+    const clearance = await prisma.clearance.update({
       where: { id: parsedInput.id },
       data: {
         status: "rejected",
@@ -134,5 +196,5 @@ export const rejectClearanceRequestAction = actionClient
         rejectedById: user.id,
       },
     });
-    return { request, success: true };
+    return { clearance, success: true };
   });

@@ -28,6 +28,8 @@ export const authOptions = {
         token.id = user.id; // Add user ID to the token
         token.name = user.name; // Add user name to the token
         token.email = user.email; // Add user email to the token
+        token.role = user.role; // Add user role to the token
+        token.unitId = user.unitId; // Add user unitId to the token
       }
       return token;
     },
@@ -37,6 +39,8 @@ export const authOptions = {
         id: token.id,
         name: token.name,
         email: token.email,
+        role: token.role,
+        unitId: token.unitId,
       };
       return session;
     },
