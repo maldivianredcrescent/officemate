@@ -84,3 +84,13 @@ export const deleteRequestItemAction = actionClient
     });
     return { requestItem, success: true };
   });
+
+export const updateExpenditureAction = actionClient
+  .schema(z.object({ id: z.string(), expenditure: z.number() }))
+  .action(async ({ parsedInput }) => {
+    const requestItem = await prisma.requestItem.update({
+      where: { id: parsedInput.id },
+      data: { expenditure: parsedInput.expenditure },
+    });
+    return { requestItem, success: true };
+  });

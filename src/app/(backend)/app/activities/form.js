@@ -44,6 +44,7 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
   const form = useForm({
     resolver: zodResolver(activitySchema), // Updated to activitySchema
     defaultValues: {
+      code: "",
       name: "",
       budget: "",
       projectId: "",
@@ -53,6 +54,7 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
   useEffect(() => {
     if (activity) {
       form.setValue("name", activity.name);
+      form.setValue("code", activity.code);
       form.setValue("budget", activity.budget); // Set budget
       form.setValue("projectId", activity.projectId); // Set projectId
       form.setValue("workplanId", activity.workplanId); // Set workplanId
@@ -113,6 +115,19 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Activity Code</FormLabel>
+                    <FormControl>
+                      <Input placeholder="eg. 1.1.1" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="name"

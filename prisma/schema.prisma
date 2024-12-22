@@ -82,6 +82,7 @@ model Workplan {
 model Activity {
   id         String    @id @default(cuid())
   number     Int       @default(autoincrement())
+  code       String?
   name       String
   workplanId String
   projectId  String
@@ -131,23 +132,23 @@ model Request {
 }
 
 model RequestItem {
-  id        String   @id @default(cuid())
-  requestId String
-  name      String
-  remarks   String?
-  qty       Int
-  rate      Float
-  amount    Float
-  request   Request  @relation(fields: [requestId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  requestId   String
+  name        String
+  remarks     String?
+  qty         Int
+  rate        Float
+  amount      Float
+  expenditure Float?   @default(0)
+  request     Request  @relation(fields: [requestId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Clearance {
   id                       String    @id @default(cuid())
   number                   Int       @default(autoincrement())
   status                   String    @default("created")
-  expenditure              Float     @default(0)
   remarks                  String?
   requestId                String
   rejectedById             String?

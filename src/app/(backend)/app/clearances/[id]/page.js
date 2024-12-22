@@ -17,17 +17,10 @@ import { usePagination } from "@/hooks/use-pagination";
 import moment from "moment";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "../../request-items/data-table";
-import {
-  completeClearanceAction,
-  getClearanceByIdAction,
-} from "@/actions/clearanceActions";
-import {
-  submitClearanceForApprovalAction,
-  submitClearanceForBudgetApprovalAction,
-  submitClearanceForFinanceApprovalAction,
-} from "@/actions/clearanceActions";
+import { getClearanceByIdAction } from "@/actions/clearanceActions";
 import { columns } from "../../request-items/columns";
 import SignaturePopup from "../signature-popup";
+import UpdateExpenditureForm from "../../request-items/update-expenditure-form";
 
 const ClearanceByIdPage = () => {
   const { id } = useParams();
@@ -35,6 +28,7 @@ const ClearanceByIdPage = () => {
   const { isPending, execute, result } = useAction(getClearanceByIdAction);
   const { limit, skip, pagination, onPaginationChange } = usePagination();
   const [isSignaturePopupOpen, setIsSignaturePopupOpen] = useState(false);
+  const [selectedRequestItem, setSelectedRequestItem] = useState(null);
 
   React.useEffect(() => {
     if (id) {
@@ -224,6 +218,10 @@ const ClearanceByIdPage = () => {
               columns={columns({
                 onEdit: null,
                 onDelete: null,
+                showExpenditure: true,
+                onExpenditureUpdate: (requestItem) => {
+                  setSelectedRequestItem(requestItem);
+                },
               })}
               isPending={isPending}
               data={
@@ -259,8 +257,8 @@ const ClearanceByIdPage = () => {
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
                       <p>
                         MVR{" "}
-                        {result.data && result.data.clearance.expenditure
-                          ? result.data.clearance.expenditure
+                        {result.data && result.data.totalExpenditure
+                          ? result.data.totalExpenditure
                           : "0.00"}
                       </p>
                     </div>
@@ -276,7 +274,7 @@ const ClearanceByIdPage = () => {
                         MVR{" "}
                         {result.data && result.data.totalAmount
                           ? result.data.totalAmount -
-                            result.data.clearance.expenditure
+                            result.data.totalExpenditure
                           : "0.00"}
                       </p>
                     </div>
@@ -501,6 +499,16 @@ const ClearanceByIdPage = () => {
             {result.data?.clearance?.remarks || "N/A"}
           </p>
         </div>
+        <UpdateExpenditureForm
+          requestItem={selectedRequestItem}
+          onSuccess={() => {
+            execute({ id, limit, skip });
+            setSelectedRequestItem(null);
+          }}
+          onClose={() => {
+            setSelectedRequestItem(null);
+          }}
+        />
       </div>
     </div>
   );

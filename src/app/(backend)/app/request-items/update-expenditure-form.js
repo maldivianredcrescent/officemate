@@ -21,54 +21,40 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { requestItemSchema } from "@/schemas/requestItemSchemas"; // Updated import to requestItemSchema
-import {
-  createRequestItemAction,
-  updateRequestItemAction,
-} from "@/actions/requestItemActions"; // Updated action imports
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { updateExpenditureAction } from "@/actions/requestItemActions";
+import { z } from "zod";
 
-const RequestItemForm = ({ requestItem, onSuccess, onClose, request }) => {
+const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm({
-    resolver: zodResolver(requestItemSchema),
+    resolver: zodResolver(
+      z.object({
+        expenditure: z.number().min(0),
+      })
+    ),
     defaultValues: {
-      name: "",
-      qty: 0,
-      rate: 0,
-      remarks: "",
+      expenditure: 0,
     },
   });
 
   useEffect(() => {
     if (requestItem) {
-      form.setValue("name", requestItem.name);
-      form.setValue("qty", requestItem.qty);
-      form.setValue("rate", requestItem.rate);
-      form.setValue("remarks", requestItem.remarks);
+      form.setValue("expenditure", requestItem.expenditure);
       setIsOpen(true);
     }
   }, [requestItem]);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    var result;
-    if (requestItem) {
-      result = await updateRequestItemAction({
-        ...data,
-        id: requestItem.id,
-      });
-    } else {
-      result = await createRequestItemAction({
-        ...data,
-        requestId: request.id,
-      });
-    }
+    const result = await updateExpenditureAction({
+      ...data,
+      id: requestItem.id,
+    });
 
     if (result.data && result.data.success) {
       form.reset();
@@ -95,85 +81,36 @@ const RequestItemForm = ({ requestItem, onSuccess, onClose, request }) => {
       }}
     >
       <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]">
-        {requestItem ? "Edit Item" : "Add Item"}
+        Update Expenditure
       </DialogTrigger>
       <DialogContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader>
               <DialogTitle className="font-semibold">
-                {requestItem ? "Edit Item" : "Add Item"}
+                Update Expenditure
               </DialogTitle>
               <DialogDescription>
-                {requestItem
-                  ? "You are currently editing an existing request item's information. Please review the details below and make any necessary changes to ensure that all information is accurate and up-to-date."
-                  : "Welcome! To create a new request item, please fill in the required details in the form below. Make sure to provide all relevant information to help us maintain a comprehensive record of our request items."}
+                Update the expenditure for the request item.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <FormField
                 control={form.control}
-                name="name"
+                name="expenditure"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Item Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter item name" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="qty"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Quantity</FormLabel>
+                    <FormLabel>Expenditure</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         {...field}
-                        placeholder="Enter quantity"
+                        placeholder="Enter expenditure"
                         step="0.00"
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value))
                         }
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="rate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Rate</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        placeholder="Enter rate"
-                        step="0.00"
-                        onChange={(e) =>
-                          field.onChange(parseFloat(e.target.value))
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="remarks"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Remarks</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} placeholder="Enter remarks" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -214,4 +151,4 @@ const RequestItemForm = ({ requestItem, onSuccess, onClose, request }) => {
   );
 };
 
-export default RequestItemForm; // Updated export
+export default UpdateExpenditureForm;

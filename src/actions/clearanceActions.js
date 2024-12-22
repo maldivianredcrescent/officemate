@@ -76,15 +76,19 @@ export const getClearanceByIdAction = actionClient
       0
     );
 
-    return { clearance, totalAmount, success: true };
+    const totalExpenditure = clearance.request.requestItems.reduce(
+      (sum, item) => sum + item.expenditure,
+      0
+    );
+
+    return { clearance, totalAmount, totalExpenditure, success: true };
   });
 
 export const createClearanceAction = actionClient
-  .schema(z.object({ expenditure: z.string(), remarks: z.string().optional() }))
+  .schema(z.object({ remarks: z.string().optional() }))
   .action(async ({ parsedInput }) => {
     const clearance = await prisma.clearance.create({
       data: {
-        expenditure: parseFloat(parsedInput.expenditure),
         remarks: parsedInput.remarks,
       },
     });
@@ -95,7 +99,6 @@ export const updateClearanceAction = actionClient
   .schema(
     z.object({
       id: z.string(),
-      expenditure: z.string(),
       remarks: z.string().optional(),
     })
   )
@@ -103,7 +106,6 @@ export const updateClearanceAction = actionClient
     const clearance = await prisma.clearance.update({
       where: { id: parsedInput.id },
       data: {
-        expenditure: parseFloat(parsedInput.expenditure),
         remarks: parsedInput.remarks,
       },
     });

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useAction } from "next-safe-action/hooks";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Breadcrumb,
@@ -13,13 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import RequestForm from "../form";
-import {
-  completedRequestAction,
-  getRequestByIdAction,
-  submitRequestForApprovalAction,
-  submitRequestForBudgetApprovalAction,
-  submitRequestForFinanceApprovalAction,
-} from "@/actions/requestActions";
+import { getRequestByIdAction } from "@/actions/requestActions";
 import { usePagination } from "@/hooks/use-pagination";
 import RequestItemForm from "../../request-items/form";
 import { DataTable } from "../../request-items/data-table";
@@ -27,11 +21,11 @@ import { columns } from "../../request-items/columns";
 import moment from "moment";
 import { deleteRequestItemAction } from "@/actions/requestItemActions";
 import { Button } from "@/components/ui/button";
-import SignaturePad from "@/components/ui/signature-pad";
 import SignaturePopup from "../signature-popup";
 
 const RequestByIdPage = () => {
   const { id } = useParams();
+  const router = useRouter();
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const { isPending, execute, result } = useAction(getRequestByIdAction);
   const { limit, skip, pagination, onPaginationChange } = usePagination();
@@ -271,7 +265,12 @@ const RequestByIdPage = () => {
                     />
                   )}
                 <div>
-                  <Button className="bg-gray-100 text-black hover:bg-gray-200">
+                  <Button
+                    onClick={() => {
+                      router.push(`/print/request/${result.data?.request?.id}`);
+                    }}
+                    className="bg-gray-100 text-black hover:bg-gray-200"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -305,7 +304,7 @@ const RequestByIdPage = () => {
                         strokeLinejoin="round"
                       />
                     </svg>
-                    Print Clearance
+                    Print Request
                   </Button>
                 </div>
               </div>

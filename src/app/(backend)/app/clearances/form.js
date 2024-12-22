@@ -43,19 +43,16 @@ const ClearanceForm = ({ clearance, onSuccess, onClose }) => {
   const form = useForm({
     resolver: zodResolver(
       z.object({
-        expenditure: z.string(),
         remarks: z.string().optional(),
       })
     ),
     defaultValues: {
-      expenditure: "",
       remarks: "",
     },
   });
 
   useEffect(() => {
     if (clearance) {
-      form.setValue("expenditure", clearance.expenditure);
       form.setValue("remarks", clearance.remarks);
     }
   }, [clearance]);
@@ -110,19 +107,6 @@ const ClearanceForm = ({ clearance, onSuccess, onClose }) => {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="expenditure"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Expenditure</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter expenditure" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="remarks"

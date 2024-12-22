@@ -12,7 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import moment from "moment";
 
-export const columns = ({ onEdit, onDelete }) => [
+export const columns = ({
+  onEdit,
+  onDelete,
+  showExpenditure,
+  onExpenditureUpdate,
+}) => [
   {
     accessorKey: "name",
     header: "Description",
@@ -27,11 +32,49 @@ export const columns = ({ onEdit, onDelete }) => [
   {
     accessorKey: "rate",
     header: "Rate",
+    cell: ({ row }) => {
+      return (
+        <div>
+          {row.getValue("rate").toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "amount",
     header: "Amount",
+    cell: ({ row }) => {
+      return (
+        <div>
+          {row.getValue("amount").toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </div>
+      );
+    },
   },
+  ...(showExpenditure
+    ? [
+        {
+          accessorKey: "expenditure",
+          header: "Expenditure",
+          cell: ({ row }) => {
+            return (
+              <div>
+                {row.getValue("expenditure").toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </div>
+            );
+          },
+        },
+      ]
+    : []),
   {
     accessorKey: "remarks",
     header: "Remarks",
@@ -41,18 +84,18 @@ export const columns = ({ onEdit, onDelete }) => [
     cell: ({ row }) => {
       const requestItem = row.original;
 
-      if (onEdit && onDelete) {
-        return (
-          <div className="flex justify-end">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      return (
+        <div className="flex justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              {onEdit && (
                 <DropdownMenuItem
                   onClick={() => {
                     onEdit(requestItem);
@@ -60,6 +103,8 @@ export const columns = ({ onEdit, onDelete }) => [
                 >
                   Edit Item
                 </DropdownMenuItem>
+              )}
+              {onDelete && (
                 <DropdownMenuItem
                   onClick={() => {
                     onDelete(requestItem);
@@ -67,13 +112,20 @@ export const columns = ({ onEdit, onDelete }) => [
                 >
                   Delete Item
                 </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        );
-      }
-
-      return null;
+              )}
+              {onExpenditureUpdate && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    onExpenditureUpdate(requestItem);
+                  }}
+                >
+                  Update Expenditure
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      );
     },
   },
 ];
