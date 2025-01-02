@@ -211,7 +211,7 @@ export const completedRequestAction = actionClient
   });
 
 export const rejectRequestAction = actionClient
-  .schema(z.object({ id: z.string() }))
+  .schema(z.object({ id: z.string(), rejectedRemarks: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
@@ -222,6 +222,7 @@ export const rejectRequestAction = actionClient
         status: "rejected",
         rejectedAt: new Date(),
         rejectedById: user.id,
+        rejectedRemarks: parsedInput.rejectedRemarks,
       },
     });
     return { request, success: true };

@@ -22,6 +22,7 @@ import moment from "moment";
 import { deleteRequestItemAction } from "@/actions/requestItemActions";
 import { Button } from "@/components/ui/button";
 import SignaturePopup from "../signature-popup";
+import RejectRequestForm from "../reject-request";
 
 const RequestByIdPage = () => {
   const { id } = useParams();
@@ -125,7 +126,7 @@ const RequestByIdPage = () => {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
-            <div>
+            <div className="flex flex-row gap-2">
               {result.data &&
                 result.data.request &&
                 [
@@ -148,6 +149,18 @@ const RequestByIdPage = () => {
           </div>
         </div>
       </div>
+      {result.data?.request?.status === "rejected" && (
+        <div className="px-4">
+          <div className="w-full flex flex-col space-y-2 mt-6 bg-red-50 rounded-[--radius] p-4 border border-red-200">
+            <p className="text-sm text-black/50 font-[600] text-red-500">
+              Reject Remarks
+            </p>
+            <p className="text-sm lg:mr-[20rem] mr-0 text-red-500">
+              {result.data?.request?.rejectedRemarks || "N/A"}
+            </p>
+          </div>
+        </div>
+      )}
       <div className="w-full h-full p-4">
         <div className="w-full flex flex-col justify-between pb-4 capitalize">
           <div className="w-full flex items-center justify-between gap-4 mb-2">
@@ -490,6 +503,21 @@ const RequestByIdPage = () => {
               {result.data?.request?.remarks || "N/A"}
             </p>
           </div>
+          {result.data &&
+            result.data.request &&
+            ["submitted", "budget_approved", "finance_approved"].includes(
+              result.data?.request?.status
+            ) && (
+              <div className="w-full flex flex-row justify-end gap-2 mt-6">
+                <RejectRequestForm
+                  request={result.data?.request}
+                  onSuccess={() => {
+                    execute({ id, limit, skip });
+                  }}
+                  onClose={() => {}}
+                />
+              </div>
+            )}
         </div>
       </div>
     </div>

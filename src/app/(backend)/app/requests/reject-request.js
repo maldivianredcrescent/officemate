@@ -21,17 +21,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import { useAction } from "next-safe-action/hooks";
-import {
-  createClearanceAction,
-  updateClearanceAction,
-} from "@/actions/clearanceActions";
+import { rejectRequestAction } from "@/actions/requestActions"; // Import the reject request action
 import { z } from "zod";
 
-const ClearanceForm = ({ clearance, onSuccess, onClose }) => {
+const RejectRequestForm = ({ request, onSuccess, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -39,33 +35,28 @@ const ClearanceForm = ({ clearance, onSuccess, onClose }) => {
   const form = useForm({
     resolver: zodResolver(
       z.object({
-        remarks: z.string().optional(),
+        rejectedRemarks: z.string().min(1, "Remarks are required"), // Ensure remarks are provided
       })
     ),
     defaultValues: {
-      remarks: "",
+      rejectedRemarks: "",
     },
   });
 
   useEffect(() => {
-    if (clearance) {
-      form.setValue("remarks", clearance.remarks);
+    if (request) {
+      form.setValue("rejectedRemarks", request.rejectedRemarks);
     }
-  }, [clearance]);
+  }, [request]);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    var result;
-    if (clearance) {
-      result = await updateClearanceAction({ ...data, id: clearance.id });
-    } else {
-      result = await createClearanceAction(data);
-    }
+    const result = await rejectRequestAction({ ...data, id: request.id }); // Call the reject request action
 
     if (result.data && result.data.success) {
       form.reset();
       setIsOpen(false);
-      onSuccess?.(result.data.clearance);
+      onSuccess?.(result.data.request);
     } else {
       result.data?.error &&
         toast({
@@ -86,31 +77,29 @@ const ClearanceForm = ({ clearance, onSuccess, onClose }) => {
         setIsOpen(open);
       }}
     >
-      <DialogTrigger className="text-sm text-[--primary] font-[400] underline rounded-[--radius]">
-        {clearance ? "Edit" : "Create"}
+      <DialogTrigger className="text-sm bg-red-600 text-white px-4 h-[42px] rounded-[--radius]">
+        Reject Request
       </DialogTrigger>
       <DialogContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader>
               <DialogTitle className="font-semibold">
-                {clearance ? "Edit Clearance" : "Create Clearance"}
+                Reject Request
               </DialogTitle>
               <DialogDescription>
-                {clearance
-                  ? "You are currently editing an existing request's information. Please review the details below and make any necessary changes to ensure that all information is accurate and up-to-date."
-                  : "Welcome! To create a new request, please fill in the required details in the form below. Make sure to provide all relevant information to help us maintain a comprehensive record of our requests."}{" "}
+                Please provide remarks for rejecting this request.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <FormField
                 control={form.control}
-                name="remarks"
+                name="rejectedRemarks"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Remarks</FormLabel>
+                    <FormLabel>Reject Remarks</FormLabel>
                     <FormControl>
-                      <Textarea {...field} placeholder="Enter remarks" />
+                      <Textarea {...field} placeholder="Enter reject remarks" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -141,7 +130,7 @@ const ClearanceForm = ({ clearance, onSuccess, onClose }) => {
                     ></path>
                   </svg>
                 )}
-                Save
+                Reject
               </Button>
             </DialogFooter>
           </form>
@@ -151,4 +140,4 @@ const ClearanceForm = ({ clearance, onSuccess, onClose }) => {
   );
 };
 
-export default ClearanceForm;
+export default RejectRequestForm; // Updated export
