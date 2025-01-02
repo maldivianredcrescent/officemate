@@ -149,18 +149,6 @@ const RequestByIdPage = () => {
           </div>
         </div>
       </div>
-      {result.data?.request?.status === "rejected" && (
-        <div className="px-4">
-          <div className="w-full flex flex-col space-y-2 mt-6 bg-red-50 rounded-[--radius] p-4 border border-red-200">
-            <p className="text-sm text-black/50 font-[600] text-red-500">
-              Reject Remarks
-            </p>
-            <p className="text-sm lg:mr-[20rem] mr-0 text-red-500">
-              {result.data?.request?.rejectedRemarks || "N/A"}
-            </p>
-          </div>
-        </div>
-      )}
       <div className="w-full h-full p-4">
         <div className="w-full flex flex-col justify-between pb-4 capitalize">
           <div className="w-full flex items-center justify-between gap-4 mb-2">
@@ -182,6 +170,18 @@ const RequestByIdPage = () => {
                 : ""}
             </div>
           </div>
+          {result.data?.request?.status === "rejected" && (
+            <div>
+              <div className="w-full flex flex-col space-y-2 my-2 bg-red-50 rounded-[--radius] p-4 border border-red-200">
+                <p className="text-sm text-black/50 font-[600] text-red-500">
+                  Reject Remarks
+                </p>
+                <p className="text-sm lg:mr-[20rem] mr-0 text-red-500">
+                  {result.data?.request?.rejectedRemarks || "N/A"}
+                </p>
+              </div>
+            </div>
+          )}
           {result.data && result.data.request && (
             <div className="mt-4">
               <div className="w-full flex flex-col space-y-2">

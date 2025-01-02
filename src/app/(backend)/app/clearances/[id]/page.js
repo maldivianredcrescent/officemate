@@ -21,6 +21,7 @@ import { getClearanceByIdAction } from "@/actions/clearanceActions";
 import { columns } from "../../request-items/columns";
 import SignaturePopup from "../signature-popup";
 import UpdateExpenditureForm from "../../request-items/update-expenditure-form";
+import RejectClearanceForm from "../reject-clearance";
 
 const ClearanceByIdPage = () => {
   const { id } = useParams();
@@ -153,6 +154,18 @@ const ClearanceByIdPage = () => {
                 : ""}
             </div>
           </div>
+          {result.data?.clearance?.status === "rejected" && (
+            <div>
+              <div className="w-full flex flex-col space-y-2 my-2 bg-red-50 rounded-[--radius] p-4 border border-red-200">
+                <p className="text-sm text-black/50 font-[600] text-red-500">
+                  Reject Remarks
+                </p>
+                <p className="text-sm lg:mr-[20rem] mr-0 text-red-500">
+                  {result.data?.clearance?.rejectedRemarks || "N/A"}
+                </p>
+              </div>
+            </div>
+          )}
           {result.data && result.data.clearance && (
             <div className="mt-4">
               <div className="w-full flex flex-col space-y-2">
@@ -507,6 +520,21 @@ const ClearanceByIdPage = () => {
             {result.data?.clearance?.remarks || "N/A"}
           </p>
         </div>
+        {result.data &&
+          result.data.clearance &&
+          ["submitted", "budget_approved", "finance_approved"].includes(
+            result.data?.clearance?.status
+          ) && (
+            <div className="w-full flex flex-row justify-end gap-2 mt-6">
+              <RejectClearanceForm
+                clearance={result.data?.clearance}
+                onSuccess={() => {
+                  execute({ id, limit, skip });
+                }}
+                onClose={() => {}}
+              />
+            </div>
+          )}
       </div>
       <UpdateExpenditureForm
         requestItem={selectedRequestItem}

@@ -185,7 +185,7 @@ export const completeClearanceAction = actionClient
   });
 
 export const rejectClearanceAction = actionClient
-  .schema(z.object({ id: z.string() }))
+  .schema(z.object({ id: z.string(), rejectedRemarks: z.string() }))
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
@@ -196,6 +196,7 @@ export const rejectClearanceAction = actionClient
         status: "rejected",
         rejectedAt: new Date(),
         rejectedById: user.id,
+        rejectedRemarks: parsedInput.rejectedRemarks,
       },
     });
     return { clearance, success: true };
