@@ -193,6 +193,15 @@ const UserForm = ({ user, onSuccess, onClose, units }) => {
                         <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
                           <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="budget_approver">
+                            Budget Approver
+                          </SelectItem>
+                          <SelectItem value="finance_approver">
+                            Finance Approver
+                          </SelectItem>
+                          <SelectItem value="payment_processor">
+                            Payment Processor
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
