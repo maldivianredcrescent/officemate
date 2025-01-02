@@ -178,13 +178,15 @@ export const completedRequestAction = actionClient
       },
     });
 
-    await prisma.clearance.create({
-      data: {
-        requestId: parsedInput.id,
-        submittedById: user.id,
-        submittedAt: new Date(),
-      },
-    });
+    if (request.type === "working_advance") {
+      await prisma.clearance.create({
+        data: {
+          requestId: parsedInput.id,
+          submittedById: user.id,
+          submittedAt: new Date(),
+        },
+      });
+    }
 
     return { request, success: true };
   });

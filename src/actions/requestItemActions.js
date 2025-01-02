@@ -42,34 +42,59 @@ export const getRequestItemByIdAction = actionClient
 
 export const createRequestItemAction = actionClient
   .schema(requestItemSchema.omit({ id: true }))
-  .action(async ({ parsedInput: { requestId, name, qty, rate } }) => {
-    const requestItem = await prisma.requestItem.create({
-      data: {
+  .action(
+    async ({
+      parsedInput: {
         requestId,
         name,
-        qty: qty,
-        rate: rate,
-        amount: qty * rate,
+        qty,
+        rate,
+        remarks,
+        gst,
+        tgst,
+        serviceCharge,
       },
-    });
+    }) => {
+      const requestItem = await prisma.requestItem.create({
+        data: {
+          requestId,
+          name,
+          qty: qty,
+          rate: rate,
+          amount: qty * rate,
+          remarks: remarks,
+          gst: gst,
+          tgst: tgst,
+          serviceCharge: serviceCharge,
+        },
+      });
 
-    return { requestItem, success: true };
-  });
+      return { requestItem, success: true };
+    }
+  );
 
 export const updateRequestItemAction = actionClient
   .schema(requestItemSchema)
-  .action(async ({ parsedInput: { id, name, qty, rate } }) => {
-    const requestItem = await prisma.requestItem.update({
-      where: { id },
-      data: {
-        name,
-        qty: qty,
-        rate: rate,
-        amount: qty * rate,
-      },
-    });
-    return { requestItem, success: true };
-  });
+  .action(
+    async ({
+      parsedInput: { id, name, qty, rate, remarks, gst, tgst, serviceCharge },
+    }) => {
+      const requestItem = await prisma.requestItem.update({
+        where: { id },
+        data: {
+          name,
+          qty: qty,
+          rate: rate,
+          amount: qty * rate,
+          remarks: remarks,
+          gst: gst,
+          tgst: tgst,
+          serviceCharge: serviceCharge,
+        },
+      });
+      return { requestItem, success: true };
+    }
+  );
 
 export const deleteRequestItemAction = actionClient
   .schema(
@@ -78,7 +103,6 @@ export const deleteRequestItemAction = actionClient
     })
   )
   .action(async ({ parsedInput }) => {
-    console.log(parsedInput);
     const requestItem = await prisma.requestItem.delete({
       where: { id: parsedInput.id },
     });
@@ -86,11 +110,21 @@ export const deleteRequestItemAction = actionClient
   });
 
 export const updateExpenditureAction = actionClient
-  .schema(z.object({ id: z.string(), expenditure: z.number() }))
+  .schema(
+    z.object({
+      id: z.string(),
+      expenditure: z.number(),
+      payee: z.string(),
+    })
+  )
   .action(async ({ parsedInput }) => {
     const requestItem = await prisma.requestItem.update({
       where: { id: parsedInput.id },
-      data: { expenditure: parsedInput.expenditure },
+      data: {
+        expenditure: parsedInput.expenditure,
+        payee: parsedInput.payee,
+        clearanceDate: new Date(),
+      },
     });
     return { requestItem, success: true };
   });

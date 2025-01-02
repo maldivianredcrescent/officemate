@@ -35,16 +35,19 @@ const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
     resolver: zodResolver(
       z.object({
         expenditure: z.number().min(0),
+        payee: z.string().min(1),
       })
     ),
     defaultValues: {
       expenditure: 0,
+      payee: "",
     },
   });
 
   useEffect(() => {
     if (requestItem) {
       form.setValue("expenditure", requestItem.expenditure);
+      form.setValue("payee", requestItem.payee);
       setIsOpen(true);
     }
   }, [requestItem]);
@@ -80,7 +83,7 @@ const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
         setIsOpen(open);
       }}
     >
-      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]">
+      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius] hidden">
         Update Expenditure
       </DialogTrigger>
       <DialogContent>
@@ -95,6 +98,24 @@ const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="payee"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Payee</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        {...field}
+                        placeholder="Enter payee"
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="expenditure"

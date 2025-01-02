@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "RequestItem" ADD COLUMN     "clearanceDate" TIMESTAMP(3),
+ADD COLUMN     "file" TEXT,
+ADD COLUMN     "gst" DOUBLE PRECISION DEFAULT 0,
+ADD COLUMN     "payee" TEXT,
+ADD COLUMN     "serviceCharge" DOUBLE PRECISION DEFAULT 0,
+ADD COLUMN     "tgst" DOUBLE PRECISION DEFAULT 0;

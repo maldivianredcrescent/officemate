@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useAction } from "next-safe-action/hooks";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Breadcrumb,
@@ -24,6 +24,7 @@ import UpdateExpenditureForm from "../../request-items/update-expenditure-form";
 
 const ClearanceByIdPage = () => {
   const { id } = useParams();
+  const router = useRouter();
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const { isPending, execute, result } = useAction(getClearanceByIdAction);
   const { limit, skip, pagination, onPaginationChange } = usePagination();
@@ -306,7 +307,14 @@ const ClearanceByIdPage = () => {
             </div>
             <div className="my-6 flex items-center justify-between">
               <div>
-                <Button className="bg-gray-100 text-black hover:bg-gray-200">
+                <Button
+                  onClick={() => {
+                    router.push(
+                      `/print/clearance/${result.data?.clearance?.id}`
+                    );
+                  }}
+                  className="bg-gray-100 text-black hover:bg-gray-200"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -499,17 +507,15 @@ const ClearanceByIdPage = () => {
             {result.data?.clearance?.remarks || "N/A"}
           </p>
         </div>
-        <UpdateExpenditureForm
-          requestItem={selectedRequestItem}
-          onSuccess={() => {
-            execute({ id, limit, skip });
-            setSelectedRequestItem(null);
-          }}
-          onClose={() => {
-            setSelectedRequestItem(null);
-          }}
-        />
       </div>
+      <UpdateExpenditureForm
+        requestItem={selectedRequestItem}
+        onSuccess={() => {
+          setSelectedRequestItem(null);
+          execute({ id, limit, skip });
+        }}
+        onClose={() => setSelectedRequestItem(null)}
+      />
     </div>
   );
 };

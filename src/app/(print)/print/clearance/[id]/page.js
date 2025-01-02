@@ -1,14 +1,14 @@
 "use client";
 
-import { getRequestByIdAction } from "@/actions/requestActions";
+import { getClearanceByIdAction } from "@/actions/clearanceActions";
 import moment from "moment";
 import { useAction } from "next-safe-action/hooks";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
 
-const PrintRequestPage = () => {
+const PrintClearancePage = () => {
   const { id } = useParams();
-  const { isPending, execute, result } = useAction(getRequestByIdAction);
+  const { isPending, execute, result } = useAction(getClearanceByIdAction);
 
   useEffect(() => {
     if (id) {
@@ -37,48 +37,59 @@ const PrintRequestPage = () => {
               Maldives
             </address>
           </header>
-          <h1 className="text-xl font-semibold mb-6">Request Form</h1>
+          <h1 className="text-xl font-semibold mb-6">Clearance</h1>
           <div className="grid grid-cols-3 gap-x-12 gap-y-3 mb-6 text-sm">
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Date</span>
               <span>
-                {moment(result.data.request.createdAt).format("DD MMM YYYY")}
+                {moment(result.data.clearance.createdAt).format("DD MMM YYYY")}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Activity</span>
-              <span>{result.data.request.activity?.name}</span>
+              <span>{result.data.clearance.request.requestItem?.name}</span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Activity Code</span>
-              <span>{result.data.request.activity?.code}</span>
+              <span>{result.data.clearance.request.activity?.code}</span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Request No.</span>
               <span>
-                MRCR/{moment(result.data.request.createdAt).format("YYYY")}/
-                {result.data.request.number}
+                MRCC/
+                {moment(result.data.clearance.createdAt).format("YYYY")}/
+                {result.data.clearance.number}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Project</span>
-              <span>{result.data.request.activity?.project?.name}</span>
+              <span>
+                {result.data.clearance.request.activity?.project?.name}
+              </span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Project Code</span>
-              <span>{result.data.request.activity?.project?.code}</span>
+              <span>
+                {result.data.clearance.request.activity?.project?.code}
+              </span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Unit</span>
-              <span>{result.data.request?.unit?.name || "N/A"}</span>
+              <span>
+                {result.data.clearance.request.activity?.project?.unit?.name}
+              </span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Donor</span>
-              <span>{result.data.request.activity?.project?.donor?.name}</span>
+              <span>
+                {result.data.clearance.request.activity?.project?.donor?.name}
+              </span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Donor Code</span>
-              <span>{result.data.request.activity?.project?.donor?.code}</span>
+              <span>
+                {result.data.clearance.request.activity?.project?.donor?.code}
+              </span>
             </div>
           </div>
           <table className="w-full mb-8 text-sm rounded-lg">
@@ -99,10 +110,19 @@ const PrintRequestPage = () => {
                 <th className="border border-gray-300 p-2 text-left w-24">
                   Amount
                 </th>
+                <th className="border border-gray-300 p-2 text-left w-24">
+                  Expenditure
+                </th>
+                <th className="border border-gray-300 p-2 text-left w-24">
+                  Payee
+                </th>
+                <th className="border border-gray-300 p-2 text-left w-24 whitespace-nowrap">
+                  Expenditure Date
+                </th>
               </tr>
             </thead>
             <tbody>
-              {result.data.request.requestItems.map((item, index) => (
+              {result.data.clearance.request.requestItems.map((item, index) => (
                 <tr key={index} className="border border-gray-300">
                   <td className="border border-gray-300 p-2">{index + 1}</td>
                   <td className="border border-gray-300 p-2">
@@ -120,6 +140,15 @@ const PrintRequestPage = () => {
                   <td className="border border-gray-300 p-2">
                     {item.amount?.toFixed(2)}
                   </td>
+                  <td className="border border-gray-300 p-2">
+                    {item.expenditure?.toFixed(2)}
+                  </td>
+                  <td className="border border-gray-300 p-2 whitespace-nowrap">
+                    {item.payee}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    {moment(item.clearanceDate).format("DD MMM YYYY")}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -128,17 +157,17 @@ const PrintRequestPage = () => {
           <footer className="grid grid-cols-3 gap-8 text-sm mt-12">
             <div className="space-y-1">
               <div className="font-[500]">Submitted By</div>
-              <div>{result.data.request.submittedBy?.name}</div>
-              <div>{result.data.request.submittedBy?.designation}</div>
+              <div>{result.data.clearance.submittedBy?.name}</div>
+              <div>{result.data.clearance.submittedBy?.designation}</div>
               <div>
-                {moment(result.data.request.submittedAt).format(
+                {moment(result.data.clearance.request.submittedAt).format(
                   "DD MMM YYYY HH:mm"
                 )}
               </div>
-              {result.data?.request?.submittedSignature && (
+              {result.data.clearance.submittedSignature && (
                 <div>
                   <img
-                    src={result.data?.request?.submittedSignature}
+                    src={result.data.clearance.submittedSignature}
                     className="w-[100px] h-[100px]"
                   />
                 </div>
@@ -146,17 +175,17 @@ const PrintRequestPage = () => {
             </div>
             <div className="space-y-1">
               <div className="font-[500]">Budget Approval</div>
-              <div>{result.data.request.budgetApprovedBy?.name}</div>
-              <div>{result.data.request.budgetApprovedBy?.designation}</div>
+              <div>{result.data.clearance.budgetApprovedBy?.name}</div>
+              <div>{result.data.clearance.budgetApprovedBy?.designation}</div>
               <div>
-                {moment(result.data.request.budgetApprovedAt).format(
+                {moment(result.data.clearance.budgetApprovedAt).format(
                   "DD MMM YYYY HH:mm"
                 )}
               </div>
-              {result.data?.request?.budgetApprovedSignature && (
+              {result.data.clearance.budgetApprovedSignature && (
                 <div>
                   <img
-                    src={result.data?.request?.budgetApprovedSignature}
+                    src={result.data.clearance.budgetApprovedSignature}
                     className="w-[100px] h-[100px]"
                   />
                 </div>
@@ -164,17 +193,17 @@ const PrintRequestPage = () => {
             </div>
             <div className="space-y-1">
               <div className="font-[500]">Finance Approval</div>
-              <div>{result.data.request.financeApprovedBy?.name}</div>
-              <div>{result.data.request.financeApprovedBy?.designation}</div>
+              <div>{result.data.clearance.financeApprovedBy?.name}</div>
+              <div>{result.data.clearance.financeApprovedBy?.designation}</div>
               <div>
-                {moment(result.data.request.financeApprovedAt).format(
+                {moment(result.data.clearance.financeApprovedAt).format(
                   "DD MMM YYYY HH:mm"
                 )}
               </div>
-              {result.data?.request?.financeApprovedSignature && (
+              {result.data.clearance.financeApprovedSignature && (
                 <div>
                   <img
-                    src={result.data?.request?.financeApprovedSignature}
+                    src={result.data.clearance.financeApprovedSignature}
                     className="w-[100px] h-[100px]"
                   />
                 </div>
@@ -187,4 +216,4 @@ const PrintRequestPage = () => {
   );
 };
 
-export default PrintRequestPage;
+export default PrintClearancePage;

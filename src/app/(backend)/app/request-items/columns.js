@@ -73,11 +73,31 @@ export const columns = ({
             );
           },
         },
+        {
+          accessorKey: "payee",
+          header: "Payee",
+        },
+        {
+          accessorKey: "clearanceDate",
+          header: "Expenditure Date",
+          cell: ({ row }) => {
+            return (
+              <div>
+                {moment(row.getValue("clearanceDate")).format("DD-MM-YYYY")}
+              </div>
+            );
+          },
+        },
       ]
     : []),
   {
     accessorKey: "remarks",
     header: "Remarks",
+    cell: ({ row }) => {
+      return (
+        <div className="max-w-[200px] text-wrap">{row.getValue("remarks")}</div>
+      );
+    },
   },
   {
     id: "actions",
