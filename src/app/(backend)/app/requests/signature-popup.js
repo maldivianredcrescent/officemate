@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import SignaturePad from "@/components/ui/signature-pad";
-import { submitRequestForApprovalAction } from "@/actions/requestActions";
+import {
+  submitRequestForApprovalAction,
+  submitRequestForPaymentProcessingAction,
+} from "@/actions/requestActions";
 import { submitRequestForBudgetApprovalAction } from "@/actions/requestActions";
 import { submitRequestForFinanceApprovalAction } from "@/actions/requestActions";
 import { completedRequestAction } from "@/actions/requestActions";
@@ -32,6 +35,10 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request }) => {
   } = useAction(submitRequestForFinanceApprovalAction);
   const { isPending: isCompletedPending, execute: completedRequest } =
     useAction(completedRequestAction);
+  const {
+    isPending: isPaymentProcessingPending,
+    execute: submitRequestForPaymentProcessing,
+  } = useAction(submitRequestForPaymentProcessingAction);
 
   useEffect(() => {
     setIsOpen(isPopupOpen);
@@ -53,8 +60,12 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request }) => {
       await submitRequestForFinanceApproval({ id: request.id, signature: s });
     }
     if (request.status === "finance_approved") {
+      await submitRequestForPaymentProcessing({ id: request.id, signature: s });
+    }
+    if (request.status === "payment_processing") {
       await completedRequest({ id: request.id, signature: s });
     }
+
     setIsLoading(false);
     onSuccess?.();
     setIsOpen(false);
@@ -72,7 +83,8 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request }) => {
         {request?.status === "created" && "Submit request"}
         {request?.status === "submitted" && "Approve budget"}
         {request?.status === "budget_approved" && "Approve finance"}
-        {request?.status === "finance_approved" && "Complete request"}
+        {request?.status === "finance_approved" && "Payment processing"}
+        {request?.status === "payment_processing" && "Complete request"}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -122,7 +134,8 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request }) => {
               {request?.status === "created" && "Submit"}
               {request?.status === "submitted" && "Approve budget"}
               {request?.status === "budget_approved" && "Approve finance"}
-              {request?.status === "finance_approved" && "Complete request"}
+              {request?.status === "finance_approved" && "Payment processing"}
+              {request?.status === "payment_processing" && "Complete request"}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

@@ -70,6 +70,7 @@ export const getRequestByIdAction = actionClient
         submittedBy: true,
         budgetApprovedBy: true,
         financeApprovedBy: true,
+        paymentProcessedBy: true,
         completedBy: true,
       },
     });
@@ -157,6 +158,24 @@ export const submitRequestForFinanceApprovalAction = actionClient
         financeApprovedAt: new Date(),
         financeApprovedById: user.id,
         financeApprovedSignature: parsedInput.signature,
+      },
+    });
+    return { request, success: true };
+  });
+
+export const submitRequestForPaymentProcessingAction = actionClient
+  .schema(z.object({ id: z.string(), signature: z.string() }))
+  .action(async ({ parsedInput }) => {
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
+    const request = await prisma.request.update({
+      where: { id: parsedInput.id },
+      data: {
+        status: "payment_processing",
+        paymentProcessedAt: new Date(),
+        paymentProcessedById: user.id,
+        paymentProcessedSignature: parsedInput.signature,
       },
     });
     return { request, success: true };

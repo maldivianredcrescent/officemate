@@ -314,6 +314,7 @@ const RequestByIdPage = () => {
                   "submitted",
                   "budget_approved",
                   "finance_approved",
+                  "payment_processing",
                 ].includes(result.data?.request?.status) && (
                   <SignaturePopup
                     request={result.data?.request}
@@ -332,7 +333,7 @@ const RequestByIdPage = () => {
           </div>
           {result.data?.request?.status !== "created" && (
             <div className="w-full flex flex-col space-y-2">
-              <div className="rounded-[--radius] border grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 overflow-hidden">
+              <div className="rounded-[--radius] border grid lg:grid-cols-5 md:grid-cols-2 grid-cols-1 overflow-hidden">
                 <div className="w-full">
                   <div>
                     <p className="text-black/50 text-sm border-b border-t border-t-transparent border-border py-3 font-[600] px-4 bg-gray-50">
@@ -413,6 +414,37 @@ const RequestByIdPage = () => {
                         <div>
                           <img
                             src={result.data?.request?.financeApprovedSignature}
+                            className="w-[100px] h-[100px]"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full">
+                  <div>
+                    <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
+                      Payment Processing
+                    </p>
+                    <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                      <p className="font-[600]">
+                        {result.data && result.data.request.paymentProcessedBy
+                          ? result.data.request.paymentProcessedBy.name
+                          : ""}
+                      </p>
+                      <p>
+                        {result.data && result.data.request.paymentProcessedAt
+                          ? moment(
+                              result.data.request.paymentProcessedAt
+                            ).format("DD MMM YYYY HH:mm")
+                          : ""}
+                      </p>
+                      {result.data?.request?.paymentProcessedSignature && (
+                        <div>
+                          <img
+                            src={
+                              result.data?.request?.paymentProcessedSignature
+                            }
                             className="w-[100px] h-[100px]"
                           />
                         </div>

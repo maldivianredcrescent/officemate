@@ -93,6 +93,14 @@ export const columns = [
               </div>
             </div>
           );
+        case "payment_processing":
+          return (
+            <div className="flex">
+              <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+                Payment Processing
+              </div>
+            </div>
+          );
         case "completed":
           return (
             <div className="flex">
