@@ -94,11 +94,11 @@ model Activity {
 }
 
 model Request {
-  id                        String        @id @default(cuid())
-  number                    Int           @default(autoincrement())
+  id                        String            @id @default(cuid())
+  number                    Int               @default(autoincrement())
   title                     String
-  type                      String        @default("service")
-  status                    String        @default("created")
+  type                      String            @default("service")
+  status                    String            @default("created")
   activityId                String
   unitId                    String?
   createdById               String
@@ -121,19 +121,20 @@ model Request {
   completedAt               DateTime?
   completedSignature        String?
   remarks                   String?
-  activity                  Activity      @relation(fields: [activityId], references: [id])
-  unit                      Unit?         @relation(fields: [unitId], references: [id])
-  createdAt                 DateTime      @default(now())
-  updatedAt                 DateTime      @updatedAt
+  activity                  Activity          @relation(fields: [activityId], references: [id])
+  unit                      Unit?             @relation(fields: [unitId], references: [id])
+  createdAt                 DateTime          @default(now())
+  updatedAt                 DateTime          @updatedAt
   requestItems              RequestItem[]
-  createdBy                 User?         @relation("CreatedBy", fields: [createdById], references: [id])
-  rejectedBy                User?         @relation("RejectedBy", fields: [rejectedById], references: [id])
-  submittedBy               User?         @relation("SubmittedBy", fields: [submittedById], references: [id])
-  budgetApprovedBy          User?         @relation("BudgetApprovedBy", fields: [budgetApprovedById], references: [id])
-  financeApprovedBy         User?         @relation("FinanceApprovedBy", fields: [financeApprovedById], references: [id])
-  paymentProcessedBy        User?         @relation("PaymentProcessedBy", fields: [paymentProcessedById], references: [id])
-  completedBy               User?         @relation("CompletedBy", fields: [completedById], references: [id])
-  clearance                 Clearance[]
+  createdBy                 User?             @relation("CreatedBy", fields: [createdById], references: [id])
+  rejectedBy                User?             @relation("RejectedBy", fields: [rejectedById], references: [id])
+  submittedBy               User?             @relation("SubmittedBy", fields: [submittedById], references: [id])
+  budgetApprovedBy          User?             @relation("BudgetApprovedBy", fields: [budgetApprovedById], references: [id])
+  financeApprovedBy         User?             @relation("FinanceApprovedBy", fields: [financeApprovedById], references: [id])
+  paymentProcessedBy        User?             @relation("PaymentProcessedBy", fields: [paymentProcessedById], references: [id])
+  completedBy               User?             @relation("CompletedBy", fields: [completedById], references: [id])
+  clearances                Clearance[]
+  requestDocuments          RequestDocument[]
 }
 
 model RequestItem {
@@ -157,9 +158,9 @@ model RequestItem {
 }
 
 model Clearance {
-  id                       String    @id @default(cuid())
-  number                   Int       @default(autoincrement())
-  status                   String    @default("created")
+  id                       String              @id @default(cuid())
+  number                   Int                 @default(autoincrement())
+  status                   String              @default("created")
   remarks                  String?
   incompleteRemarks        String?
   requestId                String
@@ -178,12 +179,33 @@ model Clearance {
   completedById            String?
   completedSignature       String?
   completedAt              DateTime?
-  request                  Request   @relation(fields: [requestId], references: [id])
-  createdAt                DateTime  @default(now())
-  updatedAt                DateTime  @updatedAt
-  rejectedBy               User?     @relation("ClearanceRejectedBy", fields: [rejectedById], references: [id])
-  submittedBy              User?     @relation("ClearanceSubmittedBy", fields: [submittedById], references: [id])
-  budgetApprovedBy         User?     @relation("ClearanceBudgetApprovedBy", fields: [budgetApprovedById], references: [id])
-  financeApprovedBy        User?     @relation("ClearanceFinanceApprovedBy", fields: [financeApprovedById], references: [id])
-  completedBy              User?     @relation("ClearanceCompletedBy", fields: [completedById], references: [id])
+  request                  Request             @relation(fields: [requestId], references: [id])
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+  rejectedBy               User?               @relation("ClearanceRejectedBy", fields: [rejectedById], references: [id])
+  submittedBy              User?               @relation("ClearanceSubmittedBy", fields: [submittedById], references: [id])
+  budgetApprovedBy         User?               @relation("ClearanceBudgetApprovedBy", fields: [budgetApprovedById], references: [id])
+  financeApprovedBy        User?               @relation("ClearanceFinanceApprovedBy", fields: [financeApprovedById], references: [id])
+  completedBy              User?               @relation("ClearanceCompletedBy", fields: [completedById], references: [id])
+  clearanceDocuments       ClearanceDocument[]
+}
+
+model ClearanceDocument {
+  id          String    @id @default(cuid())
+  clearanceId String
+  name        String
+  documentUrl String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  clearance   Clearance @relation(fields: [clearanceId], references: [id])
+}
+
+model RequestDocument {
+  id          String   @id @default(cuid())
+  requestId   String
+  name        String
+  documentUrl String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  request     Request  @relation(fields: [requestId], references: [id])
 }

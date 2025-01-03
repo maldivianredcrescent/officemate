@@ -65,6 +65,7 @@ export const getRequestByIdAction = actionClient
             },
           },
         },
+        requestDocuments: true,
         unit: true,
         requestItems: true,
         submittedBy: true,

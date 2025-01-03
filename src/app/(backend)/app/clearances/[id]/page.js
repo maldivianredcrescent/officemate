@@ -23,6 +23,10 @@ import SignaturePopup from "../signature-popup";
 import UpdateExpenditureForm from "../../request-items/update-expenditure-form";
 import RejectClearanceForm from "../reject-clearance";
 import IncompleteClearanceForm from "../incomplete-clearance";
+import { DataTable as ClearanceDocumentTable } from "../../clearance-documents/data-table";
+import { columns as clearanceDocumentTableColumns } from "../../clearance-documents/columns";
+import ClearanceDocumentForm from "../../clearance-documents/form";
+import { getClearanceDocumentByIdAction } from "@/actions/clearanceDocumentActions";
 
 const ClearanceByIdPage = () => {
   const { id } = useParams();
@@ -32,6 +36,12 @@ const ClearanceByIdPage = () => {
   const { limit, skip, pagination, onPaginationChange } = usePagination();
   const [isSignaturePopupOpen, setIsSignaturePopupOpen] = useState(false);
   const [selectedRequestItem, setSelectedRequestItem] = useState(null);
+  const [selectedClearanceDocument, setSelectedClearanceDocument] =
+    useState(null);
+  const {
+    isPending: isClearanceDocumentPending,
+    execute: executeClearanceDocument,
+  } = useAction(getClearanceDocumentByIdAction);
 
   React.useEffect(() => {
     if (id) {
@@ -389,7 +399,6 @@ const ClearanceByIdPage = () => {
               </div>
             </div>
           </div>
-
           {result.data?.clearance?.status !== "created" && (
             <div className="w-full flex flex-col space-y-2">
               <div className="rounded-[--radius] border grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 overflow-hidden">
@@ -523,21 +532,55 @@ const ClearanceByIdPage = () => {
             {result.data?.clearance?.remarks || "N/A"}
           </p>
         </div>
-        <div>
+        <div className="w-full">
+          <div className="flex flex-row justify-between pb-6 pt-12">
+            <p className="text-black text-xl font-[600]">Clearance Documents</p>
+            <ClearanceDocumentForm
+              clearance={result.data?.clearance}
+              clearanceDocument={selectedClearanceDocument}
+              onSuccess={() => {
+                execute({ id, limit, skip });
+              }}
+              onClose={() => {}}
+            />
+          </div>
+          <div className="w-full">
+            <ClearanceDocumentTable
+              columns={clearanceDocumentTableColumns({
+                onEdit: (clearanceDocument) => {
+                  setSelectedClearanceDocument(clearanceDocument);
+                },
+                onDelete: async (clearanceDocument) => {
+                  await executeClearanceDocument({
+                    id: clearanceDocument.id,
+                  });
+                  await execute({ id, limit, skip });
+                },
+              })}
+              isPending={isPending}
+              data={
+                !isPending &&
+                result.data &&
+                result.data.clearance.clearanceDocuments
+                  ? result.data.clearance.clearanceDocuments
+                  : []
+              }
+            />
+          </div>
+        </div>
+        <div className="flex flex-row justify-end gap-2 mt-6">
           {result.data &&
             result.data.clearance &&
             ["submitted", "budget_approved", "finance_approved"].includes(
               result.data?.clearance?.status
             ) && (
-              <div className="w-full flex flex-row justify-end gap-2 mt-6">
-                <RejectClearanceForm
-                  clearance={result.data?.clearance}
-                  onSuccess={() => {
-                    execute({ id, limit, skip });
-                  }}
-                  onClose={() => {}}
-                />
-              </div>
+              <RejectClearanceForm
+                clearance={result.data?.clearance}
+                onSuccess={() => {
+                  execute({ id, limit, skip });
+                }}
+                onClose={() => {}}
+              />
             )}
           {result.data &&
             result.data.clearance &&
@@ -547,15 +590,13 @@ const ClearanceByIdPage = () => {
               "finance_approved",
               "rejected",
             ].includes(result.data?.clearance?.status) && (
-              <div className="w-full flex flex-row justify-end gap-2 mt-6">
-                <IncompleteClearanceForm
-                  clearance={result.data?.clearance}
-                  onSuccess={() => {
-                    execute({ id, limit, skip });
-                  }}
-                  onClose={() => {}}
-                />
-              </div>
+              <IncompleteClearanceForm
+                clearance={result.data?.clearance}
+                onSuccess={() => {
+                  execute({ id, limit, skip });
+                }}
+                onClose={() => {}}
+              />
             )}
         </div>
       </div>

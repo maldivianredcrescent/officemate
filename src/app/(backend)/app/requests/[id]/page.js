@@ -23,6 +23,10 @@ import { deleteRequestItemAction } from "@/actions/requestItemActions";
 import { Button } from "@/components/ui/button";
 import SignaturePopup from "../signature-popup";
 import RejectRequestForm from "../reject-request";
+import { DataTable as RequestDocumentTable } from "../../request-documents/data-table";
+import { columns as requestDocumentTableColumns } from "../../request-documents/columns";
+import RequestDocumentForm from "../../request-documents/form";
+import { deleteRequestDocumentAction } from "@/actions/requestDocumentActions";
 
 const RequestByIdPage = () => {
   const { id } = useParams();
@@ -34,6 +38,11 @@ const RequestByIdPage = () => {
   const { isPending: isDeletePending, execute: deleteRequestItem } = useAction(
     deleteRequestItemAction
   );
+  const [selectedRequestDocument, setSelectedRequestDocument] = useState(null);
+  const {
+    isPending: isRequestDocumentDeletePending,
+    execute: deleteRequestDocument,
+  } = useAction(deleteRequestDocumentAction);
   const [isSignaturePopupOpen, setIsSignaturePopupOpen] = useState(false);
 
   React.useEffect(() => {
@@ -502,6 +511,42 @@ const RequestByIdPage = () => {
             <p className="text-sm lg:mr-[20rem] mr-0">
               {result.data?.request?.remarks || "N/A"}
             </p>
+          </div>
+          <div className="w-full">
+            <div className="flex flex-row justify-between pb-6 pt-12">
+              <p className="text-black text-xl font-[600]">Request Documents</p>
+              <RequestDocumentForm
+                requestDocument={selectedRequestDocument}
+                onSuccess={() => {
+                  execute({ id, limit, skip });
+                }}
+                onClose={() => {}}
+                request={result.data?.request}
+              />
+            </div>
+            <div className="w-full">
+              <RequestDocumentTable
+                columns={requestDocumentTableColumns({
+                  onEdit: (requestDocument) => {
+                    setSelectedRequestDocument(requestDocument);
+                  },
+                  onDelete: async (requestDocument) => {
+                    await deleteRequestDocument({
+                      id: requestDocument.id,
+                    });
+                    await execute({ id, limit, skip });
+                  },
+                })}
+                isPending={isPending}
+                data={
+                  !isPending &&
+                  result.data &&
+                  result.data.request.requestDocuments
+                    ? result.data.request.requestDocuments
+                    : []
+                }
+              />
+            </div>
           </div>
           {result.data &&
             result.data.request &&

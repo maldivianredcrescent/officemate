@@ -64,6 +64,7 @@ export const getClearanceByIdAction = actionClient
             completedBy: true,
           },
         },
+        clearanceDocuments: true,
         submittedBy: true,
         budgetApprovedBy: true,
         financeApprovedBy: true,
