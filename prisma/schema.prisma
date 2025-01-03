@@ -161,6 +161,7 @@ model Clearance {
   number                   Int       @default(autoincrement())
   status                   String    @default("created")
   remarks                  String?
+  incompleteRemarks        String?
   requestId                String
   rejectedById             String?
   rejectedAt               DateTime?

@@ -39,7 +39,7 @@ export const columns = [
         case "created":
           return (
             <div className="flex">
-              <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-orange-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
                 Created
               </div>
             </div>
@@ -71,7 +71,7 @@ export const columns = [
         case "completed":
           return (
             <div className="flex">
-              <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-green-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
                 Completed
               </div>
             </div>
@@ -87,6 +87,29 @@ export const columns = [
         default:
           return <div>{row.getValue("status")}</div>;
       }
+    },
+  },
+  {
+    accessorKey: "incompleteRemarks",
+    header: "Incompleted",
+    cell: ({ row }) => {
+      return (
+        <div>
+          {row.getValue("incompleteRemarks") ? (
+            <div className="flex">
+              <div className="bg-red-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+                Yes
+              </div>
+            </div>
+          ) : (
+            <div className="flex">
+              <div className="bg-gray-200 rounded-full text-black font-[600] text-xs px-3 py-1 text-center">
+                No
+              </div>
+            </div>
+          )}
+        </div>
+      );
     },
   },
   {

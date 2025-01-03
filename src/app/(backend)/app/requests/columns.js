@@ -64,7 +64,7 @@ export const columns = [
         case "created":
           return (
             <div className="flex">
-              <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-orange-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
                 Created
               </div>
             </div>
@@ -104,7 +104,7 @@ export const columns = [
         case "completed":
           return (
             <div className="flex">
-              <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-green-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
                 Completed
               </div>
             </div>

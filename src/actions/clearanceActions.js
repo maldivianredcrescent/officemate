@@ -125,6 +125,8 @@ export const submitClearanceForApprovalAction = actionClient
         submittedAt: new Date(),
         submittedById: user.id,
         submittedSignature: parsedInput.signature,
+        incompleteRemarks: null,
+        rejectedRemarks: null,
       },
     });
     return { clearance, success: true };
@@ -143,6 +145,8 @@ export const submitClearanceForBudgetApprovalAction = actionClient
         budgetApprovedAt: new Date(),
         budgetApprovedById: user.id,
         budgetApprovedSignature: parsedInput.signature,
+        incompleteRemarks: null,
+        rejectedRemarks: null,
       },
     });
     return { request, success: true };
@@ -161,6 +165,8 @@ export const submitClearanceForFinanceApprovalAction = actionClient
         financeApprovedAt: new Date(),
         financeApprovedById: user.id,
         financeApprovedSignature: parsedInput.signature,
+        incompleteRemarks: null,
+        rejectedRemarks: null,
       },
     });
     return { clearance, success: true };
@@ -179,6 +185,8 @@ export const completeClearanceAction = actionClient
         completedAt: new Date(),
         completedById: user.id,
         completedSignature: parsedInput.signature,
+        incompleteRemarks: null,
+        rejectedRemarks: null,
       },
     });
     return { clearance, success: true };
@@ -197,6 +205,32 @@ export const rejectClearanceAction = actionClient
         rejectedAt: new Date(),
         rejectedById: user.id,
         rejectedRemarks: parsedInput.rejectedRemarks,
+        incompleteRemarks: null,
+      },
+    });
+    return { clearance, success: true };
+  });
+
+export const incompleteClearanceAction = actionClient
+  .schema(z.object({ id: z.string(), incompleteRemarks: z.string() }))
+  .action(async ({ parsedInput }) => {
+    const clearance = await prisma.clearance.update({
+      where: { id: parsedInput.id },
+      data: {
+        status: "created",
+        incompleteRemarks: parsedInput.incompleteRemarks,
+        submittedById: null,
+        submittedSignature: null,
+        submittedAt: null,
+        budgetApprovedById: null,
+        budgetApprovedAt: null,
+        budgetApprovedSignature: null,
+        financeApprovedById: null,
+        financeApprovedAt: null,
+        financeApprovedSignature: null,
+        completedById: null,
+        completedSignature: null,
+        completedAt: null,
       },
     });
     return { clearance, success: true };

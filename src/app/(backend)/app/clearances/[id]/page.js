@@ -22,6 +22,7 @@ import { columns } from "../../request-items/columns";
 import SignaturePopup from "../signature-popup";
 import UpdateExpenditureForm from "../../request-items/update-expenditure-form";
 import RejectClearanceForm from "../reject-clearance";
+import IncompleteClearanceForm from "../incomplete-clearance";
 
 const ClearanceByIdPage = () => {
   const { id } = useParams();
@@ -130,18 +131,8 @@ const ClearanceByIdPage = () => {
       <div className="w-full h-full p-4">
         <div className="w-full flex flex-col justify-between pb-4 capitalize">
           <div className="w-full flex flex-row items-center justify-between gap-4 mb-2">
-            <div className="flex flex-row gap-3 items-center">
-              <h1 className="text-2xl font-semibold">
-                {result.data && result.data.clearance
-                  ? "Clearance for " +
-                    "MRCR/" +
-                    moment(result.data.clearance.request.createdAt).format(
-                      "YYYY"
-                    ) +
-                    "/" +
-                    result.data.clearance.request.number
-                  : "Clearance Details"}
-              </h1>
+            <div className="flex md:flex-row flex-col md:gap-3 gap-1 md:items-center items-start">
+              <h1 className="text-2xl font-semibold">Clearance</h1>
               <div>{renderStatus(result.data?.clearance?.status)}</div>
             </div>
             <div className="text-xl font-semibold">
@@ -156,12 +147,24 @@ const ClearanceByIdPage = () => {
           </div>
           {result.data?.clearance?.status === "rejected" && (
             <div>
-              <div className="w-full flex flex-col space-y-2 my-2 bg-red-50 rounded-[--radius] p-4 border border-red-200">
+              <div className="w-full flex flex-col space-y-1 my-2 bg-red-50 rounded-[--radius] p-4 border border-red-200">
                 <p className="text-sm text-black/50 font-[600] text-red-500">
                   Reject Remarks
                 </p>
                 <p className="text-sm lg:mr-[20rem] mr-0 text-red-500">
                   {result.data?.clearance?.rejectedRemarks || "N/A"}
+                </p>
+              </div>
+            </div>
+          )}
+          {result.data?.clearance?.incompleteRemarks && (
+            <div>
+              <div className="w-full flex flex-col space-y-1 my-2 bg-yellow-50 rounded-[--radius] p-4 border border-yellow-200">
+                <p className="text-sm text-black/50 font-[600] text-yellow-600">
+                  Incomplete Remarks
+                </p>
+                <p className="text-sm lg:mr-[20rem] mr-0 text-yellow-600">
+                  {result.data?.clearance?.incompleteRemarks || "N/A"}
                 </p>
               </div>
             </div>
@@ -520,21 +523,41 @@ const ClearanceByIdPage = () => {
             {result.data?.clearance?.remarks || "N/A"}
           </p>
         </div>
-        {result.data &&
-          result.data.clearance &&
-          ["submitted", "budget_approved", "finance_approved"].includes(
-            result.data?.clearance?.status
-          ) && (
-            <div className="w-full flex flex-row justify-end gap-2 mt-6">
-              <RejectClearanceForm
-                clearance={result.data?.clearance}
-                onSuccess={() => {
-                  execute({ id, limit, skip });
-                }}
-                onClose={() => {}}
-              />
-            </div>
-          )}
+        <div>
+          {result.data &&
+            result.data.clearance &&
+            ["submitted", "budget_approved", "finance_approved"].includes(
+              result.data?.clearance?.status
+            ) && (
+              <div className="w-full flex flex-row justify-end gap-2 mt-6">
+                <RejectClearanceForm
+                  clearance={result.data?.clearance}
+                  onSuccess={() => {
+                    execute({ id, limit, skip });
+                  }}
+                  onClose={() => {}}
+                />
+              </div>
+            )}
+          {result.data &&
+            result.data.clearance &&
+            [
+              "submitted",
+              "budget_approved",
+              "finance_approved",
+              "rejected",
+            ].includes(result.data?.clearance?.status) && (
+              <div className="w-full flex flex-row justify-end gap-2 mt-6">
+                <IncompleteClearanceForm
+                  clearance={result.data?.clearance}
+                  onSuccess={() => {
+                    execute({ id, limit, skip });
+                  }}
+                  onClose={() => {}}
+                />
+              </div>
+            )}
+        </div>
       </div>
       <UpdateExpenditureForm
         requestItem={selectedRequestItem}
