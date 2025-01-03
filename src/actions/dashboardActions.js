@@ -13,14 +13,19 @@ export const getDashboardRequestsAction = actionClient
     })
   )
   .action(async ({ parsedInput }) => {
-    const clearances = await prisma.clearance.findMany({
+    const requests = await prisma.request.findMany({
       where: parsedInput.type ? { type: parsedInput.type } : undefined,
       orderBy: { updatedAt: "desc" },
       include: {
-        request: {
+        unit: true,
+        activity: {
           include: {
-            activity: true,
-            requestItems: true,
+            workplan: true,
+            project: {
+              include: {
+                donor: true,
+              },
+            },
           },
         },
       },
@@ -28,8 +33,11 @@ export const getDashboardRequestsAction = actionClient
       take: parsedInput.limit,
     });
 
-    const totalClearances = await prisma.clearance.count({
+    const totalRequests = await prisma.request.count({
       where: parsedInput.type ? { type: parsedInput.type } : undefined,
     });
-    return { clearances, totalClearances, success: true };
+    const activities = await prisma.activity.findMany({
+      include: { workplan: true },
+    });
+    return { requests, totalRequests, activities, success: true };
   });

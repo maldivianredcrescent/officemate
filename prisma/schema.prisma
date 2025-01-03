@@ -149,6 +149,7 @@ model RequestItem {
   tgst          Float?    @default(0)
   serviceCharge Float?    @default(0)
   payee         String?
+  documentUrl   String?
   clearanceDate DateTime?
   file          String?
   expenditure   Float?    @default(0)
