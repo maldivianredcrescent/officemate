@@ -168,7 +168,7 @@ const PrintClearancePage = () => {
                 <div>
                   <img
                     src={result.data.clearance.submittedSignature}
-                    className="w-[100px] h-[100px]"
+                    className="h-[100px]"
                   />
                 </div>
               )}
@@ -186,7 +186,7 @@ const PrintClearancePage = () => {
                 <div>
                   <img
                     src={result.data.clearance.budgetApprovedSignature}
-                    className="w-[100px] h-[100px]"
+                    className="h-[100px]"
                   />
                 </div>
               )}
@@ -204,7 +204,7 @@ const PrintClearancePage = () => {
                 <div>
                   <img
                     src={result.data.clearance.financeApprovedSignature}
-                    className="w-[100px] h-[100px]"
+                    className="h-[100px]"
                   />
                 </div>
               )}

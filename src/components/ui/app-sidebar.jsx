@@ -22,6 +22,8 @@ import {
 import { Button } from "./button";
 import { LogOutIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import UpdateUserSignatureForm from "@/app/(backend)/app/users/update-signature";
+import { useState } from "react";
 
 // Menu items.
 const items = [
@@ -403,6 +405,7 @@ const settingsItems = [
 export function AppSidebar() {
   const { data: session } = useSession();
   const user = session?.user;
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Sidebar>
@@ -523,6 +526,12 @@ export function AppSidebar() {
         )}
       </SidebarContent>
       <SidebarFooter>
+        <UpdateUserSignatureForm
+          isOpen={isOpen}
+          user={user}
+          onSuccess={() => {}}
+          onClose={() => {}}
+        />
         <Button
           onClick={() => signOut({ callbackUrl: "/auth/signin" })}
           className="w-full"

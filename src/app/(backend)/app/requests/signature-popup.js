@@ -21,6 +21,7 @@ import { submitRequestForFinanceApprovalAction } from "@/actions/requestActions"
 import { completedRequestAction } from "@/actions/requestActions";
 import { useAction } from "next-safe-action/hooks";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +44,8 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
 
   useEffect(() => {
     setIsOpen(isPopupOpen);
-  }, [isPopupOpen]);
+    setSignature(user?.signatureUrl);
+  }, [isPopupOpen, user?.signatureUrl]);
 
   const handleSubmit = async (s) => {
     setIsLoading(true);
@@ -128,12 +130,7 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
-          <SignaturePad
-            onChange={(signature) => {
-              setSignature(signature);
-              console.log(signature);
-            }}
-          />
+          <img src={user?.signatureUrl} alt="signature" />
         </div>
         <DialogFooter>
           {signature && (
@@ -165,33 +162,11 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
                   ></path>
                 </svg>
               )}
-              {request?.status === "created" && "Submit"}
+              Sign & {request?.status === "created" && "Submit"}
               {request?.status === "submitted" && "Approve budget"}
               {request?.status === "budget_approved" && "Approve finance"}
               {request?.status === "finance_approved" && "Payment processing"}
               {request?.status === "payment_processing" && "Complete request"}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                className="size-6"
-                color={"#ffffff"}
-                fill={"none"}
-              >
-                <path
-                  d="M20.0001 11.9998L4.00012 11.9998"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M15.0003 17C15.0003 17 20.0002 13.3176 20.0002 12C20.0002 10.6824 15.0002 7 15.0002 7"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
             </Button>
           )}
         </DialogFooter>

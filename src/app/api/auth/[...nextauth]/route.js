@@ -23,14 +23,20 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id; // Add user ID to the token
         token.name = user.name; // Add user name to the token
         token.email = user.email; // Add user email to the token
         token.role = user.role; // Add user role to the token
         token.unitId = user.unitId; // Add user unitId to the token
+        token.signatureUrl = user.signatureUrl; // Add user signatureUrl to the token
       }
+
+      if (trigger === "update" && session?.signatureUrl) {
+        token.signatureUrl = session.signatureUrl;
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -41,6 +47,7 @@ export const authOptions = {
         email: token.email,
         role: token.role,
         unitId: token.unitId,
+        signatureUrl: token.signatureUrl,
       };
       return session;
     },

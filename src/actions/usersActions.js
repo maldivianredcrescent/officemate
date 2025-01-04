@@ -78,3 +78,18 @@ export const updateUserAction = actionClient
       return { user, success: true };
     }
   });
+
+export const updateUserSignatureAction = actionClient
+  .schema(
+    z.object({
+      id: z.string().min(1, "User ID is required"),
+      signatureUrl: z.string().min(1, "Signature URL is required"),
+    })
+  )
+  .action(async ({ parsedInput }) => {
+    const user = await prisma.user.update({
+      where: { id: parsedInput.id },
+      data: { signatureUrl: parsedInput.signatureUrl },
+    });
+    return { user, success: true };
+  });

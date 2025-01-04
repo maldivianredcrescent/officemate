@@ -139,7 +139,7 @@ const PrintRequestPage = () => {
                 <div>
                   <img
                     src={result.data?.request?.submittedSignature}
-                    className="w-[100px] h-[100px]"
+                    className="h-[100px]"
                   />
                 </div>
               )}
@@ -157,7 +157,7 @@ const PrintRequestPage = () => {
                 <div>
                   <img
                     src={result.data?.request?.budgetApprovedSignature}
-                    className="w-[100px] h-[100px]"
+                    className="h-[100px]"
                   />
                 </div>
               )}
@@ -175,7 +175,7 @@ const PrintRequestPage = () => {
                 <div>
                   <img
                     src={result.data?.request?.financeApprovedSignature}
-                    className="w-[100px] h-[100px]"
+                    className="h-[100px]"
                   />
                 </div>
               )}

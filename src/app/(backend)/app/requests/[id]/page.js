@@ -403,7 +403,7 @@ const RequestByIdPage = () => {
                         <div>
                           <img
                             src={result.data?.request?.submittedSignature}
-                            className="w-[100px] h-[100px]"
+                            className="h-[100px]"
                           />
                         </div>
                       )}
@@ -432,7 +432,7 @@ const RequestByIdPage = () => {
                         <div>
                           <img
                             src={result.data?.request?.budgetApprovedSignature}
-                            className="w-[100px] h-[100px]"
+                            className="h-[100px]"
                           />
                         </div>
                       )}
@@ -461,7 +461,7 @@ const RequestByIdPage = () => {
                         <div>
                           <img
                             src={result.data?.request?.financeApprovedSignature}
-                            className="w-[100px] h-[100px]"
+                            className="h-[100px]"
                           />
                         </div>
                       )}
@@ -492,7 +492,7 @@ const RequestByIdPage = () => {
                             src={
                               result.data?.request?.paymentProcessedSignature
                             }
-                            className="w-[100px] h-[100px]"
+                            className="h-[100px]"
                           />
                         </div>
                       )}
@@ -521,7 +521,7 @@ const RequestByIdPage = () => {
                         <div>
                           <img
                             src={result.data?.request?.completedSignature}
-                            className="w-[100px] h-[100px]"
+                            className="h-[100px]"
                           />
                         </div>
                       )}

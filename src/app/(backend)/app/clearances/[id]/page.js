@@ -428,7 +428,7 @@ const ClearanceByIdPage = () => {
                         <div>
                           <img
                             src={result.data?.clearance?.submittedSignature}
-                            className="w-[100px] h-[100px]"
+                            className="h-[100px]"
                           />
                         </div>
                       )}
@@ -459,7 +459,7 @@ const ClearanceByIdPage = () => {
                             src={
                               result.data?.clearance?.budgetApprovedSignature
                             }
-                            className="w-[100px] h-[100px]"
+                            className="h-[100px]"
                           />
                         </div>
                       )}
@@ -490,7 +490,7 @@ const ClearanceByIdPage = () => {
                             src={
                               result.data?.clearance?.financeApprovedSignature
                             }
-                            className="w-[100px] h-[100px]"
+                            className="h-[100px]"
                           />
                         </div>
                       )}
@@ -519,7 +519,7 @@ const ClearanceByIdPage = () => {
                         <div>
                           <img
                             src={result.data?.clearance?.completedSignature}
-                            className="w-[100px] h-[100px]"
+                            className="h-[100px]"
                           />
                         </div>
                       )}

@@ -36,7 +36,8 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
 
   useEffect(() => {
     setIsOpen(isPopupOpen);
-  }, [isPopupOpen]);
+    setSignature(user?.signatureUrl);
+  }, [isPopupOpen, user?.signatureUrl]);
 
   const handleSubmit = async (s) => {
     setIsLoading(true);
@@ -116,12 +117,7 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
-          <SignaturePad
-            onChange={(signature) => {
-              setSignature(signature);
-              console.log(signature);
-            }}
-          />
+          <img src={user?.signatureUrl} alt="signature" />
         </div>
         <DialogFooter>
           {signature && (
@@ -153,7 +149,7 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
                   ></path>
                 </svg>
               )}
-              {request?.status === "created" && "Submit"}
+              Sign & {request?.status === "created" && "Submit"}
               {request?.status === "submitted" && "Approve budget"}
               {request?.status === "budget_approved" && "Approve finance"}
               {request?.status === "finance_approved" && "Complete request"}
