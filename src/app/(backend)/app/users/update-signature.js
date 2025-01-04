@@ -82,15 +82,38 @@ const UpdateUserSignatureForm = ({ user, onSuccess, onClose }) => {
         setIsOpen(open);
       }}
     >
-      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]">
-        {user ? "Edit User Signature" : "Create User"}
+      <DialogTrigger className="text-sm text-black bg-gray-100 px-3 h-[42px] rounded-[--radius] text-left flex items-center gap-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width={20}
+          height={20}
+          color={"#000000"}
+          fill={"none"}
+        >
+          <path
+            d="M22 12.6344C18 16.1465 17.4279 10.621 15.3496 11.0165C13 11.4637 11.5 16.4445 13 16.4445C14.5 16.4445 12.5 10.5 10.5 12.5556C8.5 14.6111 7.85936 17.2946 6.23526 15.3025C-1.5 5.81446 4.99998 -1.14994 8.16322 3.45685C10.1653 6.37256 6.5 16.9769 2 22"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M9 21H19"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        Update Signature
       </DialogTrigger>
       <DialogContent className="overflow-y-auto">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader>
               <DialogTitle className="font-semibold">
-                {user ? "Edit User Signature" : "Create User"}
+                Update Signature
               </DialogTitle>
               <DialogDescription>
                 {user

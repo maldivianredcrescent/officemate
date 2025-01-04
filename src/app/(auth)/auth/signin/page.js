@@ -44,25 +44,19 @@ const SignInPage = () => {
         <div>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                fill="#ffffff"
-                viewBox="0 0 256 256"
-              >
-                <path d="M201.54,54.46A104,104,0,0,0,54.46,201.54,104,104,0,0,0,201.54,54.46ZM190.23,65.78a88.18,88.18,0,0,1,11,13.48L167.55,119,139.63,40.78A87.34,87.34,0,0,1,190.23,65.78ZM155.59,133l-18.16,21.37-27.59-5L100.41,123l18.16-21.37,27.59,5ZM65.77,65.78a87.34,87.34,0,0,1,56.66-25.59l17.51,49L58.3,74.32A88,88,0,0,1,65.77,65.78ZM46.65,161.54a88.41,88.41,0,0,1,2.53-72.62l51.21,9.35Zm19.12,28.68a88.18,88.18,0,0,1-11-13.48L88.45,137l27.92,78.18A87.34,87.34,0,0,1,65.77,190.22Zm124.46,0a87.34,87.34,0,0,1-56.66,25.59l-17.51-49,81.64,14.91A88,88,0,0,1,190.23,190.22Zm-34.62-32.49,53.74-63.27a88.41,88.41,0,0,1-2.53,72.62Z"></path>
-              </svg>
+              <img src="/whitelogo.svg" alt="Logo" />
             </div>
             <span className="text-xl">Office Mate</span>
           </div>
         </div>
         <div>
-          <blockquote className="text-lg mb-4 font-[400]">
-            "This library has saved me countless hours of work and helped me
-            deliver stunning designs to my clients faster than ever before."
+          <blockquote className="text-md mb-4 font-[400]">
+            "The only way to do great work is to love what you do. It is through
+            passion and dedication that we can truly excel in our endeavors,
+            pushing the boundaries of what we believe is possible and achieving
+            greatness in our respective fields."
           </blockquote>
-          <p>Sofia Davis</p>
+          <p>Steve Jobs</p>
         </div>
       </div>
       {/* Right side with form */}
@@ -71,15 +65,7 @@ const SignInPage = () => {
           <div className="lg:hidden flex justify-between items-center mb-12">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  fill="#000000"
-                  viewBox="0 0 256 256"
-                >
-                  <path d="M201.54,54.46A104,104,0,0,0,54.46,201.54,104,104,0,0,0,201.54,54.46ZM190.23,65.78a88.18,88.18,0,0,1,11,13.48L167.55,119,139.63,40.78A87.34,87.34,0,0,1,190.23,65.78ZM155.59,133l-18.16,21.37-27.59-5L100.41,123l18.16-21.37,27.59,5ZM65.77,65.78a87.34,87.34,0,0,1,56.66-25.59l17.51,49L58.3,74.32A88,88,0,0,1,65.77,65.78ZM46.65,161.54a88.41,88.41,0,0,1,2.53-72.62l51.21,9.35Zm19.12,28.68a88.18,88.18,0,0,1-11-13.48L88.45,137l27.92,78.18A87.34,87.34,0,0,1,65.77,190.22Zm124.46,0a87.34,87.34,0,0,1-56.66,25.59l-17.51-49,81.64,14.91A88,88,0,0,1,190.23,190.22Zm-34.62-32.49,53.74-63.27a88.41,88.41,0,0,1-2.53,72.62Z"></path>
-                </svg>
+                <img src="/logo.svg" alt="Logo" />
               </div>
               <span className="text-xl">Office Mate</span>
             </div>
@@ -135,15 +121,7 @@ const SignInPage = () => {
               </Button>
             </form>
             <p className="text-sm text-gray-600 text-center mt-6">
-              By clicking continue, you agree to our{" "}
-              <a href="/terms" className="underline">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="/privacy" className="underline">
-                Privacy Policy
-              </a>
-              .
+              All rights reserved. © Office Mate 2025 by Maldivian Red Crescent
             </p>
           </div>
         </div>
