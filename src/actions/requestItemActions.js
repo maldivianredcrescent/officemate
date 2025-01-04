@@ -115,6 +115,7 @@ export const updateExpenditureAction = actionClient
       id: z.string(),
       expenditure: z.number(),
       payee: z.string(),
+      documentUrl: z.string().optional(),
     })
   )
   .action(async ({ parsedInput }) => {
@@ -123,6 +124,7 @@ export const updateExpenditureAction = actionClient
       data: {
         expenditure: parsedInput.expenditure,
         payee: parsedInput.payee,
+        documentUrl: parsedInput.documentUrl,
         clearanceDate: new Date(),
       },
     });

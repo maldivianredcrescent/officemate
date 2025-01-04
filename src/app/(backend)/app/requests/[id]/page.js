@@ -27,6 +27,8 @@ import { DataTable as RequestDocumentTable } from "../../request-documents/data-
 import { columns as requestDocumentTableColumns } from "../../request-documents/columns";
 import RequestDocumentForm from "../../request-documents/form";
 import { deleteRequestDocumentAction } from "@/actions/requestDocumentActions";
+import { date } from "zod";
+import { useSession } from "next-auth/react";
 
 const RequestByIdPage = () => {
   const { id } = useParams();
@@ -44,6 +46,8 @@ const RequestByIdPage = () => {
     execute: deleteRequestDocument,
   } = useAction(deleteRequestDocumentAction);
   const [isSignaturePopupOpen, setIsSignaturePopupOpen] = useState(false);
+  const { data: session } = useSession();
+  const user = session?.user;
 
   React.useEffect(() => {
     if (id) {
@@ -254,13 +258,37 @@ const RequestByIdPage = () => {
           <div className="w-full">
             <DataTable
               columns={columns({
-                onEdit: async (requestItem) => {
-                  setSelectedRequestItem(requestItem);
-                },
-                onDelete: async (requestItem) => {
-                  await deleteRequestItem({ id: requestItem.id });
-                  await execute({ id, limit, skip });
-                },
+                onEdit:
+                  [
+                    "created",
+                    "submitted",
+                    "budget_approved",
+                    "finance_approved",
+                  ].includes(result.data?.request?.status) ||
+                  user?.role === "admin" ||
+                  user?.role === "budget_approver" ||
+                  user?.role === "finance_approver" ||
+                  user?.role === "payment_processor"
+                    ? async (requestItem) => {
+                        setSelectedRequestItem(requestItem);
+                      }
+                    : null,
+                onDelete:
+                  [
+                    "created",
+                    "submitted",
+                    "budget_approved",
+                    "finance_approved",
+                  ].includes(result.data?.request?.status) ||
+                  user?.role === "admin" ||
+                  user?.role === "budget_approver" ||
+                  user?.role === "finance_approver" ||
+                  user?.role === "payment_processor"
+                    ? async (requestItem) => {
+                        await deleteRequestItem({ id: requestItem.id });
+                        await execute({ id, limit, skip });
+                      }
+                    : null,
               })}
               isPending={isPending}
               data={
@@ -268,24 +296,20 @@ const RequestByIdPage = () => {
                   ? result.data.request.requestItems
                   : []
               }
-              // onPaginationChange={onPaginationChange}
-              // pagination={pagination}
             />
             <div className="my-6 flex items-center justify-between">
               <div className="flex flex-row gap-2">
-                {result.data &&
-                  result.data.request &&
-                  ["created"].includes(result.data?.request?.status) && (
-                    <RequestItemForm
-                      requestItem={selectedRequestItem}
-                      request={result.data.request}
-                      onSuccess={() => {
-                        execute({ id, limit, skip });
-                        setSelectedRequestItem(null);
-                      }}
-                      onClose={() => setSelectedRequestItem(null)}
-                    />
-                  )}
+                {result.data && result.data.request && (
+                  <RequestItemForm
+                    requestItem={selectedRequestItem}
+                    request={result.data.request}
+                    onSuccess={() => {
+                      execute({ id, limit, skip });
+                      setSelectedRequestItem(null);
+                    }}
+                    onClose={() => setSelectedRequestItem(null)}
+                  />
+                )}
                 <div>
                   <Button
                     onClick={() => {
@@ -339,6 +363,7 @@ const RequestByIdPage = () => {
                   "payment_processing",
                 ].includes(result.data?.request?.status) && (
                   <SignaturePopup
+                    user={user}
                     request={result.data?.request}
                     isPopupOpen={isSignaturePopupOpen}
                     onSuccess={() => {
@@ -515,14 +540,23 @@ const RequestByIdPage = () => {
           <div className="w-full">
             <div className="flex flex-row justify-between pb-6 pt-12">
               <p className="text-black text-xl font-[600]">Request Documents</p>
-              <RequestDocumentForm
-                requestDocument={selectedRequestDocument}
-                onSuccess={() => {
-                  execute({ id, limit, skip });
-                }}
-                onClose={() => {}}
-                request={result.data?.request}
-              />
+              {result.data &&
+                result.data.request &&
+                [
+                  "submitted",
+                  "budget_approved",
+                  "finance_approved",
+                  "completed",
+                ].includes(result.data?.request?.status) && (
+                  <RequestDocumentForm
+                    requestDocument={selectedRequestDocument}
+                    onSuccess={() => {
+                      execute({ id, limit, skip });
+                    }}
+                    onClose={() => {}}
+                    request={result.data?.request}
+                  />
+                )}
             </div>
             <div className="w-full">
               <RequestDocumentTable

@@ -17,8 +17,9 @@ import { submitClearanceForBudgetApprovalAction } from "@/actions/clearanceActio
 import { submitClearanceForFinanceApprovalAction } from "@/actions/clearanceActions";
 import { completeClearanceAction } from "@/actions/clearanceActions";
 import { useAction } from "next-safe-action/hooks";
+import { cn } from "@/lib/utils";
 
-const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request }) => {
+const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [signature, setSignature] = useState(null);
@@ -60,6 +61,34 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request }) => {
     setIsOpen(false);
   };
 
+  const hasPermission = (status, role) => {
+    if (status === "created") {
+      return (
+        role === "admin" ||
+        role === "user" ||
+        role === "budget_approver" ||
+        role === "finance_approver" ||
+        role === "payment_processor"
+      );
+    }
+    if (status === "submitted") {
+      return role === "budget_approver" || role === "admin";
+    }
+    if (status === "budget_approved") {
+      return role === "finance_approver" || role === "admin";
+    }
+    if (status === "finance_approved") {
+      return role === "payment_processor" || role === "admin";
+    }
+    if (status === "payment_processing") {
+      return role === "payment_processor" || role === "admin";
+    }
+    if (status === "completed") {
+      return role === "admin" || role === "payment_processor";
+    }
+    return false;
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -68,7 +97,12 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request }) => {
         onClose?.();
       }}
     >
-      <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]">
+      <DialogTrigger
+        className={cn(
+          "text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]",
+          !hasPermission(request.status, user.role) && "hidden"
+        )}
+      >
         {request?.status === "created" && "Submit clearance"}
         {request?.status === "submitted" && "Approve budget"}
         {request?.status === "budget_approved" && "Approve finance"}

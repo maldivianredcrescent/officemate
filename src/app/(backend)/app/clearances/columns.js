@@ -39,7 +39,7 @@ export const columns = [
         case "created":
           return (
             <div className="flex">
-              <div className="bg-orange-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-orange-100 rounded-full text-orange-600 font-[600] text-xs px-3 py-1 text-center">
                 Created
               </div>
             </div>
@@ -47,7 +47,7 @@ export const columns = [
         case "submitted":
           return (
             <div className="flex">
-              <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-blue-100 rounded-full text-blue-600 font-[600] text-xs px-3 py-1 text-center">
                 Submitted
               </div>
             </div>
@@ -55,7 +55,7 @@ export const columns = [
         case "budget_approved":
           return (
             <div className="flex">
-              <div className="bg-[#A5F3FC] rounded-full text-[#020617] font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-blue-100 rounded-full text-blue-600 font-[600] text-xs px-3 py-1 text-center">
                 Budget Approved
               </div>
             </div>
@@ -63,7 +63,7 @@ export const columns = [
         case "finance_approved":
           return (
             <div className="flex">
-              <div className="bg-[#0891B2] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-blue-100 rounded-full text-blue-600 font-[600] text-xs px-3 py-1 text-center">
                 Finance Approved
               </div>
             </div>
@@ -71,7 +71,7 @@ export const columns = [
         case "completed":
           return (
             <div className="flex">
-              <div className="bg-green-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-green-100 rounded-full text-green-600 font-[600] text-xs px-3 py-1 text-center">
                 Completed
               </div>
             </div>
@@ -79,7 +79,7 @@ export const columns = [
         case "rejected":
           return (
             <div className="flex">
-              <div className="bg-red-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-red-100 rounded-full text-red-600 font-[600] text-xs px-3 py-1 text-center">
                 Rejected
               </div>
             </div>
@@ -97,13 +97,13 @@ export const columns = [
         <div>
           {row.getValue("incompleteRemarks") ? (
             <div className="flex">
-              <div className="bg-red-500 rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-red-100 rounded-full text-red-600 font-[600] text-xs px-3 py-1 text-center">
                 Yes
               </div>
             </div>
           ) : (
             <div className="flex">
-              <div className="bg-gray-200 rounded-full text-black font-[600] text-xs px-3 py-1 text-center">
+              <div className="bg-gray-100 rounded-full text-black font-[600] text-xs px-3 py-1 text-center">
                 No
               </div>
             </div>

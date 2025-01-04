@@ -36,11 +36,13 @@ const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
       z.object({
         expenditure: z.number().min(0),
         payee: z.string().min(1),
+        documentUrl: z.string().optional(),
       })
     ),
     defaultValues: {
       expenditure: 0,
       payee: "",
+      documentUrl: "",
     },
   });
 
@@ -48,6 +50,7 @@ const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
     if (requestItem) {
       form.setValue("expenditure", requestItem.expenditure);
       form.setValue("payee", requestItem.payee);
+      form.setValue("documentUrl", requestItem.documentUrl);
       setIsOpen(true);
     }
   }, [requestItem]);
@@ -131,6 +134,24 @@ const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value))
                         }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="documentUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Document URL</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        {...field}
+                        placeholder="Enter document URL"
+                        onChange={(e) => field.onChange(e.target.value)}
                       />
                     </FormControl>
                     <FormMessage />

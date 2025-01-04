@@ -31,6 +31,10 @@ export const columns = [
     header: "Name",
   },
   {
+    accessorKey: "user.name",
+    header: "Budget Holder",
+  },
+  {
     accessorKey: "amount",
     header: "Amount",
     cell: ({ row }) => {

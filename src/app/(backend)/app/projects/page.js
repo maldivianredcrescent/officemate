@@ -52,6 +52,9 @@ const BudgetPage = () => {
             </Breadcrumb>
             <div>
               <ProjectForm // Updated to ProjectForm
+                users={
+                  result.data && result.data.users ? result.data.users : []
+                }
                 donors={
                   result.data && result.data.donors ? result.data.donors : []
                 }

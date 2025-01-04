@@ -35,6 +35,7 @@ model User {
   clearanceBudgetApproved  Clearance[] @relation("ClearanceBudgetApprovedBy")
   clearanceFinanceApproved Clearance[] @relation("ClearanceFinanceApprovedBy")
   clearanceCompleted       Clearance[] @relation("ClearanceCompletedBy")
+  projects                 Project[]   @relation("ProjectUser")
 }
 
 model Unit {
@@ -64,6 +65,8 @@ model Project {
   donorId       String
   strategicCode Int?
   amount        Float?
+  userId        String?
+  user          User?      @relation("ProjectUser", fields: [userId], references: [id])
   file          String?
   donor         Donor      @relation(fields: [donorId], references: [id], onDelete: Cascade)
   createdAt     DateTime   @default(now())

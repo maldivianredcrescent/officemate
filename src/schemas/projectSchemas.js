@@ -10,6 +10,7 @@ export const projectSchema = z.object({
   strategicCode: z.number().optional(),
   amount: z.number().optional(),
   file: z.string().optional(),
+  userId: z.string().optional(),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
 });

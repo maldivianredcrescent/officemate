@@ -57,6 +57,9 @@ const ProjectByIdPage = () => {
               {result.data && result.data.project && (
                 <ProjectForm
                   isOpen={isEditFormOpen}
+                  users={
+                    result.data && result.data.users ? result.data.users : []
+                  }
                   donors={
                     result.data && result.data.donors ? result.data.donors : []
                   }

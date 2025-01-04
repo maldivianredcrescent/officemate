@@ -15,11 +15,12 @@ export const getProjectsAction = actionClient // Updated function name
       orderBy: { updatedAt: "desc" },
       skip: parsedInput.skip,
       take: parsedInput.limit,
-      include: { donor: true },
+      include: { donor: true, user: true },
     });
     const donors = await prisma.donor.findMany();
     const totalProjects = await prisma.project.count(); // Updated to count projects
-    return { projects, donors, totalProjects, success: true }; // Updated return object
+    const users = await prisma.user.findMany();
+    return { projects, donors, totalProjects, users, success: true }; // Updated return object
   });
 
 export const getProjectByIdAction = actionClient // Updated function name
@@ -29,7 +30,8 @@ export const getProjectByIdAction = actionClient // Updated function name
       where: { id: parsedInput.id },
     });
     const donors = await prisma.donor.findMany();
-    return { project, donors, success: true };
+    const users = await prisma.user.findMany();
+    return { project, donors, users, success: true };
   });
 
 export const createProjectAction = actionClient // Updated function name

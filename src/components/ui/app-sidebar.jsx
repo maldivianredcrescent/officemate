@@ -1,6 +1,9 @@
+"use client";
+
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -16,12 +19,22 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./collapsible";
+import { Button } from "./button";
+import { LogOutIcon } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
 // Menu items.
 const items = [
   {
     title: "Dashboard",
     url: "/app/dashboard",
+    accessibleRoles: [
+      "admin",
+      "budget_approver",
+      "finance_approver",
+      "payment_processor",
+      "user",
+    ],
     icon: () => {
       return (
         <svg
@@ -43,6 +56,13 @@ const items = [
   },
   {
     title: "Requests",
+    accessibleRoles: [
+      "admin",
+      "budget_approver",
+      "finance_approver",
+      "payment_processor",
+      "user",
+    ],
     items: [
       {
         title: "All Requests",
@@ -95,6 +115,13 @@ const items = [
   {
     title: "Clearances",
     url: "/app/clearances",
+    accessibleRoles: [
+      "admin",
+      "budget_approver",
+      "finance_approver",
+      "payment_processor",
+      "user",
+    ],
     icon: () => {
       return (
         <svg
@@ -146,6 +173,7 @@ const items = [
   {
     title: "Workplans",
     url: "/app/workplans",
+    accessibleRoles: ["admin", "finance_approver", "budget_approver"],
     icon: () => {
       return (
         <svg
@@ -373,6 +401,9 @@ const settingsItems = [
 ];
 
 export function AppSidebar() {
+  const { data: session } = useSession();
+  const user = session?.user;
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -423,7 +454,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item, index) => (
                 <div key={index}>
-                  {item.items ? (
+                  {item.items && item.accessibleRoles.includes(user?.role) ? (
                     <Collapsible
                       key={item.title}
                       defaultOpen
@@ -455,38 +486,51 @@ export function AppSidebar() {
                       </SidebarMenuItem>
                     </Collapsible>
                   ) : (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <a href={item.url}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    item.accessibleRoles.includes(user?.role) && (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <a href={item.url}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )
                   )}
                 </div>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Settings</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {settingsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {user?.role === "admin" && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Settings</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {settingsItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
+      <SidebarFooter>
+        <Button
+          onClick={() => signOut({ callbackUrl: "/auth/signin" })}
+          className="w-full"
+        >
+          <LogOutIcon className="w-4 h-4" />
+          <span>Logout</span>
+        </Button>
+      </SidebarFooter>
     </Sidebar>
   );
 }

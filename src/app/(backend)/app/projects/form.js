@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
-const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
+const ProjectForm = ({ project, onSuccess, onClose, donors, users }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +52,7 @@ const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
       strategicCode: "", // Added strategicCode
       amount: "", // Added amount
       file: "", // Added file
+      userId: "", // Added userId
     },
   });
 
@@ -65,6 +66,7 @@ const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
       form.setValue("strategicCode", project.strategicCode); // Set strategicCode
       form.setValue("amount", project.amount); // Set amount
       form.setValue("file", project.file); // Set file
+      form.setValue("userId", project.userId); // Set userId
     }
   }, [project]);
 
@@ -263,6 +265,33 @@ const ProjectForm = ({ project, onSuccess, onClose, donors }) => {
                     <FormLabel>File</FormLabel>
                     <FormControl>
                       <Input type="file" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="userId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Budget Holder</FormLabel>
+                    <FormControl>
+                      <Select
+                        {...field}
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a user" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {users.map((user) => (
+                            <SelectItem key={user.id} value={user.id}>
+                              {user.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
