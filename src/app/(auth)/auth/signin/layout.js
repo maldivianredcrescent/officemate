@@ -18,6 +18,12 @@ const manrope = Manrope({
   variable: "--font-manrope",
 });
 
+export const metadata = {
+  title: "Office Mate",
+  description:
+    "Office Mate is a comprehensive platform designed to enhance workplace efficiency and collaboration.",
+};
+
 const Layout = ({ children }) => {
   return (
     <html lang="en" className={`${inter.variable} ${manrope.variable}`}>

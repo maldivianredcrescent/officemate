@@ -23,6 +23,12 @@ const manrope = Manrope({
   variable: "--font-manrope",
 });
 
+export const metadata = {
+  title: "Office Mate",
+  description:
+    "Office Mate is a comprehensive platform designed to enhance workplace efficiency and collaboration.",
+};
+
 export default async function Layout({ children }) {
   const session = await getServerSession(authOptions);
 
