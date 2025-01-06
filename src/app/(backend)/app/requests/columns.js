@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import moment from "moment";
+import { snakeToSentence } from "@/utils/snakeToSentence";
 
 export const columns = [
   {
@@ -32,7 +33,9 @@ export const columns = [
     header: "Type",
     cell: ({ row }) => {
       return (
-        <div className="font-[600] capitalize">{row.getValue("type")}</div>
+        <div className="font-[600] capitalize">
+          {snakeToSentence(row.getValue("type"))}
+        </div>
       );
     },
   },

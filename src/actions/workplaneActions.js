@@ -22,6 +22,7 @@ export const getWorkplanByIdAction = actionClient
             requests: true,
           },
         },
+        workplanMiscPayments: true,
       },
     });
 

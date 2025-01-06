@@ -153,6 +153,12 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
                           >
                             Working Advance
                           </SelectItem>
+                          <SelectItem
+                            key="working_advance_excess"
+                            value="working_advance_excess"
+                          >
+                            Work advance Excess
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>

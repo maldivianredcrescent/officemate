@@ -18,6 +18,10 @@ import { usePagination } from "@/hooks/use-pagination";
 import { DataTable } from "../../activities/data-table";
 import { columns } from "../../activities/columns";
 import ActivityForm from "../../activities/form";
+import WorkplanMiscPaymentForm from "../../workplan-misc-payments/form";
+import { DataTable as WorkplanMiscPaymentDataTable } from "../../workplan-misc-payments/data-table";
+import { columns as WorkplanMiscPaymentColumns } from "../../workplan-misc-payments/columns";
+import { deleteWorkplanMiscPaymentAction } from "@/actions/workplaneMiscPaymentActions";
 
 const WorkplanByIdPage = () => {
   const { id } = useParams();
@@ -25,6 +29,12 @@ const WorkplanByIdPage = () => {
   const { isPending, execute, result } = useAction(getWorkplanByIdAction);
   const { limit, skip, pagination, onPaginationChange } = usePagination();
   const [selectedActivity, setSelectedActivity] = useState();
+  const [selectedWorkplanMiscPayment, setSelectedWorkplanMiscPayment] =
+    useState();
+  const {
+    isPending: isDeleteWorkplanMiscPaymentPending,
+    execute: deleteWorkplanMiscPayment,
+  } = useAction(deleteWorkplanMiscPaymentAction);
 
   React.useEffect(() => {
     if (id) {
@@ -163,6 +173,51 @@ const WorkplanByIdPage = () => {
             rowCount={result.data?.totalActivities || 0}
             onPaginationChange={onPaginationChange}
             pagination={pagination}
+          />
+        </div>
+        <div className="w-full mt-6">
+          <div className="w-full flex flex-row items-center justify-between pb-2">
+            <h1 className="text-2xl font-semibold ">Misc Payments</h1>
+            {result.data && result.data.workplan && (
+              <WorkplanMiscPaymentForm
+                workplanMiscPayment={selectedWorkplanMiscPayment}
+                workplan={result.data.workplan}
+                onSuccess={async () => {
+                  setSelectedWorkplanMiscPayment();
+                  await execute({ id });
+                }}
+                onClose={() => {
+                  setSelectedWorkplanMiscPayment();
+                }}
+              />
+            )}
+          </div>
+          <WorkplanMiscPaymentDataTable
+            columns={WorkplanMiscPaymentColumns({
+              onEdit: (workplanMiscPayment) => {
+                setSelectedWorkplanMiscPayment(workplanMiscPayment);
+              },
+              onDelete: async (workplanMiscPayment) => {
+                const confirmed = window.confirm(
+                  "Are you sure you want to delete this payment?"
+                );
+                if (confirmed) {
+                  await deleteWorkplanMiscPayment({
+                    id: workplanMiscPayment.id,
+                  });
+                  await execute({ id });
+                }
+              },
+            })}
+            isPending={isPending}
+            data={
+              !isPending &&
+              result.data &&
+              result.data.workplan.workplanMiscPayments
+                ? result.data.workplan.workplanMiscPayments
+                : []
+            }
+            rowCount={result.data?.workplan?.totalWorkplanMiscPayments || 0}
           />
         </div>
       </div>

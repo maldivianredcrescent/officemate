@@ -29,6 +29,7 @@ import RequestDocumentForm from "../../request-documents/form";
 import { deleteRequestDocumentAction } from "@/actions/requestDocumentActions";
 import { date } from "zod";
 import { useSession } from "next-auth/react";
+import { snakeToSentence } from "@/utils/snakeToSentence";
 
 const RequestByIdPage = () => {
   const { id } = useParams();
@@ -168,7 +169,7 @@ const RequestByIdPage = () => {
             <div className="flex md:flex-row flex-col md:gap-3 gap-1 md:items-center items-start">
               <h1 className="text-2xl font-semibold">
                 {result.data && result.data.request
-                  ? result.data.request.type + " request"
+                  ? snakeToSentence(result.data.request.type) + " request"
                   : "Request Details"}
               </h1>
               <div>{renderStatus(result.data?.request?.status)}</div>
@@ -285,8 +286,13 @@ const RequestByIdPage = () => {
                   user?.role === "finance_approver" ||
                   user?.role === "payment_processor"
                     ? async (requestItem) => {
-                        await deleteRequestItem({ id: requestItem.id });
-                        await execute({ id, limit, skip });
+                        const confirmed = window.confirm(
+                          "Are you sure you want to delete this item?"
+                        );
+                        if (confirmed) {
+                          await deleteRequestItem({ id: requestItem.id });
+                          await execute({ id, limit, skip });
+                        }
                       }
                     : null,
               })}
@@ -565,10 +571,15 @@ const RequestByIdPage = () => {
                     setSelectedRequestDocument(requestDocument);
                   },
                   onDelete: async (requestDocument) => {
-                    await deleteRequestDocument({
-                      id: requestDocument.id,
-                    });
-                    await execute({ id, limit, skip });
+                    const confirmed = window.confirm(
+                      "Are you sure you want to delete this document?"
+                    );
+                    if (confirmed) {
+                      await deleteRequestDocument({
+                        id: requestDocument.id,
+                      });
+                      await execute({ id, limit, skip });
+                    }
                   },
                 })}
                 isPending={isPending}

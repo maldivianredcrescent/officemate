@@ -563,10 +563,15 @@ const ClearanceByIdPage = () => {
                       setSelectedClearanceDocument(clearanceDocument);
                     },
                     onDelete: async (clearanceDocument) => {
-                      await executeClearanceDocument({
-                        id: clearanceDocument.id,
-                      });
-                      await execute({ id, limit, skip });
+                      const confirmed = window.confirm(
+                        "Are you sure you want to delete this document?"
+                      );
+                      if (confirmed) {
+                        await executeClearanceDocument({
+                          id: clearanceDocument.id,
+                        });
+                        await execute({ id, limit, skip });
+                      }
                     },
                   })}
                   isPending={isPending}
