@@ -122,6 +122,7 @@ export const submitRequestForApprovalAction = actionClient
         status: "submitted",
         submittedAt: new Date(),
         submittedById: user.id,
+        submittedDesignation: user.designation,
         submittedSignature: parsedInput.signature,
       },
     });
@@ -140,6 +141,7 @@ export const submitRequestForBudgetApprovalAction = actionClient
         status: "budget_approved",
         budgetApprovedAt: new Date(),
         budgetApprovedById: user.id,
+        budgetApprovedDesignation: user.designation,
         budgetApprovedSignature: parsedInput.signature,
       },
     });
@@ -158,6 +160,7 @@ export const submitRequestForFinanceApprovalAction = actionClient
         status: "finance_approved",
         financeApprovedAt: new Date(),
         financeApprovedById: user.id,
+        financeApprovedDesignation: user.designation,
         financeApprovedSignature: parsedInput.signature,
       },
     });
@@ -176,6 +179,7 @@ export const submitRequestForPaymentProcessingAction = actionClient
         status: "payment_processing",
         paymentProcessedAt: new Date(),
         paymentProcessedById: user.id,
+        paymentProcessedDesignation: user.designation,
         paymentProcessedSignature: parsedInput.signature,
       },
     });
@@ -203,6 +207,7 @@ export const completedRequestAction = actionClient
         data: {
           requestId: parsedInput.id,
           submittedById: user.id,
+          submittedDesignation: user.designation,
           submittedAt: new Date(),
         },
       });

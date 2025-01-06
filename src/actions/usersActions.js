@@ -60,6 +60,7 @@ export const updateUserAction = actionClient
             name: parsedInput.name,
             unitId: parsedInput.unitId,
             role: parsedInput.role,
+            designation: parsedInput.designation,
           },
           password_hash: passwordHash,
         },
@@ -73,6 +74,7 @@ export const updateUserAction = actionClient
           name: parsedInput.name,
           unitId: parsedInput.unitId,
           role: parsedInput.role,
+          designation: parsedInput.designation,
         },
       });
       return { user, success: true };

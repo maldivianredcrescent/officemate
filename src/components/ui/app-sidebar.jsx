@@ -418,11 +418,9 @@ export function AppSidebar() {
               </div>
             </div>
             <div className="flex flex-col gap-1">
-              <h1 className="text-md font-[700] leading-none">
-                Sharif Khaleel
-              </h1>
+              <h1 className="text-md font-[700] leading-none">{user?.name}</h1>
               <p className="text-[13px] font-[400] leading-none opacity-80">
-                ll.hawk.ll@gmail.com
+                {user?.email}
               </p>
             </div>
           </div>

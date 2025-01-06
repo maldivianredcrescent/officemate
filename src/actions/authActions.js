@@ -51,52 +51,58 @@ export const createUser = actionClient
       name: z.string().min(3, {
         message: "Name must be at least 3 characters.",
       }),
+      designation: z.string().optional(),
+      unit: z.string().optional(),
     })
   )
-  .action(async ({ parsedInput: { email, password, name } }) => {
-    // Validate input
-    // Validate input
-    if (!email || !password || !name) {
-      return {
-        status: false,
-        error: "Email, password, and name are required",
-      };
-    }
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
-    if (existingUser) {
-      return {
-        status: false,
-        error: "User already exists",
-      };
-    }
+  .action(
+    async ({ parsedInput: { email, password, name, designation, unit } }) => {
+      // Validate input
+      // Validate input
+      if (!email || !password || !name) {
+        return {
+          status: false,
+          error: "Email, password, and name are required",
+        };
+      }
+      // Check if user already exists
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (existingUser) {
+        return {
+          status: false,
+          error: "User already exists",
+        };
+      }
 
-    const passwordHash = await hash(password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    });
+      const passwordHash = await hash(password, {
+        memoryCost: 19456,
+        timeCost: 2,
+        outputLen: 32,
+        parallelism: 1,
+      });
 
-    const userId = v4();
-    const newUser = await prisma.user.create({
-      data: {
-        id: userId,
-        email: email,
-        password_hash: passwordHash,
-        name: name,
-      },
-    });
-    if (!newUser) {
-      return {
-        status: false,
-        error: "Failed to create user",
-      };
+      const userId = v4();
+      const newUser = await prisma.user.create({
+        data: {
+          id: userId,
+          email: email,
+          password_hash: passwordHash,
+          name: name,
+          designation: designation,
+          unit: unit,
+        },
+      });
+      if (!newUser) {
+        return {
+          status: false,
+          error: "Failed to create user",
+        };
+      }
+
+      return { user: newUser, success: true };
     }
-
-    return { user: newUser, success: true };
-  });
+  );

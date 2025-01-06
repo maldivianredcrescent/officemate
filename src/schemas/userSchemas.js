@@ -7,4 +7,5 @@ export const userSchema = z.object({
   password: z.string().optional(),
   unitId: z.string().optional(),
   role: z.string().optional(),
+  designation: z.string().optional(),
 });

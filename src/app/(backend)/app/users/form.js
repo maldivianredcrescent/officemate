@@ -47,6 +47,7 @@ const UserForm = ({ user, onSuccess, onClose, units }) => {
       password: "",
       unitId: "",
       role: "",
+      designation: "",
     },
   });
 
@@ -56,6 +57,7 @@ const UserForm = ({ user, onSuccess, onClose, units }) => {
       form.setValue("email", user.email);
       form.setValue("unitId", user.unitId);
       form.setValue("role", user.role);
+      form.setValue("designation", user.designation);
       setIsOpen(true);
     }
   }, [user]);
@@ -142,6 +144,19 @@ const UserForm = ({ user, onSuccess, onClose, units }) => {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="eg. john@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="designation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Designation</FormLabel>
+                    <FormControl>
+                      <Input placeholder="eg. Software Engineer" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -418,6 +418,12 @@ const ClearanceByIdPage = () => {
                           : ""}
                       </p>
                       <p>
+                        {result.data &&
+                        result.data.clearance.submittedDesignation
+                          ? result.data.clearance.submittedDesignation
+                          : ""}
+                      </p>
+                      <p>
                         {result.data && result.data.clearance.submittedAt
                           ? moment(result.data.clearance.submittedAt).format(
                               "DD MMM YYYY HH:mm"
@@ -444,6 +450,12 @@ const ClearanceByIdPage = () => {
                       <p>
                         {result.data && result.data.clearance.budgetApprovedBy
                           ? result.data.clearance.budgetApprovedBy.name
+                          : ""}
+                      </p>
+                      <p>
+                        {result.data &&
+                        result.data.clearance.budgetApprovedDesignation
+                          ? result.data.clearance.budgetApprovedDesignation
                           : ""}
                       </p>
                       <p>
@@ -478,6 +490,12 @@ const ClearanceByIdPage = () => {
                           : ""}
                       </p>
                       <p>
+                        {result.data &&
+                        result.data.clearance.financeApprovedDesignation
+                          ? result.data.clearance.financeApprovedDesignation
+                          : ""}
+                      </p>
+                      <p>
                         {result.data && result.data.clearance.financeApprovedAt
                           ? moment(
                               result.data.clearance.financeApprovedAt
@@ -506,6 +524,12 @@ const ClearanceByIdPage = () => {
                       <p>
                         {result.data && result.data.clearance.completedBy
                           ? result.data.clearance.completedBy.name
+                          : ""}
+                      </p>
+                      <p>
+                        {result.data &&
+                        result.data.clearance.completedDesignation
+                          ? result.data.clearance.completedDesignation
                           : ""}
                       </p>
                       <p>

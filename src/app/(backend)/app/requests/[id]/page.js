@@ -399,6 +399,11 @@ const RequestByIdPage = () => {
                           : ""}
                       </p>
                       <p>
+                        {result.data && result.data.request.submittedDesignation
+                          ? result.data.request.submittedDesignation
+                          : ""}
+                      </p>
+                      <p>
                         {result.data && result.data.request.submittedAt
                           ? moment(result.data.request.submittedAt).format(
                               "DD MMM YYYY HH:mm"
@@ -425,6 +430,12 @@ const RequestByIdPage = () => {
                       <p className="font-[600]">
                         {result.data && result.data.request.budgetApprovedBy
                           ? result.data.request.budgetApprovedBy.name
+                          : ""}
+                      </p>
+                      <p>
+                        {result.data &&
+                        result.data.request.budgetApprovedDesignation
+                          ? result.data.request.budgetApprovedDesignation
                           : ""}
                       </p>
                       <p>
@@ -457,6 +468,12 @@ const RequestByIdPage = () => {
                           : ""}
                       </p>
                       <p>
+                        {result.data &&
+                        result.data.request.financeApprovedDesignation
+                          ? result.data.request.financeApprovedDesignation
+                          : ""}
+                      </p>
+                      <p>
                         {result.data && result.data.request.financeApprovedAt
                           ? moment(
                               result.data.request.financeApprovedAt
@@ -483,6 +500,12 @@ const RequestByIdPage = () => {
                       <p className="font-[600]">
                         {result.data && result.data.request.paymentProcessedBy
                           ? result.data.request.paymentProcessedBy.name
+                          : ""}
+                      </p>
+                      <p>
+                        {result.data &&
+                        result.data.request.paymentProcessedDesignation
+                          ? result.data.request.paymentProcessedDesignation
                           : ""}
                       </p>
                       <p>
@@ -514,6 +537,11 @@ const RequestByIdPage = () => {
                       <p className="font-[600]">
                         {result.data && result.data.request.completedBy
                           ? result.data.request.completedBy.name
+                          : ""}
+                      </p>
+                      <p>
+                        {result.data && result.data.request.completedDesignation
+                          ? result.data.request.completedDesignation
                           : ""}
                       </p>
                       <p>

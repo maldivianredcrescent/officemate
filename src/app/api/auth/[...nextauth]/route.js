@@ -31,6 +31,7 @@ export const authOptions = {
         token.role = user.role; // Add user role to the token
         token.unitId = user.unitId; // Add user unitId to the token
         token.signatureUrl = user.signatureUrl; // Add user signatureUrl to the token
+        token.designation = user.designation; // Add user designation to the token
       }
 
       if (trigger === "update" && session?.signatureUrl) {
@@ -48,6 +49,7 @@ export const authOptions = {
         role: token.role,
         unitId: token.unitId,
         signatureUrl: token.signatureUrl,
+        designation: token.designation,
       };
       return session;
     },

@@ -30,6 +30,10 @@ export const columns = (onEdit) => [
     },
   },
   {
+    accessorKey: "designation",
+    header: "Designation",
+  },
+  {
     accessorKey: "name",
     header: "Name",
   },
