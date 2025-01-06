@@ -6,4 +6,5 @@ export const workplanMiscPaymentSchema = z.object({
   name: z.string().min(1, "Name is required"),
   amount: z.number().min(0, "Amount must be greater than 0"),
   description: z.string().optional(),
+  activityId: z.string().optional(),
 });

@@ -28,12 +28,20 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const WorkplanMiscPaymentForm = ({
   workplan,
   workplanMiscPayment,
   onSuccess,
   onClose,
+  activities,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,6 +53,7 @@ const WorkplanMiscPaymentForm = ({
         name: z.string().min(1, { message: "Payment name is required" }),
         amount: z.number().min(0, { message: "Amount must be greater than 0" }),
         description: z.string().optional(),
+        activityId: z.string().optional(),
       })
     ),
     defaultValues: {
@@ -59,6 +68,7 @@ const WorkplanMiscPaymentForm = ({
       form.setValue("name", workplanMiscPayment.name);
       form.setValue("amount", workplanMiscPayment.amount);
       form.setValue("description", workplanMiscPayment.description);
+      form.setValue("activityId", workplanMiscPayment.activityId);
       setIsOpen(true);
     }
   }, [workplanMiscPayment]);
@@ -141,6 +151,34 @@ const WorkplanMiscPaymentForm = ({
                       <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="Enter description" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="activityId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Budget Line</FormLabel>
+                      <FormControl>
+                        <Select
+                          {...field}
+                          placeholder="Select a budget line"
+                          onValueChange={(value) => field.onChange(value)} // Ensure the selected value updates the form state
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a budget line" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {activities.map((activity) => (
+                              <SelectItem key={activity.id} value={activity.id}>
+                                {activity.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

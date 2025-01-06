@@ -22,7 +22,11 @@ export const getWorkplanByIdAction = actionClient
             requests: true,
           },
         },
-        workplanMiscPayments: true,
+        workplanMiscPayments: {
+          include: {
+            activity: true,
+          },
+        },
       },
     });
 

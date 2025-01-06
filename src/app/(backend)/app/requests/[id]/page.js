@@ -221,7 +221,7 @@ const RequestByIdPage = () => {
                       </p>
                       <p className="py-3 px-4 text-sm capitalize">
                         {result.data && result.data.request.type
-                          ? result.data.request.type
+                          ? snakeToSentence(result.data.request.type)
                           : "N/A"}
                       </p>
                     </div>

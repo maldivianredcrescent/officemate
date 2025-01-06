@@ -173,15 +173,15 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
                 name="activityId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Activity</FormLabel>
+                    <FormLabel>Budget Line</FormLabel>
                     <FormControl>
                       <Select
                         {...field}
-                        placeholder="Select an activity"
+                        placeholder="Select a budget line"
                         onValueChange={(value) => field.onChange(value)} // Ensure the selected value updates the form state
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select an activity" />
+                          <SelectValue placeholder="Select a budget line" />
                         </SelectTrigger>
                         <SelectContent>
                           {activities.map((activity) => (

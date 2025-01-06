@@ -28,6 +28,10 @@ export const columns = ({ onEdit, onDelete }) => [
     },
   },
   {
+    accessorKey: "activity.name",
+    header: "Budget Line",
+  },
+  {
     accessorKey: "amount",
     header: "Amount",
     cell: ({ row }) => {

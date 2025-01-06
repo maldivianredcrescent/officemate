@@ -180,6 +180,7 @@ const WorkplanByIdPage = () => {
             <h1 className="text-2xl font-semibold ">Misc Payments</h1>
             {result.data && result.data.workplan && (
               <WorkplanMiscPaymentForm
+                activities={result.data.activities}
                 workplanMiscPayment={selectedWorkplanMiscPayment}
                 workplan={result.data.workplan}
                 onSuccess={async () => {

@@ -86,27 +86,30 @@ model Workplan {
 }
 
 model WorkplanMiscPayment {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   workplanId  String
-  workplan    Workplan @relation(fields: [workplanId], references: [id])
+  activityId  String?
+  workplan    Workplan  @relation(fields: [workplanId], references: [id])
+  activity    Activity? @relation(fields: [activityId], references: [id])
   name        String
   description String?
   amount      Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Activity {
-  id         String    @id @default(cuid())
-  number     Int       @default(autoincrement())
-  code       String?
-  name       String
-  workplanId String
-  projectId  String
-  budget     Float?
-  workplan   Workplan  @relation(fields: [workplanId], references: [id])
-  project    Project   @relation(fields: [projectId], references: [id])
-  requests   Request[]
+  id                  String                @id @default(cuid())
+  number              Int                   @default(autoincrement())
+  code                String?
+  name                String
+  workplanId          String
+  projectId           String
+  budget              Float?
+  workplan            Workplan              @relation(fields: [workplanId], references: [id])
+  project             Project               @relation(fields: [projectId], references: [id])
+  requests            Request[]
+  WorkplanMiscPayment WorkplanMiscPayment[]
 }
 
 model Request {

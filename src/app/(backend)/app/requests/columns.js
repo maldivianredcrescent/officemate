@@ -45,7 +45,7 @@ export const columns = [
   },
   {
     accessorKey: "activity.name",
-    header: "Activity",
+    header: "Budget Line",
   },
   {
     accessorKey: "unit.name",
