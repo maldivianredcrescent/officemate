@@ -40,7 +40,7 @@ export const columns = [
           return (
             <div className="flex">
               <div className="bg-orange-100 rounded-full text-orange-600 font-[600] text-xs px-3 py-1 text-center">
-                Created
+                Pending
               </div>
             </div>
           );

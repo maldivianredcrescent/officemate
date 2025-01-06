@@ -50,6 +50,7 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
       activityId: "",
       remarks: "",
       title: "",
+      statusNote: "",
     },
   });
 
@@ -59,6 +60,7 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
       form.setValue("activityId", request.activityId);
       form.setValue("remarks", request.remarks);
       form.setValue("title", request.title);
+      form.setValue("statusNote", request.statusNote);
     }
   }, [request]);
 
@@ -189,6 +191,19 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
                           ))}
                         </SelectContent>
                       </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="statusNote"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status Note</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter status note" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

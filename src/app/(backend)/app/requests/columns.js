@@ -48,15 +48,11 @@ export const columns = [
     header: "Activity",
   },
   {
-    accessorKey: "activity.workplan.name",
-    header: "Workplan",
-  },
-  {
     accessorKey: "unit.name",
     header: "Unit",
   },
   {
-    accessorKey: "activity.project.name",
+    accessorKey: "activity.project.code",
     header: "Project",
   },
   {
@@ -128,6 +124,10 @@ export const columns = [
           return <div>{row.getValue("status")}</div>;
       }
     },
+  },
+  {
+    accessorKey: "statusNote",
+    header: "Status Note",
   },
   {
     accessorKey: "createdAt",

@@ -115,6 +115,7 @@ model Request {
   title                     String
   type                      String            @default("service")
   status                    String            @default("created")
+  statusNote                String?
   activityId                String
   unitId                    String?
   createdById               String

@@ -58,7 +58,7 @@ const ClearanceByIdPage = () => {
         return (
           <div className="flex">
             <div className="bg-[#0F172A] rounded-full text-white font-[600] text-xs px-3 py-1 text-center">
-              Created
+              Pending
             </div>
           </div>
         );
