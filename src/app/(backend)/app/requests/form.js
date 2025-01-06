@@ -196,19 +196,21 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="statusNote"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status Note</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter status note" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {request && (
+                <FormField
+                  control={form.control}
+                  name="statusNote"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status Note</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Enter status note" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="remarks"
