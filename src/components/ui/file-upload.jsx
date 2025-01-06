@@ -120,7 +120,7 @@ function FileUpload({ onSuccess, defaultValue, label }) {
         fileUrl.endsWith(".bmp") ||
         fileUrl.endsWith(".webp") ||
         fileUrl.endsWith(".svg") ? (
-          <div className="h-auto overflow-hidden flex justify-center items-center mt-2 rounded-xl">
+          <div className="h-auto overflow-hidden flex justify-center items-center mt-6 rounded-xl">
             <Link href={fileUrl} target="_blank" className="w-full">
               <img
                 className="rounded-xl w-full"

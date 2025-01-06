@@ -51,17 +51,15 @@ const UpdateUserSignatureForm = ({ user, onSuccess, onClose }) => {
       id: user.id,
     });
 
-    if (result.data && result.data.success) {
+    if (result.data && result.data.success && result.data.user) {
       form.reset();
       setIsOpen(false);
       onSuccess?.(result.data.user);
-      if (user) {
-        toast({
-          title: "Signature updated",
-          description: "User signature updated successfully",
-        });
-        update({ signatureUrl: user.signatureUrl });
-      }
+      toast({
+        title: "Signature updated",
+        description: "User signature updated successfully",
+      });
+      await update({ signatureUrl: result.data.user.signatureUrl });
     } else {
       result.data?.error &&
         toast({
