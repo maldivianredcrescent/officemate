@@ -1,7 +1,9 @@
 "use server";
 
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { actionClient } from "@/lib/safe-action";
+import { getServerSession } from "next-auth";
 import { z } from "zod";
 
 export const getDashboardRequestsAction = actionClient
@@ -13,6 +15,9 @@ export const getDashboardRequestsAction = actionClient
     })
   )
   .action(async ({ parsedInput }) => {
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
     if (
       [
         "admin",
