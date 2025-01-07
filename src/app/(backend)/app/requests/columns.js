@@ -52,10 +52,12 @@ export const columns = [
     header: "Units/Departments",
   },
   {
+    id: "activity.project.code",
     accessorKey: "activity.project.code",
     header: "Project",
   },
   {
+    id: "activity.project.donor.code",
     accessorKey: "activity.project.donor.code",
     header: "Donor",
   },

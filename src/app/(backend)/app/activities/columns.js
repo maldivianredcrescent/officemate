@@ -23,14 +23,17 @@ export const columns = ({ onEdit }) => [
     },
   },
   {
+    id: "code",
     accessorKey: "code",
     header: "Activity Code",
   },
   {
+    id: "name",
     accessorKey: "name",
     header: "Activity Name",
   },
   {
+    id: "project.name",
     accessorKey: "project.name",
     header: "Project",
   },

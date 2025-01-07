@@ -20,13 +20,6 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export function DataTable({
   columns,
@@ -57,43 +50,40 @@ export function DataTable({
     <>
       <div className="flex flex-col lg:flex-row items-center gap-4 py-4">
         <Input
-          placeholder="Filter using project name..."
           value={
-            columnFilters.find((f) => f.id === "activity.workplan.name")
-              ?.value || ""
+            table.getColumn("activity.project.donor.code")?.getFilterValue() ??
+            ""
           }
+          placeholder="Filter by donor code..."
           onChange={(e) => {
             const value = e.target.value;
             setColumnFilters((prev) =>
               prev
-                .filter((f) => f.id !== "activity.workplan.name")
+                .filter((f) => f.id !== "activity.project.donor.code")
                 .concat({
-                  id: "activity.workplan.name",
+                  id: "activity.project.donor.code",
                   value,
                 })
             );
           }}
-          className="w-full rounded-[--radius]"
         />
-        {/* <Select
-          value={table.getColumn("type")?.getFilterValue() ?? type}
-          placeholder="Filter project..."
-          onValueChange={(value) => {
-            table.getColumn("type")?.setFilterValue(value);
+        <Input
+          value={
+            table.getColumn("activity.project.code")?.getFilterValue() ?? ""
+          }
+          placeholder="Filter by project code..."
+          onChange={(e) => {
+            const value = e.target.value;
+            setColumnFilters((prev) =>
+              prev
+                .filter((f) => f.id !== "activity.project.code")
+                .concat({
+                  id: "activity.project.code",
+                  value,
+                })
+            );
           }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a request type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem key="goods" value="goods">
-              Goods
-            </SelectItem>
-            <SelectItem key="service" value="service">
-              Service
-            </SelectItem>
-          </SelectContent>
-        </Select> */}
+        />
       </div>
       <div className="rounded-xl border overflow-hidden">
         <Table className="w-full">

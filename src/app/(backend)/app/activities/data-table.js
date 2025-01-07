@@ -48,12 +48,28 @@ export function DataTable({
 
   return (
     <>
-      <div className="flex items-center py-4">
+      <div className="flex flex-col lg:flex-row gap-3 items-center py-4">
         <Input
           placeholder="Filter name..."
           value={table.getColumn("name")?.getFilterValue() ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="w-full rounded-[--radius]"
+        />
+        <Input
+          placeholder="Filter code..."
+          value={table.getColumn("code")?.getFilterValue() ?? ""}
+          onChange={(event) =>
+            table.getColumn("code")?.setFilterValue(event.target.value)
+          }
+          className="w-full rounded-[--radius]"
+        />
+        <Input
+          placeholder="Filter project name..."
+          value={table.getColumn("project.name")?.getFilterValue() ?? ""}
+          onChange={(event) =>
+            table.getColumn("project.name")?.setFilterValue(event.target.value)
           }
           className="w-full rounded-[--radius]"
         />
