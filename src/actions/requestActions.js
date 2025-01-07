@@ -16,33 +16,77 @@ export const getRequestsAction = actionClient
     })
   )
   .action(async ({ parsedInput }) => {
-    const requests = await prisma.request.findMany({
-      where: parsedInput.type ? { type: parsedInput.type } : undefined,
-      orderBy: { updatedAt: "desc" },
-      include: {
-        unit: true,
-        activity: {
-          include: {
-            workplan: true,
-            project: {
-              include: {
-                donor: true,
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
+    if (
+      [
+        "admin",
+        "budget_approver",
+        "finance_approver",
+        "payment_processor",
+      ].includes(user.role)
+    ) {
+      const requests = await prisma.request.findMany({
+        where: parsedInput.type ? { type: parsedInput.type } : undefined,
+        orderBy: { updatedAt: "desc" },
+        include: {
+          unit: true,
+          activity: {
+            include: {
+              workplan: true,
+              project: {
+                include: {
+                  donor: true,
+                },
               },
             },
           },
         },
-      },
-      skip: parsedInput.skip,
-      take: parsedInput.limit,
-    });
+        skip: parsedInput.skip,
+        take: parsedInput.limit,
+      });
 
-    const totalRequests = await prisma.request.count({
-      where: parsedInput.type ? { type: parsedInput.type } : undefined,
-    });
-    const activities = await prisma.activity.findMany({
-      include: { workplan: true },
-    });
-    return { requests, totalRequests, activities, success: true };
+      const totalRequests = await prisma.request.count({
+        where: parsedInput.type ? { type: parsedInput.type } : undefined,
+      });
+      const activities = await prisma.activity.findMany({
+        include: { workplan: true },
+      });
+      return { requests, totalRequests, activities, success: true };
+    } else {
+      const requests = await prisma.request.findMany({
+        where: parsedInput.type
+          ? { type: parsedInput.type, unitId: user.unitId }
+          : { unitId: user.unitId },
+        orderBy: { updatedAt: "desc" },
+        include: {
+          unit: true,
+          activity: {
+            include: {
+              workplan: true,
+              project: {
+                include: {
+                  donor: true,
+                },
+              },
+            },
+          },
+        },
+        skip: parsedInput.skip,
+        take: parsedInput.limit,
+      });
+
+      const totalRequests = await prisma.request.count({
+        where: parsedInput.type
+          ? { type: parsedInput.type, unitId: user.unitId }
+          : { unitId: user.unitId },
+      });
+      const activities = await prisma.activity.findMany({
+        include: { workplan: true },
+      });
+      return { requests, totalRequests, activities, success: true };
+    }
   });
 
 export const getRequestByIdAction = actionClient
@@ -115,6 +159,19 @@ export const submitRequestForApprovalAction = actionClient
   .action(async ({ parsedInput }) => {
     const session = await getServerSession(authOptions);
     const user = session.user;
+
+    const requestItemCount = await prisma.requestItem.count({
+      where: { requestId: parsedInput.id },
+    });
+
+    if (requestItemCount === 0) {
+      return {
+        request,
+        success: false,
+        error:
+          "No request items found. Please add one or more items to proceed.",
+      };
+    }
 
     const request = await prisma.request.update({
       where: { id: parsedInput.id },

@@ -15,25 +15,61 @@ export const getClearancesAction = actionClient
     })
   )
   .action(async ({ parsedInput }) => {
-    const clearances = await prisma.clearance.findMany({
-      where: parsedInput.type ? { type: parsedInput.type } : undefined,
-      orderBy: { updatedAt: "desc" },
-      include: {
-        request: {
-          include: {
-            activity: true,
-            requestItems: true,
+    const session = await getServerSession(authOptions);
+    const user = session.user;
+
+    if (
+      [
+        "admin",
+        "budget_approver",
+        "finance_approver",
+        "payment_processor",
+      ].includes(user.role)
+    ) {
+      const clearances = await prisma.clearance.findMany({
+        where: parsedInput.type ? { type: parsedInput.type } : undefined,
+        orderBy: { updatedAt: "desc" },
+        include: {
+          request: {
+            include: {
+              activity: true,
+              requestItems: true,
+            },
           },
         },
-      },
-      skip: parsedInput.skip,
-      take: parsedInput.limit,
-    });
+        skip: parsedInput.skip,
+        take: parsedInput.limit,
+      });
 
-    const totalClearances = await prisma.clearance.count({
-      where: parsedInput.type ? { type: parsedInput.type } : undefined,
-    });
-    return { clearances, totalClearances, success: true };
+      const totalClearances = await prisma.clearance.count({
+        where: parsedInput.type ? { type: parsedInput.type } : undefined,
+      });
+      return { clearances, totalClearances, success: true };
+    } else {
+      const clearances = await prisma.clearance.findMany({
+        where: parsedInput.type
+          ? { type: parsedInput.type, request: { unitId: user.unitId } }
+          : { request: { unitId: user.unitId } },
+        orderBy: { updatedAt: "desc" },
+        include: {
+          request: {
+            include: {
+              activity: true,
+              requestItems: true,
+            },
+          },
+        },
+        skip: parsedInput.skip,
+        take: parsedInput.limit,
+      });
+
+      const totalClearances = await prisma.clearance.count({
+        where: parsedInput.type
+          ? { type: parsedInput.type, request: { unitId: user.unitId } }
+          : { request: { unitId: user.unitId } },
+      });
+      return { clearances, totalClearances, success: true };
+    }
   });
 
 export const getClearanceByIdAction = actionClient

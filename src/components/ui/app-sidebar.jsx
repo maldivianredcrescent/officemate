@@ -481,7 +481,7 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        {user?.role === "admin" && (
+        {["admin", "budget_approver"].includes(user?.role) && (
           <SidebarGroup>
             <SidebarGroupLabel>Settings</SidebarGroupLabel>
             <SidebarGroupContent>

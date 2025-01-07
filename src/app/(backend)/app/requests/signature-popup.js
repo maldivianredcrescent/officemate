@@ -22,6 +22,7 @@ import { completedRequestAction } from "@/actions/requestActions";
 import { useAction } from "next-safe-action/hooks";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/hooks/use-toast";
 
 const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,6 +43,8 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
     execute: submitRequestForPaymentProcessing,
   } = useAction(submitRequestForPaymentProcessingAction);
 
+  const toast = useToast();
+
   useEffect(() => {
     setIsOpen(isPopupOpen);
     setSignature(user?.signatureUrl);
@@ -50,7 +53,6 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
   const handleSubmit = async (s) => {
     setIsLoading(true);
     if (request.status === "created") {
-      console.log(request.id);
       await submitRequestForApproval({
         id: request.id,
         signature: s,
@@ -85,7 +87,7 @@ const SignaturePopup = ({ onSuccess, onClose, isPopupOpen, request, user }) => {
       );
     }
     if (status === "submitted") {
-      return role === "budget_approver" || role === "admin";
+      return request.activity.project.userId === user.id || role === "admin";
     }
     if (status === "budget_approved") {
       return role === "finance_approver" || role === "admin";

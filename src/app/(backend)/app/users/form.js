@@ -167,7 +167,7 @@ const UserForm = ({ user, onSuccess, onClose, units }) => {
                 name="unitId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Unit</FormLabel>
+                    <FormLabel>Units/Departments</FormLabel>
                     <FormControl>
                       <Select
                         {...field}

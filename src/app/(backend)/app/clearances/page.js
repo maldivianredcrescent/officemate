@@ -75,7 +75,9 @@ const ClearancePage = () => {
       </div>
       <div className="w-full h-full p-4">
         <div className="w-full flex flex-col pb-2">
-          <h1 className="text-2xl font-semibold ">Clearances</h1>{" "}
+          <h1 className="text-2xl font-semibold ">
+            Working Advance Clearances
+          </h1>{" "}
           {/* Updated to Clearances */}
         </div>
         <div className="w-full">

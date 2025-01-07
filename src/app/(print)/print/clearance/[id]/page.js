@@ -74,7 +74,9 @@ const PrintClearancePage = () => {
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Unit</span>
+              <span className="font-[400] text-black/70">
+                Units/Departments
+              </span>
               <span>
                 {result.data.clearance.request.activity?.project?.unit?.name}
               </span>

@@ -141,24 +141,27 @@ const RequestByIdPage = () => {
               </BreadcrumbList>
             </Breadcrumb>
             <div className="flex flex-row gap-2">
-              {result.data &&
+              {(result.data &&
                 result.data.request &&
-                [
-                  "created",
-                  "submitted",
-                  "budget_approved",
-                  "finance_approved",
-                ].includes(result.data?.request?.status) && (
-                  <RequestForm
-                    activities={result.data?.activities || []}
-                    isOpen={isEditFormOpen}
-                    request={result.data.request}
-                    onClose={() => setIsEditFormOpen(false)}
-                    onSuccess={() => {
-                      execute({ id, limit, skip });
-                    }}
-                  />
-                )}
+                ["created"].includes(result.data?.request?.status)) ||
+              [
+                "admin",
+                "finance_approver",
+                "budget_approver",
+                "payment_processor",
+              ].includes(user?.role) ? (
+                <RequestForm
+                  activities={result.data?.activities || []}
+                  isOpen={isEditFormOpen}
+                  request={result.data?.request || {}}
+                  onClose={() => setIsEditFormOpen(false)}
+                  onSuccess={() => {
+                    execute({ id, limit, skip });
+                  }}
+                />
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </div>
@@ -260,12 +263,7 @@ const RequestByIdPage = () => {
             <DataTable
               columns={columns({
                 onEdit:
-                  [
-                    "created",
-                    "submitted",
-                    "budget_approved",
-                    "finance_approved",
-                  ].includes(result.data?.request?.status) ||
+                  ["created"].includes(result.data?.request?.status) ||
                   user?.role === "admin" ||
                   user?.role === "budget_approver" ||
                   user?.role === "finance_approver" ||
@@ -275,12 +273,7 @@ const RequestByIdPage = () => {
                       }
                     : null,
                 onDelete:
-                  [
-                    "created",
-                    "submitted",
-                    "budget_approved",
-                    "finance_approved",
-                  ].includes(result.data?.request?.status) ||
+                  ["created"].includes(result.data?.request?.status) ||
                   user?.role === "admin" ||
                   user?.role === "budget_approver" ||
                   user?.role === "finance_approver" ||
@@ -305,16 +298,23 @@ const RequestByIdPage = () => {
             />
             <div className="my-6 flex items-center justify-between">
               <div className="flex flex-row gap-2">
-                {result.data && result.data.request && (
+                {(result.data &&
+                  result.data.request &&
+                  ["admin", "payment_processor", "finance_approver"].includes(
+                    user?.role
+                  )) ||
+                ["created"].includes(result.data?.clearance?.status) ? (
                   <RequestItemForm
                     requestItem={selectedRequestItem}
-                    request={result.data.request}
+                    request={result.data?.request || {}}
                     onSuccess={() => {
                       execute({ id, limit, skip });
                       setSelectedRequestItem(null);
                     }}
                     onClose={() => setSelectedRequestItem(null)}
                   />
+                ) : (
+                  <></>
                 )}
                 <div>
                   <Button
@@ -494,7 +494,7 @@ const RequestByIdPage = () => {
                 <div className="w-full">
                   <div>
                     <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                      Payment Processing
+                      Request Processing
                     </p>
                     <div className="py-3 px-4 text-sm flex flex-col gap-1">
                       <p className="font-[600]">
@@ -574,41 +574,48 @@ const RequestByIdPage = () => {
           <div className="w-full">
             <div className="flex flex-row justify-between pb-6 pt-12">
               <p className="text-black text-xl font-[600]">Request Documents</p>
-              {result.data &&
-                result.data.request &&
-                [
-                  "submitted",
-                  "budget_approved",
-                  "finance_approved",
-                  "completed",
-                ].includes(result.data?.request?.status) && (
-                  <RequestDocumentForm
-                    requestDocument={selectedRequestDocument}
-                    onSuccess={() => {
-                      execute({ id, limit, skip });
-                    }}
-                    onClose={() => {}}
-                    request={result.data?.request}
-                  />
-                )}
+              {["admin", "payment_processor", "finance_approver"].includes(
+                user?.role
+              ) || ["created"].includes(result.data?.request?.status) ? (
+                <RequestDocumentForm
+                  requestDocument={selectedRequestDocument}
+                  onSuccess={() => {
+                    execute({ id, limit, skip });
+                  }}
+                  onClose={() => {}}
+                  request={result.data?.request}
+                />
+              ) : (
+                <></>
+              )}
             </div>
             <div className="w-full">
               <RequestDocumentTable
                 columns={requestDocumentTableColumns({
-                  onEdit: (requestDocument) => {
-                    setSelectedRequestDocument(requestDocument);
-                  },
-                  onDelete: async (requestDocument) => {
-                    const confirmed = window.confirm(
-                      "Are you sure you want to delete this document?"
-                    );
-                    if (confirmed) {
-                      await deleteRequestDocument({
-                        id: requestDocument.id,
-                      });
-                      await execute({ id, limit, skip });
-                    }
-                  },
+                  onEdit:
+                    ["admin", "payment_processor", "finance_approver"].includes(
+                      user?.role
+                    ) || ["created"].includes(result.data?.request?.status)
+                      ? (requestDocument) => {
+                          setSelectedRequestDocument(requestDocument);
+                        }
+                      : null,
+                  onDelete:
+                    ["admin", "payment_processor", "finance_approver"].includes(
+                      user?.role
+                    ) || ["created"].includes(result.data?.request?.status)
+                      ? async (requestDocument) => {
+                          const confirmed = window.confirm(
+                            "Are you sure you want to delete this document?"
+                          );
+                          if (confirmed) {
+                            await deleteRequestDocument({
+                              id: requestDocument.id,
+                            });
+                            await execute({ id, limit, skip });
+                          }
+                        }
+                      : null,
                 })}
                 isPending={isPending}
                 data={
@@ -625,6 +632,9 @@ const RequestByIdPage = () => {
             result.data.request &&
             ["submitted", "budget_approved", "finance_approved"].includes(
               result.data?.request?.status
+            ) &&
+            ["admin", "finance_approver", "budget_approver"].includes(
+              user?.role
             ) && (
               <div className="w-full flex flex-row justify-end gap-2 mt-6">
                 <RejectRequestForm

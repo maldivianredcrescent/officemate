@@ -100,7 +100,7 @@ const UnitForm = ({ unit, onSuccess, onClose }) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Unit Name</FormLabel>
+                    <FormLabel>Units/Departments Name</FormLabel>
                     <FormControl>
                       <Input placeholder="eg. Kudahuvadhoo Unit" {...field} />
                     </FormControl>

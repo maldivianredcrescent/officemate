@@ -69,7 +69,9 @@ const PrintRequestPage = () => {
               <span>{result.data.request.activity?.project?.code}</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Unit</span>
+              <span className="font-[400] text-black/70">
+                Units/Departments
+              </span>
               <span>{result.data.request?.unit?.name || "N/A"}</span>
             </div>
             <div className="flex flex-col">

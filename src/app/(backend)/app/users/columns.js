@@ -39,7 +39,7 @@ export const columns = (onEdit) => [
   },
   {
     accessorKey: "unit.name",
-    header: "Unit",
+    header: "Units/Departments",
   },
   {
     accessorKey: "created_at",

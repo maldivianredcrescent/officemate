@@ -49,7 +49,7 @@ export const columns = [
   },
   {
     accessorKey: "unit.name",
-    header: "Unit",
+    header: "Units/Departments",
   },
   {
     accessorKey: "activity.project.code",
@@ -100,7 +100,7 @@ export const columns = [
           return (
             <div className="flex">
               <div className="bg-blue-100 rounded-full text-blue-600 font-[600] text-xs px-3 py-1 text-center">
-                Payment Processing
+                Request Processing
               </div>
             </div>
           );

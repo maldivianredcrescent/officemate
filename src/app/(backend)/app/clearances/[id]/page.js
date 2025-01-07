@@ -145,7 +145,9 @@ const ClearanceByIdPage = () => {
         <div className="w-full flex flex-col justify-between pb-4 capitalize">
           <div className="w-full flex flex-row items-center justify-between gap-4 mb-2">
             <div className="flex md:flex-row flex-col md:gap-3 gap-1 md:items-center items-start">
-              <h1 className="text-2xl font-semibold">Clearance</h1>
+              <h1 className="text-2xl font-semibold">
+                Working Advance Clearance
+              </h1>
               <div>{renderStatus(result.data?.clearance?.status)}</div>
             </div>
             <div className="text-xl font-semibold">
@@ -249,9 +251,14 @@ const ClearanceByIdPage = () => {
                 onEdit: null,
                 onDelete: null,
                 showExpenditure: true,
-                onExpenditureUpdate: (requestItem) => {
-                  setSelectedRequestItem(requestItem);
-                },
+                onExpenditureUpdate:
+                  ["admin", "payment_processor", "finance_approver"].includes(
+                    user?.role
+                  ) || ["created"].includes(result.data?.clearance?.status)
+                    ? (requestItem) => {
+                        setSelectedRequestItem(requestItem);
+                      }
+                    : null,
               })}
               isPending={isPending}
               data={
@@ -563,51 +570,58 @@ const ClearanceByIdPage = () => {
         <div className="w-full">
           <div className="flex flex-row justify-between pb-6 pt-12">
             <p className="text-black text-xl font-[600]">Clearance Documents</p>
-            <ClearanceDocumentForm
-              clearance={result.data?.clearance}
-              clearanceDocument={selectedClearanceDocument}
-              onSuccess={() => {
-                execute({ id, limit, skip });
-              }}
-              onClose={() => {}}
-            />
+            {["admin", "payment_processor", "finance_approver"].includes(
+              user?.role
+            ) || ["created"].includes(result.data?.clearance?.status) ? (
+              <ClearanceDocumentForm
+                clearance={result.data?.clearance}
+                clearanceDocument={selectedClearanceDocument}
+                onSuccess={() => {
+                  execute({ id, limit, skip });
+                }}
+                onClose={() => {}}
+              />
+            ) : (
+              <></>
+            )}
           </div>
           <div className="w-full">
-            {result.data &&
-              result.data.clearance &&
-              [
-                "submitted",
-                "budget_approved",
-                "finance_approved",
-                "completed",
-              ].includes(result.data?.clearance?.status) && (
-                <ClearanceDocumentTable
-                  columns={clearanceDocumentTableColumns({
-                    onEdit: (clearanceDocument) => {
-                      setSelectedClearanceDocument(clearanceDocument);
-                    },
-                    onDelete: async (clearanceDocument) => {
-                      const confirmed = window.confirm(
-                        "Are you sure you want to delete this document?"
-                      );
-                      if (confirmed) {
-                        await executeClearanceDocument({
-                          id: clearanceDocument.id,
-                        });
-                        await execute({ id, limit, skip });
+            <ClearanceDocumentTable
+              columns={clearanceDocumentTableColumns({
+                onEdit:
+                  ["admin", "payment_processor", "finance_approver"].includes(
+                    user?.role
+                  ) || ["created"].includes(result.data?.clearance?.status)
+                    ? (clearanceDocument) => {
+                        setSelectedClearanceDocument(clearanceDocument);
                       }
-                    },
-                  })}
-                  isPending={isPending}
-                  data={
-                    !isPending &&
-                    result.data &&
-                    result.data.clearance.clearanceDocuments
-                      ? result.data.clearance.clearanceDocuments
-                      : []
-                  }
-                />
-              )}
+                    : null,
+                onDelete:
+                  ["admin", "payment_processor", "finance_approver"].includes(
+                    user?.role
+                  ) || ["created"].includes(result.data?.clearance?.status)
+                    ? async (clearanceDocument) => {
+                        const confirmed = window.confirm(
+                          "Are you sure you want to delete this document?"
+                        );
+                        if (confirmed) {
+                          await executeClearanceDocument({
+                            id: clearanceDocument.id,
+                          });
+                          await execute({ id, limit, skip });
+                        }
+                      }
+                    : null,
+              })}
+              isPending={isPending}
+              data={
+                !isPending &&
+                result.data &&
+                result.data.clearance.clearanceDocuments
+                  ? result.data.clearance.clearanceDocuments
+                  : []
+              }
+            />
           </div>
         </div>
         <div className="flex flex-row justify-end gap-2 mt-6">
@@ -648,14 +662,23 @@ const ClearanceByIdPage = () => {
             )}
         </div>
       </div>
-      <UpdateExpenditureForm
-        requestItem={selectedRequestItem}
-        onSuccess={() => {
-          setSelectedRequestItem(null);
-          execute({ id, limit, skip });
-        }}
-        onClose={() => setSelectedRequestItem(null)}
-      />
+      {(result.data &&
+        result.data.clearance &&
+        ["admin", "payment_processor", "finance_approver"].includes(
+          user?.role
+        )) ||
+      ["created"].includes(result.data?.clearance?.status) ? (
+        <UpdateExpenditureForm
+          requestItem={selectedRequestItem}
+          onSuccess={() => {
+            setSelectedRequestItem(null);
+            execute({ id, limit, skip });
+          }}
+          onClose={() => setSelectedRequestItem(null)}
+        />
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
