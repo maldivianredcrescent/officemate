@@ -191,7 +191,7 @@ const ClearanceByIdPage = () => {
                 <div className="px-4 py-3 text-sm text-gray-500 border-b bg-gray-100 font-[600]">
                   Request Summary
                 </div>
-                <div className=" grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 overflow-hidden gap-4 p-4">
+                <div className=" grid lg:grid-cols-3 md:grid-cols-2 grid-cols-2 overflow-hidden gap-4 p-4">
                   <div className="w-full">
                     <div className="flex flex-col gap-1">
                       <p className="text-black/50 text-sm">Request No.</p>
