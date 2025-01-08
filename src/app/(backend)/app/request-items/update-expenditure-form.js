@@ -37,12 +37,14 @@ const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
         expenditure: z.number().min(0),
         payee: z.string().min(1),
         documentUrl: z.string().optional(),
+        clearanceDate: z.string().optional(),
       })
     ),
     defaultValues: {
       expenditure: 0,
       payee: "",
       documentUrl: "",
+      clearanceDate: "",
     },
   });
 
@@ -51,6 +53,7 @@ const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
       form.setValue("expenditure", requestItem.expenditure);
       form.setValue("payee", requestItem.payee);
       form.setValue("documentUrl", requestItem.documentUrl);
+      form.setValue("clearanceDate", requestItem.clearanceDate);
       setIsOpen(true);
     }
   }, [requestItem]);
@@ -134,6 +137,29 @@ const UpdateExpenditureForm = ({ requestItem, onSuccess, onClose }) => {
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value))
                         }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="clearanceDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expenditure Date</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        {...field}
+                        value={
+                          field.value
+                            ? new Date(field.value).toISOString().split("T")[0]
+                            : ""
+                        }
+                        placeholder="Enter expenditure date"
+                        onChange={(e) => field.onChange(e.target.value)}
                       />
                     </FormControl>
                     <FormMessage />

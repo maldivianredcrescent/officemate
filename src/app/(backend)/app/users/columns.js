@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import moment from "moment";
+import { snakeToSentence } from "@/utils/snakeToSentence";
 
 export const columns = (onEdit) => [
   {
@@ -26,7 +27,11 @@ export const columns = (onEdit) => [
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue("role")}</div>;
+      return (
+        <div className="capitalize">
+          {snakeToSentence(row.getValue("role"))}
+        </div>
+      );
     },
   },
   {

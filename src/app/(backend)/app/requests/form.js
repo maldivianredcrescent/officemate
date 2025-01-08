@@ -36,10 +36,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useRouter } from "next/navigation";
 
 const RequestForm = ({ request, onSuccess, onClose, activities }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const { toast } = useToast();
   const [activityOpen, setActivityOpen] = useState(false);
   const [activityValue, setActivityValue] = React.useState("");
@@ -77,6 +79,9 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
       form.reset();
       setIsOpen(false);
       onSuccess?.(result.data.request);
+      if (!request) {
+        router.push(`/app/requests/${result.data.request.id}`);
+      }
     } else {
       result.data?.error &&
         toast({

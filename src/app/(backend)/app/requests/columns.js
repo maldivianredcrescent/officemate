@@ -154,6 +154,26 @@ export const columns = [
     },
   },
   {
+    id: "totalAmount",
+    accessorKey: "requestItems.amount",
+    header: "Total Requested",
+    cell: ({ row }) => {
+      const totalAmount = row.original.requestItems.reduce(
+        (sum, item) => sum + item.amount,
+        0
+      );
+      return (
+        <div>
+          MVR{" "}
+          {totalAmount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {

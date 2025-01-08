@@ -332,7 +332,7 @@ const RequestByIdPage = () => {
                   ["admin", "payment_processor", "finance_approver"].includes(
                     user?.role
                   )) ||
-                ["created"].includes(result.data?.clearance?.status) ? (
+                ["created"].includes(result.data?.request?.status) ? (
                   <RequestItemForm
                     requestItem={selectedRequestItem}
                     request={result.data?.request || {}}

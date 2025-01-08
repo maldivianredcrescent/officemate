@@ -32,6 +32,7 @@ export const getRequestsAction = actionClient
         orderBy: { updatedAt: "desc" },
         include: {
           unit: true,
+          requestItems: true,
           activity: {
             include: {
               workplan: true,
@@ -62,6 +63,7 @@ export const getRequestsAction = actionClient
         orderBy: { updatedAt: "desc" },
         include: {
           unit: true,
+          requestItems: true,
           activity: {
             include: {
               workplan: true,

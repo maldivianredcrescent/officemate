@@ -116,6 +116,7 @@ export const updateExpenditureAction = actionClient
       expenditure: z.number(),
       payee: z.string(),
       documentUrl: z.string().optional(),
+      clearanceDate: z.string().optional(),
     })
   )
   .action(async ({ parsedInput }) => {
@@ -125,7 +126,9 @@ export const updateExpenditureAction = actionClient
         expenditure: parsedInput.expenditure,
         payee: parsedInput.payee,
         documentUrl: parsedInput.documentUrl,
-        clearanceDate: new Date(),
+        clearanceDate: parsedInput.clearanceDate
+          ? new Date(parsedInput.clearanceDate).toISOString()
+          : null,
       },
     });
     return { requestItem, success: true };

@@ -353,28 +353,36 @@ const ClearanceByIdPage = () => {
                     </div>
                   </div>
                 </div>
-                {result.data?.clearance?.status !== "completed" && (
-                  <div className="w-full">
-                    <div>
-                      <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                        Action
-                      </p>
-                      <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                        <div>
-                          <ClearanceForm
-                            isOpen={isEditFormOpen}
-                            clearance={result.data?.clearance}
-                            onSuccess={() => {
-                              setIsEditFormOpen(false);
-                              execute({ id, limit, skip });
-                            }}
-                            onClose={() => setIsEditFormOpen(false)}
-                          />
+                {result.data &&
+                  result.data.clearance &&
+                  (["created"].includes(result.data.clearance.status) ||
+                    [
+                      "admin",
+                      "payment_processor",
+                      "finance_approver",
+                      "budget_approver",
+                    ].includes(user?.role)) && (
+                    <div className="w-full">
+                      <div>
+                        <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
+                          Action
+                        </p>
+                        <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                          <div>
+                            <ClearanceForm
+                              isOpen={isEditFormOpen}
+                              clearance={result.data?.clearance}
+                              onSuccess={() => {
+                                setIsEditFormOpen(false);
+                                execute({ id, limit, skip });
+                              }}
+                              onClose={() => setIsEditFormOpen(false)}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             </div>
             <div className="my-6 flex items-center justify-between">

@@ -113,6 +113,46 @@ export const columns = [
     },
   },
   {
+    id: "totalAmount",
+    accessorKey: "request.requestItems.amount",
+    header: "Total Requested",
+    cell: ({ row }) => {
+      const totalAmount = row.original.request.requestItems.reduce(
+        (sum, item) => sum + item.amount,
+        0
+      );
+      return (
+        <div>
+          MVR{" "}
+          {totalAmount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </div>
+      );
+    },
+  },
+  {
+    id: "totalExpenditure",
+    accessorKey: "request.requestItems.expenditureAmount",
+    header: "Total Expenditure",
+    cell: ({ row }) => {
+      const totalAmount = row.original.request.requestItems.reduce(
+        (sum, item) => sum + item.expenditure,
+        0
+      );
+      return (
+        <div>
+          MVR{" "}
+          {totalAmount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {
