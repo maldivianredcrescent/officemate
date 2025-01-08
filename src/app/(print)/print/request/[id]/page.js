@@ -1,6 +1,7 @@
 "use client";
 
 import { getRequestByIdAction } from "@/actions/requestActions";
+import { snakeToSentence } from "@/utils/snakeToSentence";
 import moment from "moment";
 import { useAction } from "next-safe-action/hooks";
 import { useParams } from "next/navigation";
@@ -40,20 +41,6 @@ const PrintRequestPage = () => {
           <h1 className="text-xl font-semibold mb-6">Request Form</h1>
           <div className="grid grid-cols-3 gap-x-12 gap-y-3 mb-6 text-sm">
             <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Date</span>
-              <span>
-                {moment(result.data.request.createdAt).format("DD MMM YYYY")}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Activity</span>
-              <span>{result.data.request.activity?.name}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Activity Code</span>
-              <span>{result.data.request.activity?.code}</span>
-            </div>
-            <div className="flex flex-col">
               <span className="font-[400] text-black/70">Request No.</span>
               <span>
                 MRCR/{moment(result.data.request.createdAt).format("YYYY")}/
@@ -61,8 +48,22 @@ const PrintRequestPage = () => {
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Project</span>
-              <span>{result.data.request.activity?.project?.name}</span>
+              <span className="font-[400] text-black/70">Request Type</span>
+              <span>{snakeToSentence(result.data.request.type)}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-[400] text-black/70">Date</span>
+              <span>
+                {moment(result.data.request.submittedAt).format("DD MMM YYYY")}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-[400] text-black/70">Activity Code</span>
+              <span>{result.data.request.activity?.code}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-[400] text-black/70">Donor Code</span>
+              <span>{result.data.request.activity?.project?.donor?.code}</span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Project Code</span>
@@ -73,14 +74,6 @@ const PrintRequestPage = () => {
                 Units/Departments
               </span>
               <span>{result.data.request?.unit?.name || "N/A"}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Donor</span>
-              <span>{result.data.request.activity?.project?.donor?.name}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Donor Code</span>
-              <span>{result.data.request.activity?.project?.donor?.code}</span>
             </div>
           </div>
           <table className="w-full mb-8 text-sm rounded-lg">

@@ -1,6 +1,7 @@
 "use client";
 
 import { getClearanceByIdAction } from "@/actions/clearanceActions";
+import { snakeToSentence } from "@/utils/snakeToSentence";
 import moment from "moment";
 import { useAction } from "next-safe-action/hooks";
 import { useParams } from "next/navigation";
@@ -20,51 +21,51 @@ const PrintClearancePage = () => {
     <>
       {isPending && <div className="text-center py-4">Loading...</div>}
       {result.data && (
-        <div className="max-w-[800px] print-request py-6 w-full mx-auto bg-white">
-          <header className="flex justify-between items-start mb-4 border-b border-border pb-4">
+        <div className="max-w-[800px] min-w-[800px] print-request py-6 w-full mx-auto bg-white">
+          <header className="flex justify-start items-center gap-4 mb-4 border-b border-border pb-4">
             <div className="flex items-center">
               <img
                 src="/mrclogo.png"
                 alt="Maldivian Red Crescent"
-                className="h-12"
+                className="w-auto"
               />
             </div>
             <address className="text-left text-sm not-italic">
-              2nd Floor, Plot number 11493,
-              <br />
-              Hithigasmagu, Hulhumale',
-              <br />
-              Maldives
+              <p className="font-bold text-lg">Maldivian Red Crescent</p>
+              <p>
+                2nd Floor, Plot number 11493, Hithigasmagu, Hulhumale', Maldives
+              </p>
             </address>
           </header>
           <h1 className="text-xl font-semibold mb-6">Clearance</h1>
           <div className="grid grid-cols-3 gap-x-12 gap-y-3 mb-6 text-sm">
             <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Date</span>
+              <span className="font-[400] text-black/70">Clearance No.</span>
               <span>
-                {moment(result.data.clearance.createdAt).format("DD MMM YYYY")}
+                MRCC/{moment(result.data.clearance.number).format("YYYY")}/
+                {result.data.clearance.number}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Activity</span>
-              <span>{result.data.clearance.request.requestItem?.name}</span>
+              <span className="font-[400] text-black/70">Request Type</span>
+              <span>{snakeToSentence(result.data.clearance.request.type)}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-[400] text-black/70">Date</span>
+              <span>
+                {moment(result.data.clearance.request.submittedAt).format(
+                  "DD MMM YYYY"
+                )}
+              </span>
             </div>
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Activity Code</span>
               <span>{result.data.clearance.request.activity?.code}</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Request No.</span>
+              <span className="font-[400] text-black/70">Donor Code</span>
               <span>
-                MRCC/
-                {moment(result.data.clearance.createdAt).format("YYYY")}/
-                {result.data.clearance.number}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Project</span>
-              <span>
-                {result.data.clearance.request.activity?.project?.name}
+                {result.data.clearance.request.activity?.project?.donor?.code}
               </span>
             </div>
             <div className="flex flex-col">
@@ -77,21 +78,7 @@ const PrintClearancePage = () => {
               <span className="font-[400] text-black/70">
                 Units/Departments
               </span>
-              <span>
-                {result.data.clearance.request.activity?.project?.unit?.name}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Donor</span>
-              <span>
-                {result.data.clearance.request.activity?.project?.donor?.name}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-[400] text-black/70">Donor Code</span>
-              <span>
-                {result.data.clearance.request.activity?.project?.donor?.code}
-              </span>
+              <span>{result.data.clearance.request?.unit?.name || "N/A"}</span>
             </div>
           </div>
           <table className="w-full mb-8 text-sm rounded-lg">

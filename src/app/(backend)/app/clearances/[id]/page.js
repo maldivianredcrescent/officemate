@@ -28,6 +28,7 @@ import { columns as clearanceDocumentTableColumns } from "../../clearance-docume
 import ClearanceDocumentForm from "../../clearance-documents/form";
 import { getClearanceDocumentByIdAction } from "@/actions/clearanceDocumentActions";
 import { useSession } from "next-auth/react";
+import { snakeToSentence } from "@/utils/snakeToSentence";
 
 const ClearanceByIdPage = () => {
   const { id } = useParams();
@@ -186,56 +187,91 @@ const ClearanceByIdPage = () => {
           )}
           {result.data && result.data.clearance && (
             <div className="mt-4">
-              <div className="w-full flex flex-col space-y-2">
-                <div className="rounded-[--radius] border grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 overflow-hidden">
+              <div className="rounded-[--radius] border w-full flex flex-col space-y-2 overflow-hidden">
+                <div className="px-4 py-3 text-sm text-gray-500 border-b bg-gray-100 font-[600]">
+                  Request Summary
+                </div>
+                <div className=" grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 overflow-hidden gap-4 p-4">
                   <div className="w-full">
-                    <div>
-                      <p className="text-black/50 text-sm border-b border-t border-t-transparent border-border py-3 font-[600] px-4 bg-gray-50">
-                        Created At
-                      </p>
-                      <p className="py-3 px-4 text-sm">
-                        {result.data && result.data.clearance
-                          ? moment(result.data.clearance.createdAt).format(
-                              "DD-MM-YYYY"
-                            )
-                          : "N/A"}
+                    <div className="flex flex-col gap-1">
+                      <p className="text-black/50 text-sm">Request No.</p>
+                      <p className="text-sm capitalize">
+                        MRCR/
+                        {moment(result.data.clearance.request.createdAt).format(
+                          "YYYY"
+                        )}
+                        /{result.data.clearance.request.number}
                       </p>
                     </div>
                   </div>
                   <div className="w-full">
-                    <div>
-                      <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                        Request Title
-                      </p>
-                      <p className="py-3 px-4 text-sm capitalize">
-                        {result.data && result.data.clearance.request.title
-                          ? result.data.clearance.request.title
-                          : "N/A"}
+                    <div className="flex flex-col gap-1">
+                      <p className="text-black/50 text-sm">Request Type</p>
+                      <p className="text-sm capitalize">
+                        {snakeToSentence(result.data.clearance.request.type)}
                       </p>
                     </div>
                   </div>
                   <div className="w-full">
-                    <div>
-                      <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                        Project
-                      </p>
-                      <p className="py-3 px-4 text-sm capitalize">
-                        {result.data && result.data.clearance.request.activity
-                          ? result.data.clearance.request.activity.project.name
-                          : "N/A"}
+                    <div className="flex flex-col gap-1">
+                      <p className="text-black/50 text-sm">Request Date</p>
+                      <p className="text-sm capitalize">
+                        {moment(result.data.clearance.submittedAt).format(
+                          "MMMM D, YYYY"
+                        )}
                       </p>
                     </div>
                   </div>
                   <div className="w-full">
-                    <div>
-                      <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                        Donor
+                    <div className="flex flex-col gap-1">
+                      <p className="text-black/50 text-sm">Activity Code</p>
+                      <p className="text-sm capitalize">
+                        {result.data.clearance.request.activity?.code}
                       </p>
-                      <p className="py-3 px-4 text-sm capitalize">
-                        {result.data && result.data.clearance.request.activity
-                          ? result.data.clearance.request.activity.project.donor
-                              .name
-                          : "N/A"}
+                    </div>
+                  </div>
+                  <div className="w-full">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-black/50 text-sm">Donor Code</p>
+                      <p className="text-sm capitalize">
+                        {
+                          result.data.clearance.request.activity?.project?.donor
+                            ?.code
+                        }
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-full">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-black/50 text-sm">Project Code</p>
+                      <p className="text-sm capitalize">
+                        {result.data.clearance.request.activity?.project?.code}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-full">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-black/50 text-sm">Units/Departments</p>
+                      <p className="text-sm capitalize">
+                        {result.data.clearance.request?.unit?.name || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-full">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-black/50 text-sm">Submitted By</p>
+                      <p className="text-sm capitalize">
+                        {result.data.clearance.request?.submittedBy?.name ||
+                          "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-full">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-black/50 text-sm">Designation</p>
+                      <p className="text-sm capitalize">
+                        {result.data.clearance.request?.submittedDesignation ||
+                          "N/A"}
                       </p>
                     </div>
                   </div>

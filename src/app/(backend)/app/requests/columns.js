@@ -42,10 +42,25 @@ export const columns = [
   {
     accessorKey: "title",
     header: "Title",
+    cell: ({ row }) => {
+      return (
+        <div className="min-w-[200px] whitespace-normal">
+          {row.getValue("title")}
+        </div>
+      );
+    },
   },
   {
+    id: "activity.name",
     accessorKey: "activity.name",
     header: "Budget Line",
+    cell: ({ row }) => {
+      return (
+        <div className="min-w-[200px] whitespace-normal">
+          {row.getValue("activity.name")}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "unit.name",
@@ -130,6 +145,13 @@ export const columns = [
   {
     accessorKey: "statusNote",
     header: "Status Note",
+    cell: ({ row }) => {
+      return (
+        <div className="min-w-[200px] whitespace-normal">
+          {row.getValue("statusNote")}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "createdAt",

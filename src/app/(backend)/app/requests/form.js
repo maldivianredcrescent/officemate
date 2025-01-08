@@ -36,13 +36,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useAction } from "next-safe-action/hooks";
 
 const RequestForm = ({ request, onSuccess, onClose, activities }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-
+  const [activityOpen, setActivityOpen] = useState(false);
+  const [activityValue, setActivityValue] = React.useState("");
   const form = useForm({
     resolver: zodResolver(requestSchema),
     defaultValues: {
@@ -62,7 +62,7 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
       form.setValue("title", request.title);
       form.setValue("statusNote", request.statusNote);
     }
-  }, [request]);
+  }, [request, activities]);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -90,9 +90,10 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
 
   return (
     <Dialog
+      modal
       open={isOpen}
       onOpenChange={(open) => {
-        !open && form.reset();
+        !open && !request && form.reset();
         onClose?.();
         setIsOpen(open);
       }}
@@ -178,17 +179,23 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
                       <Select
                         {...field}
                         placeholder="Select a budget line"
-                        onValueChange={(value) => field.onChange(value)} // Ensure the selected value updates the form state
+                        onValueChange={(value) => field.onChange(value)}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select a budget line" />
                         </SelectTrigger>
                         <SelectContent>
-                          {activities.map((activity) => (
-                            <SelectItem key={activity.id} value={activity.id}>
-                              {activity.name}
-                            </SelectItem>
-                          ))}
+                          <div className="relative">
+                            {activities.map((activity) => (
+                              <SelectItem
+                                className="cursor-pointer"
+                                key={activity.id}
+                                value={activity.id}
+                              >
+                                {activity.code} - {activity.name}
+                              </SelectItem>
+                            ))}
+                          </div>
                         </SelectContent>
                       </Select>
                     </FormControl>
