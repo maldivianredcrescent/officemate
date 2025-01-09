@@ -25,12 +25,12 @@ export const columns = ({ onEdit }) => [
   {
     id: "code",
     accessorKey: "code",
-    header: "Activity Code",
+    header: "Budget Code",
   },
   {
     id: "name",
     accessorKey: "name",
-    header: "Activity Name",
+    header: "Budget Line",
   },
   {
     id: "project.name",
@@ -89,7 +89,7 @@ export const columns = ({ onEdit }) => [
               <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(activity.code)}
               >
-                Copy Activity Code
+                Copy Budget Code
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

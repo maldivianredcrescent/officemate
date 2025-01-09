@@ -241,7 +241,7 @@ const RequestByIdPage = () => {
                       </div>
                       <div className="w-full">
                         <div className="flex flex-col gap-1">
-                          <p className="text-black/50 text-sm">Activity Code</p>
+                          <p className="text-black/50 text-sm">Budget Code</p>
                           <p className="text-sm capitalize">
                             {result.data.request.activity?.code}
                           </p>

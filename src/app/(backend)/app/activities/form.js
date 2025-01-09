@@ -120,9 +120,9 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Activity Code</FormLabel>
+                    <FormLabel>Budget Code</FormLabel>
                     <FormControl>
-                      <Input placeholder="eg. 1.1.1" {...field} />
+                      <Input placeholder="eg. 171" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -133,9 +133,12 @@ const ActivityForm = ({ activity, onSuccess, onClose, projects, workplan }) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Activity Name</FormLabel>
+                    <FormLabel>Budget Line</FormLabel>
                     <FormControl>
-                      <Input placeholder="eg. Disaster Response" {...field} />
+                      <Input
+                        placeholder="eg. Emergency Response Fund"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
