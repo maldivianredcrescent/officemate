@@ -17,8 +17,9 @@ import { snakeToSentence } from "@/utils/snakeToSentence";
 
 export const columns = [
   {
+    id: "number",
     accessorKey: "number",
-    header: "Number",
+    header: "Request No.",
     cell: ({ row }) => {
       return (
         <div className="font-[600]">

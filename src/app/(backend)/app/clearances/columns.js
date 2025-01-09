@@ -17,7 +17,7 @@ import moment from "moment";
 export const columns = [
   {
     accessorKey: "number",
-    header: "Number",
+    header: "Clearance No.",
     cell: ({ row }) => {
       return (
         <div className="font-[600]">

@@ -1,6 +1,7 @@
 "use client";
 
 import { getClearanceByIdAction } from "@/actions/clearanceActions";
+import LoadingIndicator from "@/components/ui/loading-indicator";
 import { snakeToSentence } from "@/utils/snakeToSentence";
 import moment from "moment";
 import { useAction } from "next-safe-action/hooks";
@@ -19,7 +20,11 @@ const PrintClearancePage = () => {
 
   return (
     <>
-      {isPending && <div className="text-center py-4">Loading...</div>}
+      {isPending && (
+        <div className="w-full h-screen flex flex-col items-center justify-center">
+          <LoadingIndicator />
+        </div>
+      )}
       {result.data && (
         <div className="max-w-[800px] min-w-[800px] print-request py-6 w-full mx-auto bg-white">
           <header className="flex justify-start items-center gap-4 mb-4 border-b border-border pb-4">
@@ -37,7 +42,9 @@ const PrintClearancePage = () => {
               </p>
             </address>
           </header>
-          <h1 className="text-xl font-semibold mb-6">Clearance</h1>
+          <h1 className="text-xl font-semibold mb-6">
+            Working Advance Clearance
+          </h1>
           <div className="grid grid-cols-3 gap-x-12 gap-y-3 mb-6 text-sm">
             <div className="flex flex-col">
               <span className="font-[400] text-black/70">Clearance No.</span>

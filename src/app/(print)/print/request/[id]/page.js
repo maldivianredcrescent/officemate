@@ -1,6 +1,7 @@
 "use client";
 
 import { getRequestByIdAction } from "@/actions/requestActions";
+import LoadingIndicator from "@/components/ui/loading-indicator";
 import { snakeToSentence } from "@/utils/snakeToSentence";
 import moment from "moment";
 import { useAction } from "next-safe-action/hooks";
@@ -19,7 +20,11 @@ const PrintRequestPage = () => {
 
   return (
     <>
-      {isPending && <div className="text-center py-4">Loading...</div>}
+      {isPending && (
+        <div className="w-full h-screen flex flex-col items-center justify-center">
+          <LoadingIndicator />
+        </div>
+      )}
       {result.data && (
         <div className="max-w-[800px] print-request py-6 w-full mx-auto bg-white">
           <header className="flex justify-between items-start mb-4 border-b border-border pb-4">

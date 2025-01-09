@@ -56,44 +56,31 @@ export function DataTable({
   return (
     <>
       <div className="flex flex-col lg:flex-row items-center gap-4 py-4">
-        {/* <Input
-          placeholder="Filter using project name..."
-          value={
-            columnFilters.find((f) => f.id === "activity.workplan.name")
-              ?.value || ""
-          }
-          onChange={(e) => {
-            const value = e.target.value;
-            setColumnFilters((prev) =>
-              prev
-                .filter((f) => f.id !== "activity.workplan.name")
-                .concat({
-                  id: "activity.workplan.name",
-                  value,
-                })
-            );
-          }}
-          className="w-full rounded-[--radius]"
-        /> */}
-        {/* <Select
-          value={table.getColumn("type")?.getFilterValue() ?? type}
-          placeholder="Filter project..."
+        <Select
+          value={table.getColumn("status")?.getFilterValue() ?? "all"}
+          placeholder="Filter status..."
           onValueChange={(value) => {
-            table.getColumn("type")?.setFilterValue(value);
+            table.getColumn("status")?.setFilterValue(value);
           }}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select a request type" />
+            <SelectValue placeholder="Select a status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem key="goods" value="goods">
-              Goods
+            <SelectItem key="created" value="created">
+              Pending
             </SelectItem>
-            <SelectItem key="service" value="service">
-              Service
+            <SelectItem key="budget_approved" value="budget_approved">
+              Budget Approved
+            </SelectItem>
+            <SelectItem key="payment_approved" value="payment_approved">
+              Payment Approved
+            </SelectItem>
+            <SelectItem key="rejected" value="rejected">
+              Rejected
             </SelectItem>
           </SelectContent>
-        </Select> */}
+        </Select>
       </div>
       <div className="rounded-xl border overflow-hidden">
         <Table className="w-full">

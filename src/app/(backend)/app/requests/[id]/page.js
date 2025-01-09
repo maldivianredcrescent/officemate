@@ -30,6 +30,7 @@ import { deleteRequestDocumentAction } from "@/actions/requestDocumentActions";
 import { date } from "zod";
 import { useSession } from "next-auth/react";
 import { snakeToSentence } from "@/utils/snakeToSentence";
+import LoadingIndicator from "@/components/ui/loading-indicator";
 
 const RequestByIdPage = () => {
   const { id } = useParams();
@@ -166,517 +167,556 @@ const RequestByIdPage = () => {
           </div>
         </div>
       </div>
-      <div className="w-full h-full p-4">
-        <div className="w-full flex flex-col justify-between pb-4 capitalize">
-          <div className="w-full flex items-center justify-between gap-4 mb-2">
-            <div className="flex md:flex-row flex-col md:gap-3 gap-1 md:items-center items-start">
-              <h1 className="text-2xl font-semibold">
-                {result.data && result.data.request
-                  ? snakeToSentence(result.data.request.type) + " request"
-                  : "Request Details"}
-              </h1>
-              <div>{renderStatus(result.data?.request?.status)}</div>
-            </div>
-            <div className="text-xl font-semibold">
-              {result.data && result.data.totalAmount
-                ? "MVR " +
-                  result.data.totalAmount.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
-                : ""}
-            </div>
-          </div>
-          {result.data?.request?.status === "rejected" && (
-            <div>
-              <div className="w-full flex flex-col space-y-1 my-2 bg-red-50 rounded-[--radius] p-4 border border-red-200">
-                <p className="text-sm text-black/50 font-[600] text-red-500">
-                  Reject Remarks
-                </p>
-                <p className="text-sm lg:mr-[20rem] mr-0 text-red-500">
-                  {result.data?.request?.rejectedRemarks || "N/A"}
-                </p>
-              </div>
-            </div>
-          )}
-          {result.data && result.data.request && (
-            <div className="mt-4">
-              <div className="rounded-[--radius] border w-full flex flex-col space-y-2 overflow-hidden">
-                <div className="px-4 py-3 text-sm text-gray-500 border-b bg-gray-100 font-[600]">
-                  Request Summary
-                </div>
-                <div className=" grid lg:grid-cols-3 md:grid-cols-2 grid-cols-2 overflow-hidden gap-4 p-4">
-                  <div className="w-full">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-black/50 text-sm">Request No.</p>
-                      <p className="text-sm capitalize">
-                        MRCR/
-                        {moment(result.data.request.createdAt).format("YYYY")}/
-                        {result.data.request.number}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-black/50 text-sm">Request Type</p>
-                      <p className="text-sm capitalize">
-                        {snakeToSentence(result.data.request.type)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-black/50 text-sm">Request Date</p>
-                      <p className="text-sm capitalize">
-                        {moment(result.data.request.submittedAt).format(
-                          "MMMM D, YYYY"
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-black/50 text-sm">Activity Code</p>
-                      <p className="text-sm capitalize">
-                        {result.data.request.activity?.code}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-black/50 text-sm">Donor Code</p>
-                      <p className="text-sm capitalize">
-                        {result.data.request.activity?.project?.donor?.code}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-black/50 text-sm">Project Code</p>
-                      <p className="text-sm capitalize">
-                        {result.data.request.activity?.project?.code}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-black/50 text-sm">Units/Departments</p>
-                      <p className="text-sm capitalize">
-                        {result.data.request?.unit?.name || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-black/50 text-sm">Submitted By</p>
-                      <p className="text-sm capitalize">
-                        {result.data.request?.submittedBy?.name || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-black/50 text-sm">Designation</p>
-                      <p className="text-sm capitalize">
-                        {result.data.request?.submittedDesignation || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+      {result && result.data && result.data.request ? (
         <div className="w-full">
-          <div className="w-full">
-            <DataTable
-              columns={columns({
-                onEdit:
-                  ["created"].includes(result.data?.request?.status) ||
-                  user?.role === "admin" ||
-                  user?.role === "budget_approver" ||
-                  user?.role === "finance_approver" ||
-                  user?.role === "payment_processor"
-                    ? async (requestItem) => {
-                        setSelectedRequestItem(requestItem);
-                      }
-                    : null,
-                onDelete:
-                  ["created"].includes(result.data?.request?.status) ||
-                  user?.role === "admin" ||
-                  user?.role === "budget_approver" ||
-                  user?.role === "finance_approver" ||
-                  user?.role === "payment_processor"
-                    ? async (requestItem) => {
-                        const confirmed = window.confirm(
-                          "Are you sure you want to delete this item?"
-                        );
-                        if (confirmed) {
-                          await deleteRequestItem({ id: requestItem.id });
-                          await execute({ id, limit, skip });
-                        }
-                      }
-                    : null,
-              })}
-              isPending={isPending}
-              data={
-                !isPending && result.data && result.data.request.requestItems
-                  ? result.data.request.requestItems
-                  : []
-              }
-            />
-            <div className="my-6 flex items-center justify-between">
-              <div className="flex flex-row gap-2">
-                {(result.data &&
-                  result.data.request &&
-                  ["admin", "payment_processor", "finance_approver"].includes(
-                    user?.role
-                  )) ||
-                ["created"].includes(result.data?.request?.status) ? (
-                  <RequestItemForm
-                    requestItem={selectedRequestItem}
-                    request={result.data?.request || {}}
-                    onSuccess={() => {
-                      execute({ id, limit, skip });
-                      setSelectedRequestItem(null);
-                    }}
-                    onClose={() => setSelectedRequestItem(null)}
-                  />
-                ) : (
-                  <></>
-                )}
+          <div className="w-full h-full p-4">
+            <div className="w-full flex flex-col justify-between pb-4 capitalize">
+              <div className="w-full flex items-center justify-between gap-4 mb-2">
+                <div className="flex md:flex-row flex-col md:gap-3 gap-1 md:items-center items-start">
+                  <h1 className="text-2xl font-semibold">
+                    {result.data && result.data.request
+                      ? snakeToSentence(result.data.request.type) + " request"
+                      : "Request Details"}
+                  </h1>
+                  <div>{renderStatus(result.data?.request?.status)}</div>
+                </div>
+                <div className="text-xl font-semibold">
+                  {result.data && result.data.totalAmount
+                    ? "MVR " +
+                      result.data.totalAmount.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })
+                    : ""}
+                </div>
+              </div>
+              {result.data?.request?.status === "rejected" && (
                 <div>
-                  <Button
-                    onClick={() => {
-                      router.push(`/print/request/${result.data?.request?.id}`);
-                    }}
-                    className="bg-gray-100 text-black hover:bg-gray-200"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      width={24}
-                      height={24}
-                      color={"#000000"}
-                      fill={"none"}
-                    >
-                      <path
-                        d="M7.35396 18C5.23084 18 4.16928 18 3.41349 17.5468C2.91953 17.2506 2.52158 16.8271 2.26475 16.3242C1.87179 15.5547 1.97742 14.5373 2.18868 12.5025C2.36503 10.8039 2.45321 9.95455 2.88684 9.33081C3.17153 8.92129 3.55659 8.58564 4.00797 8.35353C4.69548 8 5.58164 8 7.35396 8H16.646C18.4184 8 19.3045 8 19.992 8.35353C20.4434 8.58564 20.8285 8.92129 21.1132 9.33081C21.5468 9.95455 21.635 10.8039 21.8113 12.5025C22.0226 14.5373 22.1282 15.5547 21.7352 16.3242C21.4784 16.8271 21.0805 17.2506 20.5865 17.5468C19.8307 18 18.7692 18 16.646 18"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                      />
-                      <path
-                        d="M17 8V6C17 4.11438 17 3.17157 16.4142 2.58579C15.8284 2 14.8856 2 13 2H11C9.11438 2 8.17157 2 7.58579 2.58579C7 3.17157 7 4.11438 7 6V8"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M13.9887 16L10.0113 16C9.32602 16 8.98337 16 8.69183 16.1089C8.30311 16.254 7.97026 16.536 7.7462 16.9099C7.57815 17.1904 7.49505 17.5511 7.32884 18.2724C7.06913 19.3995 6.93928 19.963 7.02759 20.4149C7.14535 21.0174 7.51237 21.5274 8.02252 21.7974C8.40513 22 8.94052 22 10.0113 22L13.9887 22C15.0595 22 15.5949 22 15.9775 21.7974C16.4876 21.5274 16.8547 21.0174 16.9724 20.4149C17.0607 19.963 16.9309 19.3995 16.6712 18.2724C16.505 17.5511 16.4218 17.1904 16.2538 16.9099C16.0297 16.536 15.6969 16.254 15.3082 16.1089C15.0166 16 14.674 16 13.9887 16Z"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M18 12H18.009"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    Print Request
-                  </Button>
-                </div>
-              </div>
-              <div>
-                {[
-                  "created",
-                  "submitted",
-                  "budget_approved",
-                  "finance_approved",
-                  "payment_processing",
-                ].includes(result.data?.request?.status) && (
-                  <SignaturePopup
-                    user={user}
-                    request={result.data?.request}
-                    isPopupOpen={isSignaturePopupOpen}
-                    onSuccess={() => {
-                      setIsSignaturePopupOpen(false);
-                      execute({ id, limit, skip });
-                    }}
-                    onClose={() => {
-                      setIsSignaturePopupOpen(false);
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-          {result.data?.request?.status !== "created" && (
-            <div className="w-full flex flex-col space-y-2">
-              <div className="rounded-[--radius] border grid lg:grid-cols-5 md:grid-cols-2 grid-cols-1 overflow-hidden">
-                <div className="w-full">
-                  <div>
-                    <p className="text-black/50 text-sm border-b border-t border-t-transparent border-border py-3 font-[600] px-4 bg-gray-50">
-                      Submitted By
+                  <div className="w-full flex flex-col space-y-1 my-2 bg-red-50 rounded-[--radius] p-4 border border-red-200">
+                    <p className="text-sm text-black/50 font-[600] text-red-500">
+                      Reject Remarks
                     </p>
-                    <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                      <p className="font-[600]">
-                        {result.data && result.data.request.submittedBy
-                          ? result.data.request.submittedBy.name
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data && result.data.request.submittedDesignation
-                          ? result.data.request.submittedDesignation
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data && result.data.request.submittedAt
-                          ? moment(result.data.request.submittedAt).format(
-                              "DD MMM YYYY HH:mm"
-                            )
-                          : ""}
-                      </p>
-                      {result.data?.request?.submittedSignature && (
-                        <div>
-                          <img
-                            src={result.data?.request?.submittedSignature}
-                            className="h-[100px]"
-                          />
+                    <p className="text-sm lg:mr-[20rem] mr-0 text-red-500">
+                      {result.data?.request?.rejectedRemarks || "N/A"}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {result.data && result.data.request && (
+                <div className="mt-4">
+                  <div className="rounded-[--radius] border w-full flex flex-col space-y-2 overflow-hidden">
+                    <div className="px-4 py-3 text-sm text-gray-500 border-b bg-gray-100 font-[600]">
+                      Request Summary
+                    </div>
+                    <div className=" grid lg:grid-cols-3 md:grid-cols-2 grid-cols-2 overflow-hidden gap-4 p-4">
+                      <div className="w-full">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-black/50 text-sm">Request No.</p>
+                          <p className="text-sm capitalize">
+                            MRCR/
+                            {moment(result.data.request.createdAt).format(
+                              "YYYY"
+                            )}
+                            /{result.data.request.number}
+                          </p>
                         </div>
-                      )}
+                      </div>
+                      <div className="w-full">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-black/50 text-sm">Request Type</p>
+                          <p className="text-sm capitalize">
+                            {snakeToSentence(result.data.request.type)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-black/50 text-sm">Request Date</p>
+                          <p className="text-sm capitalize">
+                            {moment(result.data.request.submittedAt).format(
+                              "MMMM D, YYYY"
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-black/50 text-sm">Activity Code</p>
+                          <p className="text-sm capitalize">
+                            {result.data.request.activity?.code}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-black/50 text-sm">Donor Code</p>
+                          <p className="text-sm capitalize">
+                            {result.data.request.activity?.project?.donor?.code}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-black/50 text-sm">Project Code</p>
+                          <p className="text-sm capitalize">
+                            {result.data.request.activity?.project?.code}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-black/50 text-sm">
+                            Units/Departments
+                          </p>
+                          <p className="text-sm capitalize">
+                            {result.data.request?.unit?.name || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-black/50 text-sm">Submitted By</p>
+                          <p className="text-sm capitalize">
+                            {result.data.request?.submittedBy?.name || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-black/50 text-sm">Designation</p>
+                          <p className="text-sm capitalize">
+                            {result.data.request?.submittedDesignation || "N/A"}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="w-full">
-                  <div>
-                    <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                      Budget Approved By
-                    </p>
-                    <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                      <p className="font-[600]">
-                        {result.data && result.data.request.budgetApprovedBy
-                          ? result.data.request.budgetApprovedBy.name
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data &&
-                        result.data.request.budgetApprovedDesignation
-                          ? result.data.request.budgetApprovedDesignation
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data && result.data.request.budgetApprovedAt
-                          ? moment(result.data.request.budgetApprovedAt).format(
-                              "DD MMM YYYY HH:mm"
-                            )
-                          : ""}
-                      </p>
-                      {result.data?.request?.budgetApprovedSignature && (
-                        <div>
-                          <img
-                            src={result.data?.request?.budgetApprovedSignature}
-                            className="h-[100px]"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full">
-                  <div>
-                    <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                      Finance Approved By
-                    </p>
-                    <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                      <p className="font-[600]">
-                        {result.data && result.data.request.financeApprovedBy
-                          ? result.data.request.financeApprovedBy.name
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data &&
-                        result.data.request.financeApprovedDesignation
-                          ? result.data.request.financeApprovedDesignation
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data && result.data.request.financeApprovedAt
-                          ? moment(
-                              result.data.request.financeApprovedAt
-                            ).format("DD MMM YYYY HH:mm")
-                          : ""}
-                      </p>
-                      {result.data?.request?.financeApprovedSignature && (
-                        <div>
-                          <img
-                            src={result.data?.request?.financeApprovedSignature}
-                            className="h-[100px]"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full">
-                  <div>
-                    <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                      Request Processing
-                    </p>
-                    <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                      <p className="font-[600]">
-                        {result.data && result.data.request.paymentProcessedBy
-                          ? result.data.request.paymentProcessedBy.name
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data &&
-                        result.data.request.paymentProcessedDesignation
-                          ? result.data.request.paymentProcessedDesignation
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data && result.data.request.paymentProcessedAt
-                          ? moment(
-                              result.data.request.paymentProcessedAt
-                            ).format("DD MMM YYYY HH:mm")
-                          : ""}
-                      </p>
-                      {result.data?.request?.paymentProcessedSignature && (
-                        <div>
-                          <img
-                            src={
-                              result.data?.request?.paymentProcessedSignature
-                            }
-                            className="h-[100px]"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full">
-                  <div>
-                    <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
-                      Completed By
-                    </p>
-                    <div className="py-3 px-4 text-sm flex flex-col gap-1">
-                      <p className="font-[600]">
-                        {result.data && result.data.request.completedBy
-                          ? result.data.request.completedBy.name
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data && result.data.request.completedDesignation
-                          ? result.data.request.completedDesignation
-                          : ""}
-                      </p>
-                      <p>
-                        {result.data && result.data.request.completedAt
-                          ? moment(result.data.request.completedAt).format(
-                              "DD MMM YYYY HH:mm"
-                            )
-                          : ""}
-                      </p>
-                      {result.data?.request?.completedSignature && (
-                        <div>
-                          <img
-                            src={result.data?.request?.completedSignature}
-                            className="h-[100px]"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="w-full flex flex-col space-y-2 mt-6 bg-gray-50 rounded-[--radius] p-4 border border-border">
-            <p className="text-sm text-black/50 font-[600]">Request Remarks</p>
-            <p className="text-sm lg:mr-[20rem] mr-0">
-              {result.data?.request?.remarks || "N/A"}
-            </p>
-          </div>
-          <div className="w-full">
-            <div className="flex flex-row justify-between pb-6 pt-12">
-              <p className="text-black text-xl font-[600]">Request Documents</p>
-              {["admin", "payment_processor", "finance_approver"].includes(
-                user?.role
-              ) || ["created"].includes(result.data?.request?.status) ? (
-                <RequestDocumentForm
-                  requestDocument={selectedRequestDocument}
-                  onSuccess={() => {
-                    execute({ id, limit, skip });
-                  }}
-                  onClose={() => {}}
-                  request={result.data?.request}
-                />
-              ) : (
-                <></>
               )}
             </div>
             <div className="w-full">
-              <RequestDocumentTable
-                columns={requestDocumentTableColumns({
-                  onEdit:
-                    ["admin", "payment_processor", "finance_approver"].includes(
-                      user?.role
-                    ) || ["created"].includes(result.data?.request?.status)
-                      ? (requestDocument) => {
-                          setSelectedRequestDocument(requestDocument);
-                        }
-                      : null,
-                  onDelete:
-                    ["admin", "payment_processor", "finance_approver"].includes(
-                      user?.role
-                    ) || ["created"].includes(result.data?.request?.status)
-                      ? async (requestDocument) => {
-                          const confirmed = window.confirm(
-                            "Are you sure you want to delete this document?"
-                          );
-                          if (confirmed) {
-                            await deleteRequestDocument({
-                              id: requestDocument.id,
-                            });
-                            await execute({ id, limit, skip });
+              <div className="w-full">
+                <DataTable
+                  columns={columns({
+                    onEdit:
+                      ["created"].includes(result.data?.request?.status) ||
+                      user?.role === "admin" ||
+                      user?.role === "budget_approver" ||
+                      user?.role === "finance_approver" ||
+                      user?.role === "payment_processor"
+                        ? async (requestItem) => {
+                            setSelectedRequestItem(requestItem);
                           }
-                        }
-                      : null,
-                })}
-                isPending={isPending}
-                data={
-                  !isPending &&
-                  result.data &&
-                  result.data.request.requestDocuments
-                    ? result.data.request.requestDocuments
-                    : []
-                }
-              />
+                        : null,
+                    onDelete:
+                      ["created"].includes(result.data?.request?.status) ||
+                      user?.role === "admin" ||
+                      user?.role === "budget_approver" ||
+                      user?.role === "finance_approver" ||
+                      user?.role === "payment_processor"
+                        ? async (requestItem) => {
+                            const confirmed = window.confirm(
+                              "Are you sure you want to delete this item?"
+                            );
+                            if (confirmed) {
+                              await deleteRequestItem({ id: requestItem.id });
+                              await execute({ id, limit, skip });
+                            }
+                          }
+                        : null,
+                  })}
+                  isPending={isPending}
+                  data={
+                    !isPending &&
+                    result.data &&
+                    result.data.request.requestItems
+                      ? result.data.request.requestItems
+                      : []
+                  }
+                />
+                <div className="my-6 flex items-center justify-between">
+                  <div className="flex flex-row gap-2">
+                    {(result.data &&
+                      result.data.request &&
+                      [
+                        "admin",
+                        "payment_processor",
+                        "finance_approver",
+                      ].includes(user?.role)) ||
+                    ["created"].includes(result.data?.request?.status) ? (
+                      <RequestItemForm
+                        requestItem={selectedRequestItem}
+                        request={result.data?.request || {}}
+                        onSuccess={() => {
+                          execute({ id, limit, skip });
+                          setSelectedRequestItem(null);
+                        }}
+                        onClose={() => setSelectedRequestItem(null)}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                    <div>
+                      <Button
+                        onClick={() => {
+                          router.push(
+                            `/print/request/${result.data?.request?.id}`
+                          );
+                        }}
+                        className="bg-gray-100 text-black hover:bg-gray-200"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width={24}
+                          height={24}
+                          color={"#000000"}
+                          fill={"none"}
+                        >
+                          <path
+                            d="M7.35396 18C5.23084 18 4.16928 18 3.41349 17.5468C2.91953 17.2506 2.52158 16.8271 2.26475 16.3242C1.87179 15.5547 1.97742 14.5373 2.18868 12.5025C2.36503 10.8039 2.45321 9.95455 2.88684 9.33081C3.17153 8.92129 3.55659 8.58564 4.00797 8.35353C4.69548 8 5.58164 8 7.35396 8H16.646C18.4184 8 19.3045 8 19.992 8.35353C20.4434 8.58564 20.8285 8.92129 21.1132 9.33081C21.5468 9.95455 21.635 10.8039 21.8113 12.5025C22.0226 14.5373 22.1282 15.5547 21.7352 16.3242C21.4784 16.8271 21.0805 17.2506 20.5865 17.5468C19.8307 18 18.7692 18 16.646 18"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                          />
+                          <path
+                            d="M17 8V6C17 4.11438 17 3.17157 16.4142 2.58579C15.8284 2 14.8856 2 13 2H11C9.11438 2 8.17157 2 7.58579 2.58579C7 3.17157 7 4.11438 7 6V8"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M13.9887 16L10.0113 16C9.32602 16 8.98337 16 8.69183 16.1089C8.30311 16.254 7.97026 16.536 7.7462 16.9099C7.57815 17.1904 7.49505 17.5511 7.32884 18.2724C7.06913 19.3995 6.93928 19.963 7.02759 20.4149C7.14535 21.0174 7.51237 21.5274 8.02252 21.7974C8.40513 22 8.94052 22 10.0113 22L13.9887 22C15.0595 22 15.5949 22 15.9775 21.7974C16.4876 21.5274 16.8547 21.0174 16.9724 20.4149C17.0607 19.963 16.9309 19.3995 16.6712 18.2724C16.505 17.5511 16.4218 17.1904 16.2538 16.9099C16.0297 16.536 15.6969 16.254 15.3082 16.1089C15.0166 16 14.674 16 13.9887 16Z"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M18 12H18.009"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        Print Request
+                      </Button>
+                    </div>
+                  </div>
+                  <div>
+                    {[
+                      "created",
+                      "submitted",
+                      "budget_approved",
+                      "finance_approved",
+                      "payment_processing",
+                    ].includes(result.data?.request?.status) && (
+                      <SignaturePopup
+                        user={user}
+                        request={result.data?.request}
+                        isPopupOpen={isSignaturePopupOpen}
+                        onSuccess={() => {
+                          setIsSignaturePopupOpen(false);
+                          execute({ id, limit, skip });
+                        }}
+                        onClose={() => {
+                          setIsSignaturePopupOpen(false);
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+              {result.data?.request?.status !== "created" && (
+                <div className="w-full flex flex-col space-y-2">
+                  <div className="rounded-[--radius] border grid lg:grid-cols-5 md:grid-cols-2 grid-cols-1 overflow-hidden">
+                    <div className="w-full">
+                      <div>
+                        <p className="text-black/50 text-sm border-b border-t border-t-transparent border-border py-3 font-[600] px-4 bg-gray-50">
+                          Submitted By
+                        </p>
+                        <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                          <p className="font-[600]">
+                            {result.data && result.data.request.submittedBy
+                              ? result.data.request.submittedBy.name
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data &&
+                            result.data.request.submittedDesignation
+                              ? result.data.request.submittedDesignation
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data && result.data.request.submittedAt
+                              ? moment(result.data.request.submittedAt).format(
+                                  "DD MMM YYYY HH:mm"
+                                )
+                              : ""}
+                          </p>
+                          {result.data?.request?.submittedSignature && (
+                            <div>
+                              <img
+                                src={result.data?.request?.submittedSignature}
+                                className="h-[100px]"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <div>
+                        <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
+                          Budget Approved By
+                        </p>
+                        <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                          <p className="font-[600]">
+                            {result.data && result.data.request.budgetApprovedBy
+                              ? result.data.request.budgetApprovedBy.name
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data &&
+                            result.data.request.budgetApprovedDesignation
+                              ? result.data.request.budgetApprovedDesignation
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data && result.data.request.budgetApprovedAt
+                              ? moment(
+                                  result.data.request.budgetApprovedAt
+                                ).format("DD MMM YYYY HH:mm")
+                              : ""}
+                          </p>
+                          {result.data?.request?.budgetApprovedSignature && (
+                            <div>
+                              <img
+                                src={
+                                  result.data?.request?.budgetApprovedSignature
+                                }
+                                className="h-[100px]"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <div>
+                        <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
+                          Finance Approved By
+                        </p>
+                        <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                          <p className="font-[600]">
+                            {result.data &&
+                            result.data.request.financeApprovedBy
+                              ? result.data.request.financeApprovedBy.name
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data &&
+                            result.data.request.financeApprovedDesignation
+                              ? result.data.request.financeApprovedDesignation
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data &&
+                            result.data.request.financeApprovedAt
+                              ? moment(
+                                  result.data.request.financeApprovedAt
+                                ).format("DD MMM YYYY HH:mm")
+                              : ""}
+                          </p>
+                          {result.data?.request?.financeApprovedSignature && (
+                            <div>
+                              <img
+                                src={
+                                  result.data?.request?.financeApprovedSignature
+                                }
+                                className="h-[100px]"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <div>
+                        <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
+                          Request Processing
+                        </p>
+                        <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                          <p className="font-[600]">
+                            {result.data &&
+                            result.data.request.paymentProcessedBy
+                              ? result.data.request.paymentProcessedBy.name
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data &&
+                            result.data.request.paymentProcessedDesignation
+                              ? result.data.request.paymentProcessedDesignation
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data &&
+                            result.data.request.paymentProcessedAt
+                              ? moment(
+                                  result.data.request.paymentProcessedAt
+                                ).format("DD MMM YYYY HH:mm")
+                              : ""}
+                          </p>
+                          {result.data?.request?.paymentProcessedSignature && (
+                            <div>
+                              <img
+                                src={
+                                  result.data?.request
+                                    ?.paymentProcessedSignature
+                                }
+                                className="h-[100px]"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <div>
+                        <p className="text-black/50 text-sm border-b lg:border-t-transparent border-t border-border py-3 font-[600] px-4 bg-gray-50">
+                          Completed By
+                        </p>
+                        <div className="py-3 px-4 text-sm flex flex-col gap-1">
+                          <p className="font-[600]">
+                            {result.data && result.data.request.completedBy
+                              ? result.data.request.completedBy.name
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data &&
+                            result.data.request.completedDesignation
+                              ? result.data.request.completedDesignation
+                              : ""}
+                          </p>
+                          <p>
+                            {result.data && result.data.request.completedAt
+                              ? moment(result.data.request.completedAt).format(
+                                  "DD MMM YYYY HH:mm"
+                                )
+                              : ""}
+                          </p>
+                          {result.data?.request?.completedSignature && (
+                            <div>
+                              <img
+                                src={result.data?.request?.completedSignature}
+                                className="h-[100px]"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="w-full flex flex-col space-y-2 mt-6 bg-gray-50 rounded-[--radius] p-4 border border-border">
+                <p className="text-sm text-black/50 font-[600]">
+                  Request Remarks
+                </p>
+                <p className="text-sm lg:mr-[20rem] mr-0">
+                  {result.data?.request?.remarks || "N/A"}
+                </p>
+              </div>
+              <div className="w-full">
+                <div className="flex flex-row justify-between pb-6 pt-12">
+                  <p className="text-black text-xl font-[600]">
+                    Request Documents
+                  </p>
+                  {["admin", "payment_processor", "finance_approver"].includes(
+                    user?.role
+                  ) || ["created"].includes(result.data?.request?.status) ? (
+                    <RequestDocumentForm
+                      requestDocument={selectedRequestDocument}
+                      onSuccess={() => {
+                        execute({ id, limit, skip });
+                      }}
+                      onClose={() => {}}
+                      request={result.data?.request}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                <div className="w-full">
+                  <RequestDocumentTable
+                    columns={requestDocumentTableColumns({
+                      onEdit:
+                        [
+                          "admin",
+                          "payment_processor",
+                          "finance_approver",
+                        ].includes(user?.role) ||
+                        ["created"].includes(result.data?.request?.status)
+                          ? (requestDocument) => {
+                              setSelectedRequestDocument(requestDocument);
+                            }
+                          : null,
+                      onDelete:
+                        [
+                          "admin",
+                          "payment_processor",
+                          "finance_approver",
+                        ].includes(user?.role) ||
+                        ["created"].includes(result.data?.request?.status)
+                          ? async (requestDocument) => {
+                              const confirmed = window.confirm(
+                                "Are you sure you want to delete this document?"
+                              );
+                              if (confirmed) {
+                                await deleteRequestDocument({
+                                  id: requestDocument.id,
+                                });
+                                await execute({ id, limit, skip });
+                              }
+                            }
+                          : null,
+                    })}
+                    isPending={isPending}
+                    data={
+                      !isPending &&
+                      result.data &&
+                      result.data.request.requestDocuments
+                        ? result.data.request.requestDocuments
+                        : []
+                    }
+                  />
+                </div>
+              </div>
+              {result.data &&
+                result.data.request &&
+                ["submitted", "budget_approved", "finance_approved"].includes(
+                  result.data?.request?.status
+                ) &&
+                ["admin", "finance_approver", "budget_approver"].includes(
+                  user?.role
+                ) && (
+                  <div className="w-full flex flex-row justify-end gap-2 mt-6">
+                    <RejectRequestForm
+                      request={result.data?.request}
+                      onSuccess={() => {
+                        execute({ id, limit, skip });
+                      }}
+                      onClose={() => {}}
+                    />
+                  </div>
+                )}
             </div>
           </div>
-          {result.data &&
-            result.data.request &&
-            ["submitted", "budget_approved", "finance_approved"].includes(
-              result.data?.request?.status
-            ) &&
-            ["admin", "finance_approver", "budget_approver"].includes(
-              user?.role
-            ) && (
-              <div className="w-full flex flex-row justify-end gap-2 mt-6">
-                <RejectRequestForm
-                  request={result.data?.request}
-                  onSuccess={() => {
-                    execute({ id, limit, skip });
-                  }}
-                  onClose={() => {}}
-                />
-              </div>
-            )}
         </div>
-      </div>
+      ) : (
+        <div className="w-full flex flex-col items-center justify-center h-full">
+          <LoadingIndicator />
+        </div>
+      )}
     </div>
   );
 };
