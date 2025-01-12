@@ -37,14 +37,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import { SearchActivity } from "./search-activity";
 
 const RequestForm = ({ request, onSuccess, onClose, activities }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const [activityOpen, setActivityOpen] = useState(false);
-  const [activityValue, setActivityValue] = React.useState("");
   const form = useForm({
     resolver: zodResolver(requestSchema),
     defaultValues: {
@@ -95,7 +94,7 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
 
   return (
     <Dialog
-      modal
+      modal={false}
       open={isOpen}
       onOpenChange={(open) => {
         !open && !request && form.reset();
@@ -181,28 +180,13 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
                   <FormItem>
                     <FormLabel>Budget Line</FormLabel>
                     <FormControl>
-                      <Select
-                        {...field}
-                        placeholder="Select a budget line"
-                        onValueChange={(value) => field.onChange(value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a budget line" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <div className="relative">
-                            {activities.map((activity) => (
-                              <SelectItem
-                                className="cursor-pointer"
-                                key={activity.id}
-                                value={activity.id}
-                              >
-                                {activity.code} - {activity.name}
-                              </SelectItem>
-                            ))}
-                          </div>
-                        </SelectContent>
-                      </Select>
+                      <SearchActivity
+                        onSelect={(value) => {
+                          form.setValue("activityId", value);
+                        }}
+                        activities={activities}
+                        defaultActivity={field.value}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
