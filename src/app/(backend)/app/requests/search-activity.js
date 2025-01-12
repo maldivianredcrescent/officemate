@@ -34,33 +34,38 @@ export function SearchActivity({ activities, onSelect, defaultActivity }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="justify-between w-full"
+          className="justify-between flex w-full overflow-hidden"
         >
-          {value
-            ? activities.find((activity) => activity.id === value)?.name
-            : "Select budget line..."}
+          <div className="truncate overflow-hidden text-left w-[300px]">
+            {value &&
+              activities.find((activity) => activity.id === value)?.code}{" "}
+            -{" "}
+            {value
+              ? activities.find((activity) => activity.id === value)?.name
+              : "Select budget line..."}
+          </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[350px] p-0">
         <Command>
-          <CommandInput placeholder="Search budget line..." />
+          <CommandInput placeholder="Search budget line code..." />
           <CommandList>
             <CommandEmpty>No budget line found.</CommandEmpty>
             <CommandGroup>
               {activities.map((activity) => (
                 <CommandItem
                   key={activity.id}
-                  value={activity.name}
+                  value={activity.code}
                   onSelect={(currentValue) => {
                     onSelect(
                       activities.find(
-                        (activity) => activity.name === currentValue
+                        (activity) => activity.code === currentValue
                       )?.id
                     );
                     setValue(
                       activities.find(
-                        (activity) => activity.name === currentValue
+                        (activity) => activity.code === currentValue
                       )?.id
                     );
                     setOpen(false);
