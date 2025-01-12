@@ -22,6 +22,10 @@ import WorkplanMiscPaymentForm from "../../workplan-misc-payments/form";
 import { DataTable as WorkplanMiscPaymentDataTable } from "../../workplan-misc-payments/data-table";
 import { columns as WorkplanMiscPaymentColumns } from "../../workplan-misc-payments/columns";
 import { deleteWorkplanMiscPaymentAction } from "@/actions/workplaneMiscPaymentActions";
+import { getRequestsForExportAction } from "@/actions/requestActions";
+import { Button } from "@/components/ui/button";
+import moment from "moment";
+import { snakeToSentence } from "@/utils/snakeToSentence";
 
 const WorkplanByIdPage = () => {
   const { id } = useParams();
@@ -35,12 +39,89 @@ const WorkplanByIdPage = () => {
     isPending: isDeleteWorkplanMiscPaymentPending,
     execute: deleteWorkplanMiscPayment,
   } = useAction(deleteWorkplanMiscPaymentAction);
+  const [isExporting, setIsExporting] = useState(false);
 
   React.useEffect(() => {
     if (id) {
       execute({ id });
     }
   }, [id]);
+
+  function exportToCSV(data) {
+    // Define the CSV headers
+    const headers = [
+      "Request No.",
+      "Type",
+      "Title",
+      "Budget Line",
+      "Units/Departments",
+      "Project",
+      "Donor",
+      "Status",
+      "Status Note",
+      "Total Requested",
+      "Requested By",
+      "Submitted By",
+      "Budget Approved By",
+      "Finance Approved By",
+      "Payment Processed By",
+      "Completed By",
+      "Created At",
+      "Updated At",
+    ];
+
+    // Map the data to a CSV-compliant array
+    const rows = data.map((item) => [
+      item.number,
+      snakeToSentence(item.type),
+      item.title,
+      item.activity ? item.activity.code : "N/A",
+      item.unit ? item.unit.name : "N/A",
+      item.activity ? item.activity.project.code : "N/A",
+      item.activity ? item.activity.project.donor.code : "N/A",
+      item.status,
+      item.statusNote,
+      item.activity ? item.activity.budget : 0,
+      item.createdBy ? item.createdBy.name : "N/A",
+      item.submittedBy ? item.submittedBy.name : "N/A",
+      item.budgetApprovedBy ? item.budgetApprovedBy.name : "N/A",
+      item.financeApprovedBy ? item.financeApprovedBy.name : "N/A",
+      item.paymentProcessedBy ? item.paymentProcessedBy.name : "N/A",
+      item.completedBy ? item.completedBy.name : "N/A",
+      moment(item.createdAt).format("DD/MM/YYYY HH:mm:ss"),
+      moment(item.updatedAt).format("DD/MM/YYYY HH:mm:ss"),
+    ]);
+
+    // Combine headers and rows into a CSV string
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) => row.join(",")),
+    ].join("\n");
+
+    // Create a Blob object with the CSV content
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    // Create a link element to download the file
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "exported_data.csv");
+    link.style.visibility = "hidden";
+
+    // Append link to the body, trigger click, and remove it
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  const exportRequestAsCSV = async () => {
+    setIsExporting(true);
+    const requestsForExport = await getRequestsForExportAction(
+      result.data.workplan.id
+    );
+    exportToCSV(requestsForExport);
+    setIsExporting(false);
+  };
 
   return (
     <div className="w-full h-full">
@@ -220,6 +301,16 @@ const WorkplanByIdPage = () => {
             }
             rowCount={result.data?.workplan?.totalWorkplanMiscPayments || 0}
           />
+        </div>
+        <div className="w-full flex flex-row items-center justify-end mt-6">
+          <Button
+            onClick={async () => {
+              await exportRequestAsCSV();
+            }}
+            disabled={isExporting}
+          >
+            {isExporting ? "Exporting..." : "Export Requests"}
+          </Button>
         </div>
       </div>
     </div>

@@ -46,6 +46,7 @@ export const getRequestsAction = actionClient
         },
         skip: parsedInput.skip,
         take: parsedInput.limit,
+        orderBy: { createdAt: "desc" },
       });
 
       const totalRequests = await prisma.request.count({
@@ -77,6 +78,7 @@ export const getRequestsAction = actionClient
         },
         skip: parsedInput.skip,
         take: parsedInput.limit,
+        orderBy: { createdAt: "desc" },
       });
 
       const totalRequests = await prisma.request.count({
@@ -292,3 +294,29 @@ export const rejectRequestAction = actionClient
     });
     return { request, success: true };
   });
+
+export const getRequestsForExportAction = async (workplanId) => {
+  const requests = await prisma.request.findMany({
+    where: { activity: { workplanId: workplanId } },
+    include: {
+      requestItems: true,
+      activity: {
+        include: {
+          project: {
+            include: {
+              donor: true,
+            },
+          },
+        },
+      },
+      unit: true,
+      createdBy: true,
+      submittedBy: true,
+      budgetApprovedBy: true,
+      financeApprovedBy: true,
+      paymentProcessedBy: true,
+      completedBy: true,
+    },
+  });
+  return requests;
+};
