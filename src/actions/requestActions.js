@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 import { actionClient } from "@/lib/safe-action";
 import { requestSchema } from "@/schemas/requestSchemas"; // Updated import to requestSchema
 import { getServerSession } from "next-auth";
-import { revalidateTag, unstable_cache } from "next/cache";
 import { z } from "zod";
 
 export const getRequestsAction = actionClient
@@ -28,115 +27,91 @@ export const getRequestsAction = actionClient
         "payment_processor",
       ].includes(user.role)
     ) {
-      const cacheKey = "requests-for-admin";
-      const cachedRequestsForAdmin = unstable_cache(
-        async () => {
-          const requests = await prisma.request.findMany({
-            where: parsedInput.type ? { type: parsedInput.type } : undefined,
-            orderBy: { updatedAt: "desc" },
+      const requests = await prisma.request.findMany({
+        where: parsedInput.type ? { type: parsedInput.type } : undefined,
+        orderBy: { updatedAt: "desc" },
+        include: {
+          unit: true,
+          requestItems: true,
+          activity: {
             include: {
-              unit: true,
-              requestItems: true,
-              activity: {
+              workplan: true,
+              project: {
                 include: {
-                  workplan: true,
-                  project: {
-                    include: {
-                      donor: true,
-                    },
-                  },
+                  donor: true,
                 },
               },
             },
-            skip: parsedInput.skip,
-            take: parsedInput.limit,
-            orderBy: { createdAt: "desc" },
-          });
-
-          const totalRequests = await prisma.request.count({
-            where: parsedInput.type ? { type: parsedInput.type } : undefined,
-          });
-          const activities = await prisma.activity.findMany({
-            include: { workplan: true },
-          });
-          const projects = await prisma.project.findMany({
-            include: { donor: true },
-          });
-          const donors = await prisma.donor.findMany();
-          return {
-            requests,
-            totalRequests,
-            activities,
-            projects,
-            donors,
-            success: true,
-          };
+          },
         },
-        [cacheKey],
-        {
-          tags: [cacheKey],
-          revalidate: false,
-        }
-      );
+        skip: parsedInput.skip,
+        take: parsedInput.limit,
+        orderBy: { createdAt: "desc" },
+      });
 
-      return await cachedRequestsForAdmin();
+      const totalRequests = await prisma.request.count({
+        where: parsedInput.type ? { type: parsedInput.type } : undefined,
+      });
+      const activities = await prisma.activity.findMany({
+        include: { workplan: true },
+      });
+      const projects = await prisma.project.findMany({
+        include: { donor: true },
+      });
+      const donors = await prisma.donor.findMany();
+      return {
+        requests,
+        totalRequests,
+        activities,
+        projects,
+        donors,
+        success: true,
+      };
     } else {
-      const cacheKey = `requests-for-users-${user.unitId}`;
-      const cachedRequestsForUsers = unstable_cache(
-        async () => {
-          const requests = await prisma.request.findMany({
-            where: parsedInput.type
-              ? { type: parsedInput.type, unitId: user.unitId }
-              : { unitId: user.unitId },
-            orderBy: { updatedAt: "desc" },
+      const requests = await prisma.request.findMany({
+        where: parsedInput.type
+          ? { type: parsedInput.type, unitId: user.unitId }
+          : { unitId: user.unitId },
+        orderBy: { updatedAt: "desc" },
+        include: {
+          unit: true,
+          requestItems: true,
+          activity: {
             include: {
-              unit: true,
-              requestItems: true,
-              activity: {
+              workplan: true,
+              project: {
                 include: {
-                  workplan: true,
-                  project: {
-                    include: {
-                      donor: true,
-                    },
-                  },
+                  donor: true,
                 },
               },
             },
-            skip: parsedInput.skip,
-            take: parsedInput.limit,
-            orderBy: { createdAt: "desc" },
-          });
-
-          const totalRequests = await prisma.request.count({
-            where: parsedInput.type
-              ? { type: parsedInput.type, unitId: user.unitId }
-              : { unitId: user.unitId },
-          });
-          const activities = await prisma.activity.findMany({
-            include: { workplan: true },
-          });
-          const projects = await prisma.project.findMany({
-            include: { donor: true },
-          });
-          const donors = await prisma.donor.findMany();
-          return {
-            requests,
-            totalRequests,
-            activities,
-            projects,
-            donors,
-            success: true,
-          };
+          },
         },
-        [cacheKey],
-        {
-          tags: [cacheKey],
-          revalidate: false,
-        }
-      );
+        skip: parsedInput.skip,
+        take: parsedInput.limit,
+        orderBy: { createdAt: "desc" },
+      });
 
-      return await cachedRequestsForUsers();
+      const totalRequests = await prisma.request.count({
+        where: parsedInput.type
+          ? { type: parsedInput.type, unitId: user.unitId }
+          : { unitId: user.unitId },
+      });
+      const activities = await prisma.activity.findMany({
+        include: { workplan: true },
+      });
+      const projects = await prisma.project.findMany({
+        include: { donor: true },
+      });
+      const donors = await prisma.donor.findMany();
+      return {
+        requests,
+        totalRequests,
+        activities,
+        projects,
+        donors,
+        success: true,
+      };
     }
   });
 
@@ -203,9 +178,6 @@ export const createRequestAction = actionClient
       data: { ...parsedInput, createdById: user.id, unitId: user.unitId },
     });
 
-    revalidateTag(`requests-for-users-${request.unitId}`);
-    revalidateTag(`requests-for-admin`);
-
     return { request, success: true };
   });
 
@@ -216,10 +188,6 @@ export const updateRequestAction = actionClient
       where: { id: parsedInput.id },
       data: parsedInput,
     });
-
-    revalidateTag(`requests-for-users-${request.unitId}`);
-    revalidateTag(`requests-for-admin`);
-
     return { request, success: true };
   });
 
@@ -252,10 +220,6 @@ export const submitRequestForApprovalAction = actionClient
         submittedSignature: parsedInput.signature,
       },
     });
-
-    revalidateTag(`requests-for-users-${request.unitId}`);
-    revalidateTag(`requests-for-admin`);
-
     return { request, success: true };
   });
 
@@ -275,10 +239,6 @@ export const submitRequestForBudgetApprovalAction = actionClient
         budgetApprovedSignature: parsedInput.signature,
       },
     });
-
-    revalidateTag(`requests-for-users-${request.unitId}`);
-    revalidateTag(`requests-for-admin`);
-
     return { request, success: true };
   });
 
@@ -298,10 +258,6 @@ export const submitRequestForFinanceApprovalAction = actionClient
         financeApprovedSignature: parsedInput.signature,
       },
     });
-
-    revalidateTag(`requests-for-users-${request.unitId}`);
-    revalidateTag(`requests-for-admin`);
-
     return { request, success: true };
   });
 
@@ -321,10 +277,6 @@ export const submitRequestForPaymentProcessingAction = actionClient
         paymentProcessedSignature: parsedInput.signature,
       },
     });
-
-    revalidateTag(`requests-for-users-${request.unitId}`);
-    revalidateTag(`requests-for-admin`);
-
     return { request, success: true };
   });
 
@@ -355,9 +307,6 @@ export const completedRequestAction = actionClient
       });
     }
 
-    revalidateTag(`requests-for-users-${request.unitId}`);
-    revalidateTag(`requests-for-admin`);
-
     return { request, success: true };
   });
 
@@ -376,10 +325,6 @@ export const rejectRequestAction = actionClient
         rejectedRemarks: parsedInput.rejectedRemarks,
       },
     });
-
-    revalidateTag(`requests-for-users-${request.unitId}`);
-    revalidateTag(`requests-for-admin`);
-
     return { request, success: true };
   });
 
@@ -406,9 +351,5 @@ export const getRequestsForExportAction = async (workplanId) => {
       completedBy: true,
     },
   });
-
-  revalidateTag(`requests-for-users-${request.unitId}`);
-  revalidateTag(`requests-for-admin`);
-
   return requests;
 };
