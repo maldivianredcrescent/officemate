@@ -152,6 +152,8 @@ const RequestByIdPage = () => {
                 "payment_processor",
               ].includes(user?.role) ? (
                 <RequestForm
+                  donors={result.data?.donors || []}
+                  projects={result.data?.projects || []}
                   activities={result.data?.activities || []}
                   isOpen={isEditFormOpen}
                   request={result.data?.request || {}}

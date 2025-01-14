@@ -38,20 +38,35 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { SearchActivity } from "./search-activity";
+import { z } from "zod";
 
-const RequestForm = ({ request, onSuccess, onClose, activities }) => {
+const RequestForm = ({
+  request,
+  onSuccess,
+  onClose,
+  activities,
+  donors,
+  projects,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const form = useForm({
-    resolver: zodResolver(requestSchema),
+    resolver: zodResolver(
+      requestSchema.extend({
+        donorId: z.string(),
+        projectId: z.string(),
+      })
+    ),
     defaultValues: {
       type: "",
       activityId: "",
       remarks: "",
       title: "",
       statusNote: "",
+      donorId: "",
+      projectId: "",
     },
   });
 
@@ -62,6 +77,8 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
       form.setValue("remarks", request.remarks);
       form.setValue("title", request.title);
       form.setValue("statusNote", request.statusNote);
+      form.setValue("donorId", request.activity?.project?.donor?.id);
+      form.setValue("projectId", request.activity?.project?.id);
     }
   }, [request, activities]);
 
@@ -105,7 +122,7 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
       <DialogTrigger className="text-sm bg-black text-white px-4 h-[42px] rounded-[--radius]">
         {request ? "Edit Request" : "Create Request"}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <DialogHeader>
@@ -175,23 +192,96 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
               />
               <FormField
                 control={form.control}
-                name="activityId"
+                name="donorId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Budget Line</FormLabel>
+                    <FormLabel>Donor</FormLabel>
                     <FormControl>
-                      <SearchActivity
-                        onSelect={(value) => {
-                          form.setValue("activityId", value);
-                        }}
-                        activities={activities}
-                        defaultActivity={field.value}
-                      />
+                      <Select
+                        {...field}
+                        placeholder="Select a donor"
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a donor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {donors.map((donor) => (
+                            <SelectItem key={donor.id} value={donor.id}>
+                              {donor.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              {form.watch("donorId") && (
+                <FormField
+                  control={form.control}
+                  name="projectId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Project</FormLabel>
+                      <FormControl>
+                        <Select
+                          {...field}
+                          placeholder="Select a project"
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a project" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {projects
+                              .filter(
+                                (project) =>
+                                  project.donorId === form.watch("donorId")
+                              )
+                              .map((project) => (
+                                <SelectItem key={project.id} value={project.id}>
+                                  {project.name}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {form.watch("projectId") && (
+                <FormField
+                  control={form.control}
+                  name="activityId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Budget Line</FormLabel>
+                      <FormControl>
+                        <SearchActivity
+                          onSelect={(value) => {
+                            form.setValue("activityId", value);
+                          }}
+                          activities={
+                            form.watch("projectId")
+                              ? activities.filter(
+                                  (activity) =>
+                                    activity.projectId ===
+                                    form.watch("projectId")
+                                )
+                              : activities
+                          }
+                          defaultActivity={field.value}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               {request && (
                 <FormField
                   control={form.control}
@@ -221,33 +311,37 @@ const RequestForm = ({ request, onSuccess, onClose, activities }) => {
                 )}
               />
             </div>
-            <DialogFooter>
-              <Button disabled={isLoading} type="submit">
-                {isLoading && (
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                )}
-                Save
-              </Button>
-            </DialogFooter>
+            {form.watch("donorId") &&
+              form.watch("projectId") &&
+              form.watch("activityId") && (
+                <DialogFooter>
+                  <Button disabled={isLoading} type="submit">
+                    {isLoading && (
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                    )}
+                    Save
+                  </Button>
+                </DialogFooter>
+              )}
           </form>
         </Form>
       </DialogContent>

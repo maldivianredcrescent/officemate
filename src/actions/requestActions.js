@@ -55,7 +55,18 @@ export const getRequestsAction = actionClient
       const activities = await prisma.activity.findMany({
         include: { workplan: true },
       });
-      return { requests, totalRequests, activities, success: true };
+      const projects = await prisma.project.findMany({
+        include: { donor: true },
+      });
+      const donors = await prisma.donor.findMany();
+      return {
+        requests,
+        totalRequests,
+        activities,
+        projects,
+        donors,
+        success: true,
+      };
     } else {
       const requests = await prisma.request.findMany({
         where: parsedInput.type
@@ -89,7 +100,18 @@ export const getRequestsAction = actionClient
       const activities = await prisma.activity.findMany({
         include: { workplan: true },
       });
-      return { requests, totalRequests, activities, success: true };
+      const projects = await prisma.project.findMany({
+        include: { donor: true },
+      });
+      const donors = await prisma.donor.findMany();
+      return {
+        requests,
+        totalRequests,
+        activities,
+        projects,
+        donors,
+        success: true,
+      };
     }
   });
 
@@ -132,7 +154,18 @@ export const getRequestByIdAction = actionClient
     const activities = await prisma.activity.findMany({
       include: { workplan: true },
     });
-    return { request, totalAmount, activities, success: true };
+    const projects = await prisma.project.findMany({
+      include: { donor: true },
+    });
+    const donors = await prisma.donor.findMany();
+    return {
+      request,
+      totalAmount,
+      activities,
+      projects,
+      donors,
+      success: true,
+    };
   });
 
 export const createRequestAction = actionClient

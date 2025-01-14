@@ -55,6 +55,8 @@ const RequestPage = () => {
             <div>
               {result.data && result.data.activities && (
                 <RequestForm
+                  donors={result.data?.donors || []}
+                  projects={result.data?.projects || []}
                   activities={result.data?.activities || []}
                   request={selectedRequest} // Updated prop name
                   onClose={() => setSelectedRequest(null)}
