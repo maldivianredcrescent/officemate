@@ -55,23 +55,23 @@ export function SearchActivity({
       </PopoverTrigger>
       <PopoverContent className="w-[350px] p-0">
         <Command>
-          <CommandInput placeholder="Search budget line code..." />
+          <CommandInput placeholder="Search budget line..." />
           <CommandList>
             <CommandEmpty>No budget line found.</CommandEmpty>
             <CommandGroup>
               {activities.map((activity) => (
                 <CommandItem
                   key={activity.id}
-                  value={activity.code}
+                  value={activity.name}
                   onSelect={(currentValue) => {
                     onSelect(
                       allActivities.find(
-                        (activity) => activity.code === currentValue
+                        (activity) => activity.name === currentValue
                       )?.id
                     );
                     setValue(
                       allActivities.find(
-                        (activity) => activity.code === currentValue
+                        (activity) => activity.name === currentValue
                       )?.id
                     );
                     setOpen(false);
