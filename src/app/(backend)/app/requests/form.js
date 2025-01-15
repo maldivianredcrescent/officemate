@@ -263,14 +263,15 @@ const RequestForm = ({
                       <FormControl>
                         <SearchActivity
                           onSelect={(value) => {
+                            console.log(value);
                             form.setValue("activityId", value);
                           }}
                           activities={
                             form.watch("projectId")
                               ? activities.filter(
                                   (activity) =>
-                                    activity.projectId ===
-                                    form.watch("projectId")
+                                    activity.project?.id ===
+                                    form.getValues("projectId")
                                 )
                               : activities
                           }

@@ -51,6 +51,8 @@ export default function AdminHomePage() {
             <div>
               {result.data && result.data.activities && (
                 <RequestForm
+                  projects={result.data?.projects || []}
+                  donors={result.data?.donors || []}
                   activities={result.data?.activities || []}
                   request={selectedRequest} // Updated prop name
                   onClose={() => setSelectedRequest(null)}

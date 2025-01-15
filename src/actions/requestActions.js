@@ -53,7 +53,7 @@ export const getRequestsAction = actionClient
         where: parsedInput.type ? { type: parsedInput.type } : undefined,
       });
       const activities = await prisma.activity.findMany({
-        include: { workplan: true },
+        include: { workplan: true, project: true },
       });
       const projects = await prisma.project.findMany({
         include: { donor: true },
@@ -98,7 +98,7 @@ export const getRequestsAction = actionClient
           : { unitId: user.unitId },
       });
       const activities = await prisma.activity.findMany({
-        include: { workplan: true },
+        include: { workplan: true, project: true },
       });
       const projects = await prisma.project.findMany({
         include: { donor: true },
@@ -152,7 +152,7 @@ export const getRequestByIdAction = actionClient
     );
 
     const activities = await prisma.activity.findMany({
-      include: { workplan: true },
+      include: { workplan: true, project: true },
     });
     const projects = await prisma.project.findMany({
       include: { donor: true },

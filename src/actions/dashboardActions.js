@@ -51,9 +51,20 @@ export const getDashboardRequestsAction = actionClient
         where: parsedInput.type ? { type: parsedInput.type } : undefined,
       });
       const activities = await prisma.activity.findMany({
-        include: { workplan: true },
+        include: { workplan: true, project: true },
       });
-      return { requests, totalRequests, activities, success: true };
+      const projects = await prisma.project.findMany({
+        include: { donor: true },
+      });
+      const donors = await prisma.donor.findMany();
+      return {
+        requests,
+        totalRequests,
+        activities,
+        projects,
+        donors,
+        success: true,
+      };
     } else {
       const requests = await prisma.request.findMany({
         where: parsedInput.type
@@ -82,8 +93,19 @@ export const getDashboardRequestsAction = actionClient
         where: parsedInput.type ? { type: parsedInput.type } : undefined,
       });
       const activities = await prisma.activity.findMany({
-        include: { workplan: true },
+        include: { workplan: true, project: true },
       });
-      return { requests, totalRequests, activities, success: true };
+      const projects = await prisma.project.findMany({
+        include: { donor: true },
+      });
+      const donors = await prisma.donor.findMany();
+      return {
+        requests,
+        totalRequests,
+        activities,
+        projects,
+        donors,
+        success: true,
+      };
     }
   });
