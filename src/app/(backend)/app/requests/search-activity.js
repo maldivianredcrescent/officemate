@@ -19,7 +19,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function SearchActivity({ activities, onSelect, defaultActivity }) {
+export function SearchActivity({
+  activities,
+  allActivities,
+  onSelect,
+  defaultActivity,
+}) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -38,10 +43,11 @@ export function SearchActivity({ activities, onSelect, defaultActivity }) {
         >
           <div className="truncate overflow-hidden text-left w-[300px]">
             {value &&
-              activities.find((activity) => activity.id === value)?.code}{" "}
+              allActivities.find((activity) => activity.id === value)
+                ?.code}{" "}
             -{" "}
             {value
-              ? activities.find((activity) => activity.id === value)?.name
+              ? allActivities.find((activity) => activity.id === value)?.name
               : "Select budget line..."}
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -59,12 +65,12 @@ export function SearchActivity({ activities, onSelect, defaultActivity }) {
                   value={activity.code}
                   onSelect={(currentValue) => {
                     onSelect(
-                      activities.find(
+                      allActivities.find(
                         (activity) => activity.code === currentValue
                       )?.id
                     );
                     setValue(
-                      activities.find(
+                      allActivities.find(
                         (activity) => activity.code === currentValue
                       )?.id
                     );

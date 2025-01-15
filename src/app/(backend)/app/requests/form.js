@@ -262,8 +262,8 @@ const RequestForm = ({
                       <FormLabel>Budget Line</FormLabel>
                       <FormControl>
                         <SearchActivity
+                          allActivities={activities}
                           onSelect={(value) => {
-                            console.log(value);
                             form.setValue("activityId", value);
                           }}
                           activities={
