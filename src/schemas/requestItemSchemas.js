@@ -7,4 +7,7 @@ export const requestItemSchema = z.object({
   qty: z.number(),
   rate: z.number(),
   remarks: z.string().optional(),
+  gst: z.number().optional(),
+  tgst: z.number().optional(),
+  serviceCharge: z.number().optional(),
 });
