@@ -264,7 +264,6 @@ const RequestForm = ({
                         <SearchActivity
                           allActivities={activities}
                           onSelect={(value) => {
-                            console.log(value);
                             form.setValue("activityId", value);
                           }}
                           activities={
