@@ -67,12 +67,12 @@ export function SearchActivity({
                     console.log(currentValue);
                     onSelect(
                       allActivities.find(
-                        (activity) => activity.name === currentValue
+                        (activity) => activity.name == currentValue
                       )?.id
                     );
                     setValue(
                       allActivities.find(
-                        (activity) => activity.name === currentValue
+                        (activity) => activity.name == currentValue
                       )?.id
                     );
                     setOpen(false);
