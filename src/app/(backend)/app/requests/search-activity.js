@@ -64,6 +64,7 @@ export function SearchActivity({
                   key={activity.id}
                   value={activity.name}
                   onSelect={(currentValue) => {
+                    console.log(currentValue);
                     onSelect(
                       allActivities.find(
                         (activity) => activity.name === currentValue
